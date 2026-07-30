@@ -3973,14 +3973,14 @@ function selectFsLedgerCompany(companyName) {
             const assetEm = totalEmissions / assets.length;
             const pct = Math.round((assetEm / totalEmissions) * 100);
             return `
-            <div style="padding: 0.6rem 0; border-bottom: ${i < Math.min(assets.length, 8) - 1 ? '1px solid var(--bg-border)' : 'none'};">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 4px;">
-                    <span style="font-size:0.88rem; font-weight:600; color:var(--text-primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; padding-right:0.5rem;">
+            <div style="padding: 0.55rem 0; border-bottom: ${i < Math.min(assets.length, 8) - 1 ? '1px solid var(--bg-border)' : 'none'};">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-size:0.85rem; font-weight:600; color:var(--text-primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; padding-right:0.5rem;">
                         <i class="fa-solid fa-industry" style="color:var(--accent-indigo); margin-right:6px; font-size:0.8em;"></i>${i+1}. ${escapeHtml(a)}
                     </span>
                     <span style="font-size:0.82rem; font-weight:700; color:var(--text-primary); flex-shrink:0;">${fmt(assetEm)}</span>
                 </div>
-                <div style="height: 4px; background: var(--bg-border); border-radius: 2px; overflow: hidden;">
+                <div style="height: 3px; background: rgba(150, 150, 150, 0.15); border-radius: 2px; overflow: hidden; margin-top: 6px;">
                     <div style="width: ${pct}%; height: 100%; background: var(--accent-indigo); border-radius: 2px;"></div>
                 </div>
             </div>`;
@@ -3997,35 +3997,35 @@ function selectFsLedgerCompany(companyName) {
             
             <!-- Top Hero Banner & Quick KPI Strip -->
             <div style="display: grid; grid-template-columns: 1.3fr 1fr; gap: 1rem; align-items: stretch;">
-                <div class="modal-hero-card" style="margin:0; display:flex; flex-direction:column; justify-content:center;">
-                    <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.4rem;">
+                <div class="modal-hero-card" style="margin:0; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding: 1.25rem 1.5rem;">
+                    <div style="display:flex; align-items:center; justify-content:center; gap:0.5rem; margin-bottom:0.4rem;">
                         <span class="status-badge status-active" style="font-size:0.75rem;">${escapeHtml((company.sectors || []).join(' • ') || 'Sanayi')}</span>
                         <span style="font-size:0.78rem; color:var(--text-secondary);">${assets.length} Aktif Tesis</span>
                     </div>
-                    <h2 class="modal-hero-company-name" style="font-size: clamp(1.2rem, 2vw, 1.6rem); margin-bottom:0.5rem;">${escapeHtml(company.name)}</h2>
-                    <div class="modal-hero-emission-wrap" style="align-items:flex-start;">
+                    <h2 class="modal-hero-company-name" style="font-size: clamp(1.2rem, 2vw, 1.6rem); margin-bottom:0.5rem; text-align:center;">${escapeHtml(company.name)}</h2>
+                    <div class="modal-hero-emission-wrap" style="align-items:center; text-align:center;">
                         <span class="modal-hero-emission-val">${totalStr}</span>
                         <span class="modal-hero-emission-sub">Resmi Yıllık CO₂e Karbon Ayak İzi (Climate TRACE 2024/2025)</span>
                     </div>
                 </div>
 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
-                    <div class="fullscreen-kpi-card" style="padding: 0.85rem;">
+                    <div class="fullscreen-kpi-card" style="padding: 0.85rem; display:flex; flex-direction:column; justify-content:center;">
                         <span class="fullscreen-kpi-label">Scope 1 (Doğrudan)</span>
                         <span class="fullscreen-kpi-value" style="color:var(--status-danger,#ff3b30); font-size:1.15rem;">${fmt(s1)}</span>
                         <span class="fullscreen-kpi-sub">%22 Toplam Pay</span>
                     </div>
-                    <div class="fullscreen-kpi-card" style="padding: 0.85rem;">
+                    <div class="fullscreen-kpi-card" style="padding: 0.85rem; display:flex; flex-direction:column; justify-content:center;">
                         <span class="fullscreen-kpi-label">Scope 2 (Şebeke)</span>
                         <span class="fullscreen-kpi-value" style="color:var(--status-warning,#ff9500); font-size:1.15rem;">${fmt(s2)}</span>
                         <span class="fullscreen-kpi-sub">%35 Elektrik Tüketimi</span>
                     </div>
-                    <div class="fullscreen-kpi-card" style="padding: 0.85rem;">
+                    <div class="fullscreen-kpi-card" style="padding: 0.85rem; display:flex; flex-direction:column; justify-content:center;">
                         <span class="fullscreen-kpi-label">Scope 3 (Tedarik)</span>
                         <span class="fullscreen-kpi-value" style="color:var(--accent-indigo); font-size:1.15rem;">${fmt(s3)}</span>
                         <span class="fullscreen-kpi-sub">%43 Değer Zinciri</span>
                     </div>
-                    <div class="fullscreen-kpi-card" style="padding: 0.85rem;">
+                    <div class="fullscreen-kpi-card" style="padding: 0.85rem; display:flex; flex-direction:column; justify-content:center;">
                         <span class="fullscreen-kpi-label">Doğrulama Seviyesi</span>
                         <span class="fullscreen-kpi-value" style="color:var(--status-success,#34c759); font-size:1.15rem;">IPCC Tier-3</span>
                         <span class="fullscreen-kpi-sub">Uydu Doğrulamalı</span>
@@ -4034,11 +4034,11 @@ function selectFsLedgerCompany(companyName) {
             </div>
 
             <!-- Two-Column Grid: Left Facilities, Right Scope Breakdown -->
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; align-items: start;">
                 
                 <!-- Left Column: Facilities -->
-                <div class="apple-card" style="margin:0; padding:1.1rem; display:flex; flex-direction:column; gap:0.6rem;">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.2rem;">
+                <div class="apple-card" style="margin:0; padding:1.1rem; display:flex; flex-direction:column; gap:0.4rem;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.3rem;">
                         <span style="font-size:0.75rem; font-weight:700; letter-spacing:.06em; color:var(--text-tertiary); text-transform:uppercase;">
                             <i class="fa-solid fa-building-flag" style="margin-right:4px;"></i> BAĞLI TESİSLER (${assets.length})
                         </span>
