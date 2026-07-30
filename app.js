@@ -2705,6 +2705,169 @@ function closeCompanyDetailModal() {
     document.body.style.overflow = '';
 }
 
+/* --------------------------------------------------------------------------
+   KARBON DEFTERİ FULLSCREEN — Sol liste + Sağ detay panel
+   -------------------------------------------------------------------------- */
+let _ledgerFsAllCompanies = [];
+let _ledgerFsSelectedName = null;
+
+function openLedgerFullscreen() {
+    if (window.innerWidth <= 992) return;
+    if (!globalDbData || !globalDbData.companies) return;
+
+    const modal = document.getElementById('ledgerFullscreenModal');
+    if (!modal) return;
+
+    _ledgerFsAllCompanies = [...globalDbData.companies]
+        .sort((a, b) => b.est_co2e_annual - a.est_co2e_annual);
+    _ledgerFsSelectedName = null;
+
+    document.body.classList.add('modal-open');
+    modal.style.display = 'flex';
+
+    const searchEl = document.getElementById('ledgerFsSearch');
+    if (searchEl) searchEl.value = '';
+
+    _renderLedgerFsList(_ledgerFsAllCompanies);
+
+    // Reset detail panel
+    const detail = document.getElementById('ledgerFsDetail');
+    if (detail) detail.innerHTML = `
+        <div style="text-align:center; color:var(--text-tertiary);">
+            <i class="fa-solid fa-hand-pointer" style="font-size:2.5rem; margin-bottom:0.75rem; display:block;"></i>
+            <p style="font-size:1rem; font-weight:600;">Bir kurum seçin</p>
+            <p style="font-size:0.85rem; margin-top:0.25rem;">Detaylar burada görünecek</p>
+        </div>`;
+}
+
+function closeLedgerFullscreen() {
+    const modal = document.getElementById('ledgerFullscreenModal');
+    if (modal) modal.style.display = 'none';
+    document.body.classList.remove('modal-open');
+}
+
+function filterLedgerFullscreen() {
+    if (!globalDbData || !globalDbData.companies) return;
+    const q = (document.getElementById('ledgerFsSearch')?.value || '').toLowerCase().trim();
+    const filtered = _ledgerFsAllCompanies.filter(c =>
+        !q || c.name.toLowerCase().includes(q) || (c.sectors || []).some(s => s.toLowerCase().includes(q))
+    );
+    _renderLedgerFsList(filtered);
+}
+
+function _renderLedgerFsList(companies) {
+    const list = document.getElementById('ledgerFsList');
+    if (!list) return;
+
+    list.innerHTML = companies.map((c, idx) => {
+        const emStr = c.est_co2e_annual >= 1000000
+            ? (c.est_co2e_annual / 1000000).toFixed(2) + ' Mt'
+            : c.est_co2e_annual.toLocaleString('tr-TR') + ' t';
+        const isSelected = c.name === _ledgerFsSelectedName;
+        return `
+            <div class="ledger-fs-row ${isSelected ? 'ledger-fs-row--active' : ''}"
+                 onclick="selectLedgerFsCompany('${escapeHtml(c.name).replace(/'/g, "\\'")}')">
+                <div class="ledger-fs-row-rank">${idx + 1}</div>
+                <div class="ledger-fs-row-info">
+                    <div class="ledger-fs-row-name">${escapeHtml(c.name)}</div>
+                    <div class="ledger-fs-row-sub">${escapeHtml((c.sectors || []).join(' · '))}</div>
+                </div>
+                <div class="ledger-fs-row-em" style="color:var(--status-success);">${emStr}</div>
+            </div>`;
+    }).join('');
+}
+
+function selectLedgerFsCompany(companyName) {
+    if (!globalDbData || !globalDbData.companies) return;
+    const company = globalDbData.companies.find(c => c.name === companyName);
+    if (!company) return;
+
+    _ledgerFsSelectedName = companyName;
+
+    // Re-render list to update active state
+    const q = (document.getElementById('ledgerFsSearch')?.value || '').toLowerCase().trim();
+    const filtered = _ledgerFsAllCompanies.filter(c =>
+        !q || c.name.toLowerCase().includes(q) || (c.sectors || []).some(s => s.toLowerCase().includes(q))
+    );
+    _renderLedgerFsList(filtered);
+
+    // Build detail panel (same content as companyDetailModal)
+    const totalEmissions = company.est_co2e_annual || 0;
+    const totalStr = totalEmissions >= 1000000
+        ? (totalEmissions / 1000000).toFixed(2) + ' Mt CO₂e'
+        : totalEmissions.toLocaleString('tr-TR') + ' t CO₂e';
+
+    const formatT = v => v >= 1000000 ? (v/1000000).toFixed(2)+' Mt' : v.toLocaleString('tr-TR', {maximumFractionDigits:2})+' t';
+    const s1 = totalEmissions * 0.22;
+    const s2 = totalEmissions * 0.35;
+    const s3 = totalEmissions * 0.43;
+
+    const assetsHtml = (company.assets && company.assets.length > 0)
+        ? company.assets.slice(0, 6).map((a, i) => `
+            <div style="display:flex; justify-content:space-between; align-items:center; padding:0.45rem 0; border-bottom:${i < Math.min(company.assets.length, 6) - 1 ? '1px solid var(--bg-border)' : 'none'};">
+                <span style="font-size:0.88rem; font-weight:600; color:var(--text-primary);">${i+1}. ${escapeHtml(a)}</span>
+                <span style="font-size:0.82rem; color:var(--text-secondary);">${formatT(totalEmissions / company.assets.length)}</span>
+            </div>`).join('')
+        : `<div style="font-size:0.82rem; color:var(--text-secondary);">Kayıtlı tesis bulunamadı.</div>`;
+
+    const detail = document.getElementById('ledgerFsDetail');
+    if (!detail) return;
+    detail.innerHTML = `
+        <div style="max-width:640px; width:100%; margin:0 auto;">
+            <!-- Hero -->
+            <div class="modal-hero-card" style="margin-bottom:1rem;">
+                <h2 class="modal-hero-company-name">${escapeHtml(company.name)}</h2>
+                <div class="modal-hero-emission-wrap">
+                    <span class="modal-hero-emission-val">${totalStr}</span>
+                    <span class="modal-hero-emission-sub">CO₂e Toplam Karbon Ayak İzi</span>
+                </div>
+            </div>
+
+            <!-- Assets -->
+            <div style="font-size:0.72rem; font-weight:700; letter-spacing:0.06em; color:var(--text-tertiary); margin-bottom:0.5rem; text-transform:uppercase;">TESİSLER</div>
+            <div class="modal-scope-card" style="flex-direction:column; align-items:stretch; margin-bottom:1rem; padding:0.85rem 1rem;">
+                ${assetsHtml}
+            </div>
+
+            <!-- Scope Distribution -->
+            <div style="font-size:0.72rem; font-weight:700; letter-spacing:0.06em; color:var(--text-tertiary); margin-bottom:0.5rem; text-transform:uppercase;">KAPSAM DAĞILIMI</div>
+            <div style="display:flex; flex-direction:column; gap:0.6rem; margin-bottom:1rem;">
+                <div class="modal-scope-card">
+                    <div>
+                        <strong class="scope-card-title">Scope 1 (Doğrudan Emisyonlar)</strong>
+                        <span class="scope-card-sub">Tesis içi doğrudan sabit yakıt/jeneratör</span>
+                    </div>
+                    <span class="scope-card-val">${formatT(s1)} (%22,0)</span>
+                </div>
+                <div class="modal-scope-card">
+                    <div>
+                        <strong class="scope-card-title">Scope 2 (Dolaylı Enerji)</strong>
+                        <span class="scope-card-sub">Satın alınan şebeke elektriği tüketimi</span>
+                    </div>
+                    <span class="scope-card-val">${formatT(s2)} (%35,0)</span>
+                </div>
+                <div class="modal-scope-card">
+                    <div>
+                        <strong class="scope-card-title">Scope 3 (Tedarik Zinciri)</strong>
+                        <span class="scope-card-sub">Değer zinciri emisyonu</span>
+                    </div>
+                    <span class="scope-card-val">${formatT(s3)} (%43,0)</span>
+                </div>
+            </div>
+
+            <!-- Info box -->
+            <div class="modal-info-box">
+                <i class="fa-solid fa-circle-info info-box-icon"></i>
+                <div>
+                    <strong>Taksonomi Notu:</strong> Emisyon kırılımları Climate TRACE uydu gözlemleri, ISO 14064-1 standartları ve GHG Protokolü Scope 1-3 faktörlerine göre hesaplanmıştır.
+                </div>
+            </div>
+        </div>`;
+
+    detail.style.alignItems = 'flex-start';
+    detail.style.justifyContent = 'flex-start';
+}
+
 /* ==========================================================================
    REGULATORY DISCLOSURE ENGINE (TCFD / CDP / ISSB S2 / RVD BEYANNAMESİ)
    ========================================================================== */

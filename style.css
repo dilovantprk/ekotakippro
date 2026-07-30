@@ -1001,6 +1001,51 @@ body.modal-open .fab-bottom-right-btn {
     transform: scale(0.96);
 }
 
+/* --- Karbon Defteri Fullscreen List Row --- */
+.ledger-fs-row {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.85rem 1rem;
+    cursor: pointer;
+    border-bottom: 1px solid var(--bg-border);
+    transition: background 0.12s ease;
+}
+.ledger-fs-row:hover { background: var(--bg-secondary); }
+.ledger-fs-row--active {
+    background: var(--bg-secondary);
+    border-left: 3px solid var(--accent-indigo);
+}
+.ledger-fs-row-rank {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-tertiary);
+    min-width: 22px;
+    text-align: right;
+}
+.ledger-fs-row-info { flex: 1; min-width: 0; }
+.ledger-fs-row-name {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.ledger-fs-row-sub {
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
+    margin-top: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.ledger-fs-row-em {
+    font-size: 0.82rem;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
 @media (min-width: 769px) {
     .settings-sheet-overlay {
         background: rgba(0, 0, 0, 0.65);
