@@ -2158,6 +2158,21 @@ function initOrUpdateMap(sectorFilter = 'ALL') {
     const mapDiv = document.getElementById('turkeyMap');
     if (!mapDiv) return;
 
+    if (mapDiv.offsetWidth === 0 || mapDiv.offsetHeight === 0) {
+        requestAnimationFrame(() => {
+            const checkDiv = document.getElementById('turkeyMap');
+            if (checkDiv && checkDiv.offsetWidth > 0) {
+                initOrUpdateMap(sectorFilter);
+            }
+        });
+        return;
+    }
+
+    if (mapDiv._leaflet_id) {
+        try { delete mapDiv._leaflet_id; } catch(e){}
+        mapDiv._leaflet_id = null;
+    }
+
     const isLightMode = document.documentElement.classList.contains('apple-light') || document.body.classList.contains('apple-light') || (localStorage.getItem('anz_theme') === 'light');
     const tileUrl = isLightMode
         ? 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png'
@@ -2166,18 +2181,23 @@ function initOrUpdateMap(sectorFilter = 'ALL') {
     const isMobile = window.innerWidth <= 768;
 
     if (!leafletMap) {
-        leafletMap = L.map('turkeyMap', { 
-            zoomControl: false, 
-            dragging: !isMobile,
-            tap: !isMobile
-        }).setView([39.0, 35.2], 6);
+        try {
+            leafletMap = L.map('turkeyMap', { 
+                zoomControl: false, 
+                dragging: !isMobile,
+                tap: !isMobile
+            }).setView([39.0, 35.2], 6);
 
-        L.tileLayer(tileUrl, {
-            attribution: '&copy; OpenStreetMap &copy; CARTO',
-            maxZoom: 19
-        }).addTo(leafletMap);
-        
-        L.control.zoom({ position: 'topright' }).addTo(leafletMap);
+            L.tileLayer(tileUrl, {
+                attribution: '&copy; OpenStreetMap &copy; CARTO',
+                maxZoom: 19
+            }).addTo(leafletMap);
+            
+            L.control.zoom({ position: 'topright' }).addTo(leafletMap);
+        } catch (err) {
+            console.warn('turkeyMap init suppressed:', err);
+            return;
+        }
     } else {
         if (isMobile) {
             leafletMap.dragging.disable();
@@ -2663,10 +2683,25 @@ function switchCockpitSubTab(subTab) {
 
 function initOrUpdateCompanyTabMap(company) {
     const mapDiv = document.getElementById('companyTabMap');
-    if (!mapDiv || mapDiv.offsetWidth === 0 || mapDiv.offsetHeight === 0) return;
+    if (!mapDiv) return;
+
+    if (mapDiv.offsetWidth === 0 || mapDiv.offsetHeight === 0) {
+        requestAnimationFrame(() => {
+            const checkDiv = document.getElementById('companyTabMap');
+            if (checkDiv && checkDiv.offsetWidth > 0) {
+                initOrUpdateCompanyTabMap(company);
+            }
+        });
+        return;
+    }
 
     if (companyTabMapInstance) {
         companyTabMapInstance = destroyLeafletMap(companyTabMapInstance, mapDiv);
+    }
+
+    if (mapDiv._leaflet_id) {
+        try { delete mapDiv._leaflet_id; } catch(e){}
+        mapDiv._leaflet_id = null;
     }
 
     const isLightMode = document.documentElement.classList.contains('apple-light') || document.body.classList.contains('apple-light') || (localStorage.getItem('anz_theme') === 'light');
