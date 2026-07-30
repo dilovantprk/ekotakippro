@@ -4082,12 +4082,28 @@ function openChartFullscreen(type) {
         titleEl.innerHTML = `<i class="fa-solid fa-book-bookmark" style="color:var(--accent-green);"></i> Karbon Defteri`;
         subtitleEl.textContent = `Türkiye sanayi ve holding emisyon sıralaması — 266 kurum`;
 
-        // Take over the modal body for ledger mode with matching outer padding and card borders
+        // Take over the modal body for ledger mode: Left = Company Cockpit (1.35fr), Right = 266 Company Selector List (1fr)
         const modalBody = modal.querySelector('.fullscreen-modal-body');
         if (modalBody) {
             modalBody.setAttribute('data-ledger-original', modalBody.innerHTML);
             modalBody.style.cssText = 'flex:1; overflow:hidden; display:grid; grid-template-columns:1.35fr 1fr; gap:1.25rem; padding:1.25rem 1.5rem;';
             modalBody.innerHTML = `
+                <!-- LEFT PANEL (1.35fr): Selected Company Hero Cockpit & Scope Breakdown -->
+                <div id="fsLedgerDetail" style="
+                    height:100%; min-width:0; overflow-y:auto;
+                    background:var(--bg-secondary);
+                    border:1px solid var(--bg-border);
+                    border-radius:14px;
+                    padding:1.5rem 1.75rem;
+                    display:flex; flex-direction:column; gap:1.25rem;
+                ">
+                    <div style="text-align:center; color:var(--text-tertiary); margin:auto;">
+                        <i class="fa-solid fa-arrow-right" style="font-size:2rem; margin-bottom:0.75rem; display:block; opacity:0.4;"></i>
+                        <p style="font-size:0.95rem; font-weight:600;">Sağdaki listeden bir kurum seçin</p>
+                    </div>
+                </div>
+
+                <!-- RIGHT PANEL (1fr): 266 Company Search & Selector Sidebar -->
                 <div id="fsLedgerList" style="
                     height:100%; min-width:0;
                     overflow:hidden;
@@ -4103,19 +4119,6 @@ function openChartFullscreen(type) {
                         </div>
                     </div>
                     <div id="fsLedgerRows" style="flex:1; overflow-y:auto;"></div>
-                </div>
-                <div id="fsLedgerDetail" style="
-                    height:100%; min-width:0; overflow-y:auto;
-                    background:var(--bg-secondary);
-                    border:1px solid var(--bg-border);
-                    border-radius:14px;
-                    padding:1.25rem;
-                    display:flex; flex-direction:column; gap:1rem;
-                ">
-                    <div style="text-align:center; color:var(--text-tertiary); margin:auto;">
-                        <i class="fa-solid fa-arrow-left" style="font-size:2rem; margin-bottom:0.75rem; display:block; opacity:0.4;"></i>
-                        <p style="font-size:0.95rem; font-weight:600;">Listeden bir kurum seçin</p>
-                    </div>
                 </div>`;
         }
 
