@@ -3048,6 +3048,7 @@ html.apple-dark .tabbar-item.active {
     align-items: center;
     justify-content: center;
     padding: 1.25rem;
+    cursor: pointer;
     animation: fullscreenModalFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -3057,6 +3058,7 @@ html.apple-dark .tabbar-item.active {
 }
 
 .fullscreen-modal-container {
+    cursor: default;
     background: #111318;
     border: 1px solid #282C35;
     border-radius: 20px;

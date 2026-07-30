@@ -4367,16 +4367,47 @@ function exportFullscreenDataCSV() {
 
 // Global Keyboard shortcuts for modal (ESC to close, Left/Right arrows to navigate)
 document.addEventListener('keydown', function(event) {
-    const modal = document.getElementById('chartFullscreenModal');
-    if (modal && modal.style.display !== 'none') {
-        if (event.key === 'Escape') {
-            closeChartFullscreen();
-        } else if (event.key === 'ArrowLeft') {
-            navigateChartFullscreen(-1);
-        } else if (event.key === 'ArrowRight') {
-            navigateChartFullscreen(1);
-        }
+    if (event.key === 'Escape') {
+        const chartModal = document.getElementById('chartFullscreenModal');
+        const companyModal = document.getElementById('companyDetailModal');
+        const pickerModal = document.getElementById('mobilePickerScreen');
+        const ledgerModal = document.getElementById('ledgerFullscreenModal');
+
+        if (chartModal && chartModal.style.display !== 'none') closeChartFullscreen();
+        else if (companyModal && companyModal.style.display !== 'none') closeCompanyDetailModal();
+        else if (pickerModal && pickerModal.style.display !== 'none') closeMobilePicker();
+        else if (ledgerModal && ledgerModal.style.display !== 'none') closeLedgerFullscreen();
+    } else if (event.key === 'ArrowLeft') {
+        const modal = document.getElementById('chartFullscreenModal');
+        if (modal && modal.style.display !== 'none') navigateChartFullscreen(-1);
+    } else if (event.key === 'ArrowRight') {
+        const modal = document.getElementById('chartFullscreenModal');
+        if (modal && modal.style.display !== 'none') navigateChartFullscreen(1);
     }
+});
+
+// Universal Backdrop Click Handler (Closes Modals on Desktop when clicking outside modal content)
+document.addEventListener('click', function(event) {
+    const modalConfigs = [
+        { overlayId: 'chartFullscreenModal', contentClass: 'fullscreen-modal-container', closeFn: closeChartFullscreen },
+        { overlayId: 'companyDetailModal', contentClass: 'company-detail-modal-card', closeFn: closeCompanyDetailModal },
+        { overlayId: 'mobilePickerScreen', contentClass: 'picker-modal-dialog', closeFn: closeMobilePicker },
+        { overlayId: 'ledgerFullscreenModal', contentClass: 'fullscreen-modal-container', closeFn: closeLedgerFullscreen },
+        { overlayId: 'anzCustomDialogModal', contentClass: 'anz-dialog-card', closeFn: () => {
+            const overlay = document.getElementById('anzCustomDialogModal');
+            if (overlay) overlay.style.display = 'none';
+        }}
+    ];
+
+    modalConfigs.forEach(item => {
+        const overlayEl = document.getElementById(item.overlayId);
+        if (overlayEl && overlayEl.style.display !== 'none' && event.target === overlayEl) {
+            const contentEl = overlayEl.querySelector('.' + item.contentClass);
+            if (contentEl && !contentEl.contains(event.target)) {
+                item.closeFn();
+            }
+        }
+    });
 });
 
 
