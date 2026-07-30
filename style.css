@@ -2158,10 +2158,20 @@ html.apple-dark .tabbar-item.active {
     color: var(--text-primary);
     border: 1px solid var(--bg-border);
     border-radius: 8px;
-    padding: 0.4rem 0.8rem;
-    font-size: 0.85rem;
+    height: 32px;
+    padding: 0 0.75rem;
+    font-size: 0.82rem;
+    font-weight: 500;
     outline: none;
     cursor: pointer;
+    box-sizing: border-box;
+    display: inline-flex;
+    align-items: center;
+    transition: all 0.2s ease;
+}
+
+.apple-select-input:hover {
+    border-color: var(--accent-indigo);
 }
 
 /* Ledger & Table */

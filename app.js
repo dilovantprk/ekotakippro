@@ -1895,52 +1895,99 @@ function renderMacroCharts() {
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                layout: {
+                    padding: {
+                        left: 14,
+                        right: 16,
+                        top: 10,
+                        bottom: 12
+                    }
+                },
                 plugins: {
                     legend: { display: false },
                     tooltip: {
                         callbacks: {
-                            label: function(context) { return `${context.parsed.y} Mt CO₂e`; }
+                            label: function(context) { return ` ${context.parsed.y} Mt CO₂e`; }
                         }
                     }
                 },
                 scales: {
-                    x: { ticks: { color: subLabelColor }, grid: { color: gridColor } },
-                    y: { ticks: { color: subLabelColor }, grid: { color: gridColor } }
+                    x: { ticks: { color: subLabelColor, padding: 8, font: { size: 11 } }, grid: { color: gridColor } },
+                    y: { ticks: { color: subLabelColor, padding: 10, font: { size: 11 } }, grid: { color: gridColor } }
                 }
             }
         });
     }
 
-    // 2. GAS DOUGHNUT CHART
+    // 2. GAS DOUGHNUT CHART (Donut Center Text & Right Legend)
     const canvasDoughnut = document.getElementById('gasDoughnutChart');
     if (canvasDoughnut) {
         const ctxDoughnut = canvasDoughnut.getContext('2d');
         if (gasDoughnutChart) gasDoughnutChart.destroy();
 
+        const donutCenterPlugin = {
+            id: 'donutCenterText',
+            afterDraw(chart) {
+                const { ctx, chartArea: { left, top, width, height } } = chart;
+                ctx.save();
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                const centerX = left + width / 2;
+                const centerY = top + height / 2;
+
+                ctx.font = '700 15px -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif';
+                ctx.fillStyle = labelColor;
+                ctx.fillText('%100', centerX, centerY - 7);
+
+                ctx.font = '500 11px -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif';
+                ctx.fillStyle = subLabelColor;
+                ctx.fillText('Sera Gazı', centerX, centerY + 9);
+                ctx.restore();
+            }
+        };
+
         gasDoughnutChart = new Chart(ctxDoughnut, {
             type: 'doughnut',
             data: {
-                labels: ['CO₂', 'CH₄', 'N₂O', 'F-Gaz'],
+                labels: ['CO₂ (%72)', 'CH₄ (%18)', 'N₂O (%7)', 'F-Gaz (%3)'],
                 datasets: [{
                     data: [72, 18, 7, 3],
                     backgroundColor: ['#6B8F71', '#5B7C99', '#7C5295', '#C2622D'],
-                    borderWidth: 0
+                    borderWidth: 0,
+                    hoverOffset: 4
                 }]
             },
+            plugins: [donutCenterPlugin],
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                cutout: '72%',
+                layout: {
+                    padding: { top: 6, bottom: 6, left: 6, right: 6 }
+                },
                 plugins: {
                     legend: {
-                        position: 'bottom',
-                        labels: { color: labelColor, boxWidth: 12 }
+                        position: 'right',
+                        labels: {
+                            color: labelColor,
+                            usePointStyle: true,
+                            pointStyle: 'circle',
+                            boxWidth: 8,
+                            padding: 12,
+                            font: { size: 12, weight: '600' }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) { return ` ${context.label}`; }
+                        }
                     }
                 }
             }
         });
     }
 
-    // 3. SECTOR BAR CHART
+    // 3. SECTOR BAR CHART (Bar-End Value Labels Plugin)
     const canvasBar = document.getElementById('sectorBarChart');
     if (canvasBar) {
         const ctxBar = canvasBar.getContext('2d');
@@ -1975,6 +2022,30 @@ function renderMacroCharts() {
         sectorList.sort((a, b) => b.val - a.val);
         sectorList = sectorList.slice(0, 6);
 
+        const barValuesPlugin = {
+            id: 'barValueLabels',
+            afterDatasetsDraw(chart) {
+                const { ctx } = chart;
+                const dataset = chart.data.datasets[0];
+                const meta = chart.getDatasetMeta(0);
+                const total = dataset.data.reduce((a, b) => a + b, 0);
+
+                meta.data.forEach((bar, index) => {
+                    const val = dataset.data[index];
+                    const pct = total > 0 ? ((val / total) * 100).toFixed(1) : 0;
+                    const text = `${val} Mt (%${pct})`;
+
+                    ctx.save();
+                    ctx.font = '600 11px -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif';
+                    ctx.fillStyle = subLabelColor;
+                    ctx.textAlign = 'left';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(text, bar.x + 8, bar.y);
+                    ctx.restore();
+                });
+            }
+        };
+
         sectorBarChart = new Chart(ctxBar, {
             type: 'bar',
             data: {
@@ -1983,25 +2054,36 @@ function renderMacroCharts() {
                     label: 'Mt CO₂e / Yıl',
                     data: sectorList.map(s => s.val),
                     backgroundColor: ['#5B7C99', '#6B8F71', '#C2622D', '#8FA8B8', '#7C5295', '#9C6B5A'],
-                    borderRadius: 5,
-                    barThickness: 14
+                    borderRadius: 6,
+                    barThickness: 16
                 }]
             },
+            plugins: [barValuesPlugin],
             options: {
                 indexAxis: 'y',
                 responsive: true,
                 maintainAspectRatio: false,
+                layout: {
+                    padding: { right: 55, top: 4, bottom: 4 }
+                },
                 plugins: {
                     legend: { display: false },
                     tooltip: {
                         callbacks: {
-                            label: function(context) { return `${context.parsed.x} Mt CO₂e / Yıl`; }
+                            label: function(context) { return ` ${context.parsed.x} Mt CO₂e / Yıl`; }
                         }
                     }
                 },
                 scales: {
-                    x: { ticks: { color: subLabelColor }, grid: { color: gridColor } },
-                    y: { ticks: { color: labelColor, font: { weight: '500' } }, grid: { display: false } }
+                    x: {
+                        grace: '25%',
+                        ticks: { color: subLabelColor, font: { size: 10 } },
+                        grid: { color: gridColor }
+                    },
+                    y: {
+                        ticks: { color: labelColor, font: { weight: '600', size: 11 } },
+                        grid: { display: false }
+                    }
                 }
             }
         });
