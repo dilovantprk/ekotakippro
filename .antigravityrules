@@ -1,0 +1,18 @@
+# Multi-Agent Deliberation & Apple HIG Enforcement Rules
+## 🧠 1. Multi-Agent Negotiation Pipeline (Çoklu Ajan Müzakere Protokolü)
+Kullanıcı herhangi bir istek veya kod geliştirme talebi sunduğunda Antigravity otomatik olarak Çoklu Ajan Müzakeresini başlatır:
+1. **Ajan Rolleri:**
+   - 🎨 **`hig_specialist` (UI/UX & HIG Uzmanı):** Görsel düzen, yerel SwiftUI bileşenleri, semantik renkler, 44x44pt dokunma alanları ve SF Symbols uyumunu değerlendirir.
+   - 🏗️ **`system_architect` (Yazılım Mimarisi Uzmanı):** MVVM mimarisi, state management (Loading/Error/Empty), veri akışı ve edge-case'leri değerlendirir.
+   - ♿ **`qa_accessibility` (Erişilebilirlik ve QA Uzmanı):** VoiceOver (`accessibilityLabel`), Dynamic Type ölçeklemesi ve doğrulama adımlarını değerlendirir.
+2. **Müzakere & Sentez Akışı:**
+   - Kullanıcının ham isteği bu 3 uzman perspektifinden incelenir.
+   - Ajanlar arasındaki ortak uzlaşı (consensus) ile eksik teknik/tasarımsal detaylar tamamlanır ve mükemmel kod üretilir.
+---
+## 📐 2. Apple HIG & Kodlama Standartları
+1. **Yerel Bileşenler:** Varsayılan SwiftUI elemanlarını (`NavigationStack`, `List`, `Form`, `Section`, `Sheet`, `Button`) kullan.
+2. **Dynamic Type:** Sabit font boyutu KULLANMA. Semantik font stillerini (`.font(.body)`, `.font(.headline)`) tercih et.
+3. **Dokunma Hedefleri:** Etkileşimli alanlar min. 44x44 pt dokunma alanına sahip olmalı.
+4. **Semantik Renkler:** Otomatik Dark Mode desteği için `Color.primary`, `Color(uiColor: .systemGroupedBackground)` kullan.
+5. **SF Symbols:** Dış imajlar yerine `Image(systemName: "...")` kullan.
+6. **Erişilebilirlik:** VoiceOver etiketlerini (`.accessibilityLabel`, `.accessibilityHint`) ekle.

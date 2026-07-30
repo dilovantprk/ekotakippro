@@ -1,0 +1,1164 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content">
+    <title>Eko Takip pro | Türkiye İklim Zekası & Karbon Portalı</title>
+    <meta name="description" content="Türkiye sanayi emisyonları, kurumsal iklim beyannameleri ve etkinlik karbon hesaplayıcısı.">
+    
+    <!-- PWA & Mobile Web App Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Eko Takip pro">
+    <meta name="theme-color" content="#0B0D0F">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    
+    <!-- SVG Favicon Data URI -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍃</text></svg>">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Chart.js & Leaflet.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Theme Sync IIFE -->
+    <script>
+        (function() {
+            var saved = localStorage.getItem('anz_theme') || 'dark';
+            var isDark = saved === 'dark';
+            var root = document.documentElement;
+            if (isDark) {
+                root.classList.add('apple-dark');
+                root.classList.remove('apple-light');
+            } else {
+                root.classList.add('apple-light');
+                root.classList.remove('apple-dark');
+            }
+        })();
+    </script>
+</head>
+<body class="apple-body">
+
+    <!-- RESPONSIVE HEADER BAR (MAC OS / IOS DUAL) -->
+    <header class="header" role="banner">
+        <div class="nav-container">
+            <div class="nav-left-group">
+                <a href="#" class="logo" onclick="switchTab('macroTab'); return false;">
+                    <i class="fa-solid fa-leaf logo-icon"></i>
+                    <span class="logo-text">Eko Takip <span style="font-size:0.85em; font-weight:800; color:var(--accent-indigo, #6366f1); margin-left:2px;">pro</span></span>
+                </a>
+                
+                <nav class="nav-menu" id="nav-menu">
+                    <a href="javascript:void(0)" class="nav-link active" id="nav-link-macro" onclick="switchTab('macroTab')">
+                        <i class="fa-solid fa-chart-line"></i> Makro
+                    </a>
+                    <a href="javascript:void(0)" class="nav-link" id="nav-link-company" onclick="switchTab('companyTab')">
+                        <i class="fa-solid fa-building"></i> Şirketim
+                    </a>
+                    <a href="javascript:void(0)" class="nav-link" id="nav-link-events" onclick="switchTab('eventsTab')">
+                        <i class="fa-solid fa-calendar-check"></i> Etkinlikler
+                    </a>
+                </nav>
+            </div>
+            
+            <div class="nav-actions">
+                <button class="theme-toggle-btn" aria-label="Ayarlar" type="button" onclick="openSettingsSheet()">
+                    <i class="fa-solid fa-gear" id="settingsIcon"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Native Mobile Bottom Navigation Bar (UITabBar) -->
+    <nav class="apple-tabbar mobile-nav" id="mobileTabBar">
+        <button class="tabbar-item active" id="tabbar-macro" onclick="switchTab('macroTab')">
+            <i class="fa-solid fa-chart-line"></i>
+            <span>Makro</span>
+        </button>
+        <button class="tabbar-item" id="tabbar-company" onclick="switchTab('companyTab')">
+            <i class="fa-solid fa-building"></i>
+            <span>Şirketim</span>
+        </button>
+        <button class="tabbar-item" id="tabbar-events" onclick="switchTab('eventsTab')">
+            <i class="fa-solid fa-calendar-check"></i>
+            <span>Etkinlikler</span>
+        </button>
+    </nav>
+
+    <!-- MAIN RESPONSIVE CONTAINER -->
+    <main class="main-content">
+
+        <!-- 1. MACRO TAB (SAYFA 1) -->
+        <section class="tab-pane active" id="macroTab">
+            <!-- Header Title Bar -->
+            <div class="page-title-row">
+                <h1 class="page-title">Makro İklim Zekası</h1>
+                <p class="page-subtitle">Türkiye genelindeki tesisler, holding emisyonları ve 20 yıllık tarihsel sera gazı verileri.</p>
+            </div>
+
+            <!-- Top 3 KPI Cards Row -->
+            <div class="stats-grid-row margin-bottom-1">
+                <div class="stat-card">
+                    <div class="stat-label-wrap">
+                        <span class="stat-label">Türkiye Toplam Emisyon</span>
+                    </div>
+                    <span class="stat-value" id="kpiTotalEmissions">--- Mt CO₂e</span>
+                    <span class="stat-sub"><i class="fa-solid fa-arrow-trend-up"></i> 20 Yıllık Trend</span>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label-wrap">
+                        <span class="stat-label">Haritalanan Tesis</span>
+                    </div>
+                    <span class="stat-value" id="kpiFacilitiesCount">---</span>
+                    <span class="stat-sub">Sanayi, Santral, Maden</span>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label-wrap">
+                        <span class="stat-label">İncelenen Şirket</span>
+                    </div>
+                    <span class="stat-value green" id="kpiCompaniesCount">---</span>
+                    <span class="stat-sub">Holdingler & Markalar</span>
+                </div>
+            </div>
+
+            <!-- Macro Line & Doughnut Charts -->
+            <div class="macro-grid-2-1">
+                <div class="apple-card">
+                    <div class="card-header-flex">
+                        <div>
+                            <h3 class="card-title-text"><i class="fa-solid fa-chart-line" style="color: var(--accent-green);"></i> Yıllık Toplam Emisyon (Mt CO₂e)</h3>
+                            <p class="card-subtitle">2015 – 2025 resmi Climate TRACE ölçümleri</p>
+                        </div>
+                    </div>
+                    <div class="chart-box margin-top-1">
+                        <canvas id="macroLineChart" aria-label="Yıllık emisyon grafiği"></canvas>
+                    </div>
+                </div>
+
+                <div class="apple-card">
+                    <div class="card-header-flex">
+                        <div>
+                            <h3 class="card-title-text"><i class="fa-solid fa-chart-pie" style="color: var(--accent-blue);"></i> Sera Gazları Dağılımı</h3>
+                            <p class="card-subtitle">CO₂e / CH₄ / N₂O sera gazı kırılımı</p>
+                        </div>
+                    </div>
+                    <div class="chart-box margin-top-1">
+                        <canvas id="gasDoughnutChart" aria-label="Sera gazı dağılım grafiği"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Harita + Sektörel Emisyon Yan Yana -->
+            <div class="macro-grid-2-1 margin-top-1">
+                <div class="apple-card map-card">
+                    <div class="card-header-flex">
+                        <div>
+                            <h3 class="card-title-text"><i class="fa-solid fa-map-location-dot" style="color: var(--accent-blue);"></i> Türkiye İklim & Tesis Haritası</h3>
+                            <p class="card-subtitle">Climate TRACE tespitli santraller, fabrikalar ve madenler</p>
+                        </div>
+                        <select id="mapSectorSelect" class="apple-select-input" onchange="filterMap(this.value)" aria-label="Sektör Filtresi">
+                            <option value="ALL">Tüm Sektörler</option>
+                            <option value="Enerji">Enerji</option>
+                            <option value="İmalat">İmalat</option>
+                            <option value="Ulaştırma">Ulaştırma</option>
+                            <option value="Maden">Madencilik</option>
+                        </select>
+                    </div>
+                    <div id="turkeyMap" class="apple-map margin-top-1" aria-label="Tesis Haritası"></div>
+                </div>
+
+                <div class="apple-card">
+                    <div class="card-header-flex">
+                        <div>
+                            <h3 class="card-title-text"><i class="fa-solid fa-chart-column" style="color: var(--accent-orange, #ff9500);"></i> Sektörel Emisyon Payları</h3>
+                            <p class="card-subtitle">Ana sektor emisyon dağılımı</p>
+                        </div>
+                    </div>
+                    <div class="chart-box margin-top-1">
+                        <canvas id="sectorBarChart" aria-label="Sektörel emisyon bar grafiği"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Karbon Defteri (Tek Birleşik Kart) -->
+            <div class="apple-card margin-top-1" id="macroLedgerSection">
+                <div class="card-header-flex">
+                    <div>
+                        <h3 class="card-title-text"><i class="fa-solid fa-book-bookmark" style="color: var(--accent-green);"></i> Karbon Defteri</h3>
+                        <p class="card-subtitle">Türkiye'deki 266 sanayi kuruluşu ve holding emisyon sıralaması</p>
+                    </div>
+                </div>
+
+                <div class="ledger-filter-bar margin-top-1">
+                    <div class="search-wrap" style="flex: 1; min-width: 200px;">
+                        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                        <input type="text" id="companySearchInput" class="search-input" placeholder="Şirket ara (Koç, Sabancı, Eti, THY...)" aria-label="Arama">
+                    </div>
+
+                    <div class="ledger-dropdowns-grid">
+                        <select id="sectorFilterSelect" class="apple-select-input" aria-label="Sektör Filtresi">
+                            <option value="ALL">Tüm Sektörler</option>
+                            <option value="Enerji">Enerji</option>
+                            <option value="İmalat">İmalat</option>
+                            <option value="Ulaştırma">Ulaştırma</option>
+                            <option value="Maden">Maden</option>
+                        </select>
+                        <select id="sortFilterSelect" class="apple-select-input" aria-label="Sıralama">
+                            <option value="emissions_desc">En Yüksek Emisyon</option>
+                            <option value="emissions_asc">En Düşük Emisyon</option>
+                            <option value="name_asc">A-Z İsim</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="companyEmptyState" class="empty-state hidden" style="display:none; text-align:center; padding:2rem;">
+                    <i class="fa-solid fa-building-circle-xmark" style="font-size:2.5rem; color:var(--text-tertiary); margin-bottom:0.5rem;"></i>
+                    <h3 style="font-size:1.1rem;">Sonuç Bulunamadı</h3>
+                    <p style="color:var(--text-secondary); font-size:0.9rem;">Arama kriterlerinize uygun şirket bulunamadı.</p>
+                </div>
+
+                <!-- Desktop Table -->
+                <div class="apple-table-wrap desktop-only">
+                    <table class="apple-table" id="companyTable">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Şirket / Holding</th>
+                                <th>Sektörler</th>
+                                <th>Tesis Sayısı</th>
+                                <th>Yıllık Emisyon</th>
+                            </tr>
+                        </thead>
+                        <tbody id="companyTableBody">
+                            <!-- Loaded dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Mobile Card List -->
+                <div class="mobile-only" id="companyMobileCards">
+                    <!-- Loaded dynamically -->
+                </div>
+
+                <!-- Pagination Bar -->
+                <div class="apple-pagination-bar margin-top-1" id="companyPaginationBar">
+                    <div class="pagination-info" id="paginationInfoText">266 kayıttan 1-10 arası gösteriliyor</div>
+                    <div class="pagination-controls" id="paginationControls"></div>
+                    <div class="pagination-per-page">
+                        <label for="itemsPerPageSelect" class="pagination-info">Sayfa Başına:</label>
+                        <select id="itemsPerPageSelect" class="apple-select-input" onchange="changeItemsPerPage(this.value)">
+                            <option value="10" selected>10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. MY COMPANY TAB (SAYFA 2: ŞİRKETİM PORTALI) -->
+        <section class="tab-pane" id="companyTab">
+            <!-- Header Title Bar -->
+            <div class="page-title-row">
+                <h1 class="page-title" id="companyMainTitle">Şirketim Portalı</h1>
+                <p class="page-subtitle" id="companyMainSubtitle">Fatura OCR okuma, emisyon kanıt defteri ve resmi TCFD/CDP iklim beyannameleri.</p>
+            </div>
+
+            <!-- Active Company Dashboard View (Populated by JS with Cockpit layout) -->
+            <div id="companyTabActiveContent" class="company-dashboard-content">
+            </div>
+        </section>
+
+        <!-- 2. EVENTS TAB (ETKİNLİKLER - ÇEKİRDEK) -->
+        <section class="tab-pane" id="eventsTab">
+            <!-- Header Title Bar -->
+            <div class="page-title-row">
+                <h1 class="page-title">Etkinlikler</h1>
+                <p class="page-subtitle">Kurumsal Etkinlik Sürdürülebilirlik & Emisyon Yönetimi</p>
+            </div>
+
+            <!-- Executive Summary Stats Panel -->
+            <div class="stats-grid-row" id="dashboardStatsRow">
+                <div class="stat-card">
+                    <div class="stat-label-wrap">
+                        <span class="stat-label">Toplam Emisyon</span>
+                    </div>
+                    <span class="stat-value" id="statTotalEmissions">0,0 t</span>
+                    <span class="stat-sub">Tüm Etkinlikler</span>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label-wrap">
+                        <span class="stat-label">Ortalama Emisyon</span>
+                    </div>
+                    <span class="stat-value" id="statAvgEmissions">0,0 t</span>
+                    <span class="stat-sub">Etkinlik Başına</span>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label-wrap">
+                        <span class="stat-label">Referans Tasarruf</span>
+                    </div>
+                    <span class="stat-value green" id="statSavingsPct">-%0,0</span>
+                    <span class="stat-sub" id="statSavingsSub">Sektör Ortalamasına Göre</span>
+                </div>
+            </div>
+
+            <!-- Declarations Section -->
+            <div class="section-container">
+                <div class="section-top-bar">
+                    <div class="search-wrap">
+                        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                        <input type="text" id="historySearchInput" class="search-input" placeholder="Etkinlik ara...">
+                    </div>
+                    <button class="export-btn" onclick="exportDeclarationsCSV()" title="Excel / CSV Dışa Aktar">
+                        <i class="fa-solid fa-file-excel"></i>
+                        <span class="export-btn-label">Excel'e Aktar</span>
+                    </button>
+                </div>
+
+                <!-- List Container -->
+                <div id="eventsListContainer" class="apple-list-group">
+                    <!-- Dynamically populated by JS -->
+                </div>
+
+                <!-- Pagination Bar Container (Shown when total items > 10) -->
+                <div id="eventsPaginationContainer" style="display:none;"></div>
+
+                <!-- List Footer Hint -->
+                <div class="list-footer-hint">
+                    <i class="fa-solid fa-circle-info"></i>
+                    <span>Kayıtlı kurumsal etkinlik emisyonlarınız burada listelenir. Yeni beyanname eklemek için aşağıdaki butonu kullanabilirsiniz.</span>
+                </div>
+
+                <!-- FLOATING ACTION BUTTON (ONLY INSIDE EVENTS TAB) -->
+                <button class="fab-bottom-right-btn" onclick="openEventWizardModal()">
+                    <i class="fa-solid fa-plus"></i>
+                    <span>Yeni Etkinlik</span>
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- APPLE IOS SETTINGS VIEW -->
+    <div class="settings-sheet-overlay" id="settingsSheetModal" style="display:none;" role="dialog" aria-modal="true">
+        <div class="settings-sheet-container">
+            
+            <!-- Settings Header (Consistent Green Leaf Brand Logo) -->
+            <div class="nav-bar-header" id="settingsMainHeader">
+                <button type="button" class="nav-bar-left-btn" id="settingsNavBackBtn" onclick="closeSettingsSheet()">
+                    <i class="fa-solid fa-chevron-left"></i>
+                    <span>Geri</span>
+                </button>
+                <div class="nav-bar-right-spacer"></div>
+            </div>
+
+            <!-- Settings Body -->
+            <div class="settings-sheet-body">
+                
+                <!-- Main Settings View -->
+                <div id="settingsMainView">
+                    <h1 class="settings-large-title">Ayarlar & Platform Bilgisi</h1>
+
+                    <!-- 1. APPEARANCE -->
+                    <div class="group-header-label">GÖRÜNÜM & TEMA</div>
+                    <div class="apple-group-box">
+                        <div class="apple-row">
+                            <div class="row-left-text">
+                                <span class="row-title">Koyu Mod</span>
+                                <span class="row-sub">Karanlık sistem arayüzü</span>
+                            </div>
+                            <label class="apple-switch">
+                                <input type="checkbox" id="themeSwitchToggle" onchange="toggleThemeFromSwitch(this.checked)">
+                                <span class="switch-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- 2. EVENTS PAGE SPECIFIC SETTINGS -->
+                    <div class="group-header-label">ETKİNLİKLER SAYFASI AYARLARI</div>
+                    <div class="apple-group-box">
+                        <div class="apple-row" style="cursor:default;">
+                            <div class="row-left-text">
+                                <span class="row-title">Scope 1-3 Hesaplama Motoru</span>
+                                <span class="row-sub">Konaklama, ulaşım, lojistik ve atık emisyon katsayıları</span>
+                            </div>
+                        </div>
+                        <div class="apple-row" onclick="exportEventsCSV()" role="button">
+                            <div class="row-left-text">
+                                <span class="row-title" style="color:var(--accent-blue);">Etkinlik Hesaplamaları Excel (CSV)</span>
+                                <span class="row-sub">Kayıtlı etkinliklerinizi ve kişi başı emisyonları CSV olarak indir</span>
+                            </div>
+                            <i class="fa-solid fa-chevron-right list-item-chevron"></i>
+                        </div>
+                        <div class="apple-row" onclick="resetAllDataToDefault()" role="button">
+                            <div class="row-left-text">
+                                <span class="row-title" style="color:var(--accent-red);">Etkinlik Kayıtlarını Sıfırla</span>
+                                <span class="row-sub">Oluşturulan etkinlikleri silip varsayılan örneklere dön</span>
+                            </div>
+                            <i class="fa-solid fa-rotate-left list-item-chevron" style="color:var(--accent-red);"></i>
+                        </div>
+                    </div>
+
+                    <!-- 3. COMPANY & MACRO CLIMATE DATABASE -->
+                    <div class="group-header-label">ŞİRKETİM & TÜRKİYE İKLİM VERİTABANI</div>
+                    <div class="apple-group-box">
+                        <div class="apple-row" style="cursor:default;">
+                            <div class="row-left-text">
+                                <span class="row-title">Sanayi & Holding Veritabanı</span>
+                                <span class="row-sub">Türkiye genelinde 266 Sanayi Kuruluşu ve 472 Tesis Yerleşkesi</span>
+                            </div>
+                        </div>
+                        <div class="apple-row" style="cursor:default;">
+                            <div class="row-left-text">
+                                <span class="row-title">Uydu Gözlem & Doğrulama</span>
+                                <span class="row-sub">Climate TRACE uyduları, IPCC 2024 ve ISO 14064-1 faktörleri</span>
+                            </div>
+                        </div>
+                        <div class="apple-row" style="cursor:default;">
+                            <div class="row-left-text">
+                                <span class="row-title">Raporlama Standartları</span>
+                                <span class="row-sub">TCFD Finansal Açıklamalar, CDP Anketi & ISSB IFRS S2</span>
+                            </div>
+                        </div>
+                        <div class="apple-row" onclick="exportDeclarationsCSV()" role="button">
+                            <div class="row-left-text">
+                                <span class="row-title" style="color:var(--accent-blue);">Kurumsal Verileri Dışa Aktar (CSV)</span>
+                                <span class="row-sub">266 Şirket emisyonları, tesis verileri ve beyannameleri CSV indir</span>
+                            </div>
+                            <i class="fa-solid fa-chevron-right list-item-chevron"></i>
+                        </div>
+                        <div class="apple-row" onclick="exportDeclarationsJSON()" role="button">
+                            <div class="row-left-text">
+                                <span class="row-title" style="color:var(--accent-blue);">Veri Yedekleme (JSON)</span>
+                                <span class="row-sub">Tüm veritabanını ve beyannameleri yedekleme formatında indir</span>
+                            </div>
+                            <i class="fa-solid fa-chevron-right list-item-chevron"></i>
+                        </div>
+                    </div>
+
+                    <!-- 4. ABOUT & METHODOLOGY -->
+                    <div class="group-header-label">HAKKINDA & METODOLOJİ</div>
+                    <div class="apple-group-box">
+                        <div class="apple-row" onclick="openMethodologySubView()" role="button">
+                            <div class="row-left-text">
+                                <span class="row-title" style="color:var(--accent-blue);">Hesaplama Metodolojisi & Kaynaklar</span>
+                                <span class="row-sub">Climate TRACE, IPCC EF2024, GHG Protokolü Scope 1-3 formülleri</span>
+                            </div>
+                            <i class="fa-solid fa-chevron-right list-item-chevron"></i>
+                        </div>
+                        <div class="apple-row" onclick="openKvkkModal()" role="button">
+                            <div class="row-left-text">
+                                <span class="row-title" style="color:var(--accent-blue);">Gizlilik & KVKK Güvenliği</span>
+                                <span class="row-sub">%100 Yerel işleme — Verileriniz sadece cihazınızda saklanır</span>
+                            </div>
+                            <i class="fa-solid fa-chevron-right list-item-chevron"></i>
+                        </div>
+                        <a href="https://ekotakippro.vercel.app" target="_blank" rel="noopener" class="apple-row" style="text-decoration:none;">
+                            <div class="row-left-text">
+                                <span class="row-title" style="color:var(--accent-blue);">ekotakippro.vercel.app</span>
+                                <span class="row-sub">Resmi Eko Takip pro Platformu</span>
+                            </div>
+                            <i class="fa-solid fa-arrow-up-right-from-square list-item-chevron" style="color:var(--accent-blue);"></i>
+                        </a>
+                    </div>
+
+                    <!-- Transparency Note Box -->
+                    <div class="settings-disclaimer-box">
+                        <i class="fa-solid fa-shield-halved"></i>
+                        <p><strong>Eko Takip pro Platformu:</strong> Türkiye genelindeki 266 büyük sanayi kuruluşu ve holdingin sera gazı emisyonlarını, uydulardan doğrulanmış tesis lokasyonlarını ve kurumsal iklim beyannamelerini (TCFD, CDP, ISSB S2) analiz etmek amacıyla geliştirilmiştir. Tüm hesaplamalar GHG Protokolü (Scope 1-3) standartlarına ve Climate TRACE verilerine dayanır. Verileriniz %100 yerel tarayıcınızda işlenir.</p>
+                    </div>
+
+                    <!-- Developer Attribution -->
+                    <a href="https://dilovantprk.github.io/" target="_blank" rel="noopener" class="settings-dev-footer">
+                        Geliştirici: Dilovan Toprak <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.7rem;"></i>
+                    </a>
+                </div>
+
+                <!-- KVKK Sub View (Apple HIG Settings Sub-Page) -->
+                <div id="settingsKvkkSubView" style="display:none;">
+                    <h1 class="settings-large-title">KVKK & Veri Güvenliği</h1>
+
+                    <div class="group-header-label">GİZLİLİK</div>
+                    <div class="apple-group-box">
+                        <div class="apple-row" style="flex-direction:column; align-items:flex-start; gap:0.3rem; padding: 1.1rem;">
+                            <span class="row-title" style="font-weight:600; color:var(--text-primary);">1. Kişisel Verisizlik Politikası (Zero-PII)</span>
+                            <span class="row-sub" style="line-height:1.5; color:var(--text-secondary);">Uygulamada T.C. Kimlik No, Ad-Soyad, e-posta veya finansal kişisel veri toplanmaz, istenmez ve işlenmez.</span>
+                        </div>
+                        <div class="apple-row" style="flex-direction:column; align-items:flex-start; gap:0.3rem; padding: 1.1rem;">
+                            <span class="row-title" style="font-weight:600; color:var(--text-primary);">2. Yerel Cihaz İçi Depolama (Local Edge Privacy)</span>
+                            <span class="row-sub" style="line-height:1.5; color:var(--text-secondary);">Girilen etkinlik operasyonel parametreleri harici sunucu veritabanlarında saklanmaz, yalnızca kendi tarayıcınızda (localStorage) tutulur.</span>
+                        </div>
+                        <div class="apple-row" style="flex-direction:column; align-items:flex-start; gap:0.3rem; padding: 1.1rem;">
+                            <span class="row-title" style="font-weight:600; color:var(--text-primary);">3. Çerez & Takipçi Yoktur</span>
+                            <span class="row-sub" style="line-height:1.5; color:var(--text-secondary);">Sitede 3. taraf reklam veya kullanıcı davranışı takip çerezleri (cookies) barındırılmaz.</span>
+                        </div>
+                        <div class="apple-row" style="flex-direction:column; align-items:flex-start; gap:0.3rem; padding: 1.1rem;">
+                            <span class="row-title" style="font-weight:600; color:var(--text-primary);">4. SSL / TLS 1.3 Şifreleme</span>
+                            <span class="row-sub" style="line-height:1.5; color:var(--text-secondary);">Tüm ağ iletişimleri 256-bit TLS 1.3 şifreli kanallar üzerinden gerçekleşir.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Methodology Sub View (Apple HIG Settings Sub-Page) -->
+                <div id="settingsMethodologySubView" style="display:none;">
+                    <h1 class="settings-large-title">Metodoloji & Katsayılar</h1>
+
+                    <div class="group-header-label">HESAPLAMA FORMÜLÜ</div>
+                    <div class="apple-group-box">
+                        <div class="apple-row">
+                            <div class="row-left-text">
+                                <span class="row-title">GHG Protokolü (Scope 1, 2, 3)</span>
+                                <span class="row-sub">Emisyon (kg CO₂e) = Aktivite Miktarı × Emisyon Faktörü</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="group-header-label">EMİSYON KATSAYILARI</div>
+                    <div class="apple-group-box">
+                        <div class="apple-row">
+                            <span class="row-label">Uçuş (Hava Yolu)</span>
+                            <span class="row-val-bold">0,14 kg CO₂e / km (Biz: 1.5x Kısa / 2.9x Uzun)</span>
+                        </div>
+                        <div class="apple-row">
+                            <span class="row-label">Ulaşım (Transfer)</span>
+                            <span class="row-val-bold">0,16 kg CO₂e / km</span>
+                        </div>
+                        <div class="apple-row">
+                            <span class="row-label">Lojistik Kargo</span>
+                            <span class="row-val-bold">0,11 kg CO₂e / t-km</span>
+                        </div>
+                        <div class="apple-row">
+                            <span class="row-label">Şebeke Elektriği</span>
+                            <span class="row-val-bold">0,40 kg CO₂e / kWh</span>
+                        </div>
+                        <div class="apple-row">
+                            <span class="row-label">Otel Konaklaması</span>
+                            <span class="row-val-bold">14,0 kg CO₂e / gece</span>
+                        </div>
+                        <div class="apple-row">
+                            <span class="row-label">Kırmızı Et Menüsü</span>
+                            <span class="row-val-bold">4,20 kg CO₂e / porsiyon</span>
+                        </div>
+                        <div class="apple-row">
+                            <span class="row-label">Tavuk / Beyaz Et</span>
+                            <span class="row-val-bold">1,30 kg CO₂e / porsiyon</span>
+                        </div>
+                        <div class="apple-row">
+                            <span class="row-label">Vejetaryen Menü</span>
+                            <span class="row-val-bold">0,40 kg CO₂e / porsiyon</span>
+                        </div>
+                        <div class="apple-row">
+                            <span class="row-label">Sahne / Vinil Branda</span>
+                            <span class="row-val-bold">8,50 kg CO₂e / m²</span>
+                        </div>
+                        <div class="apple-row">
+                            <span class="row-label">Promosyon Ürünü</span>
+                            <span class="row-val-bold">0,60 kg CO₂e / adet</span>
+                        </div>
+                    </div>
+
+                    <div class="group-header-label">VERİ KAYNAKLARI & KLAVUZLAR</div>
+                    <div class="apple-group-box">
+                        <a href="https://www.gov.uk/government/collections/government-conversion-factors-for-company-reporting" target="_blank" rel="noopener" class="apple-row" style="text-decoration:none;">
+                            <div class="row-left-text">
+                                <span class="row-title" style="color:var(--accent-blue);">DEFRA / DESNZ Havacılık Dönüşüm Faktörleri</span>
+                                <span class="row-sub">gov.uk — BK Çevre Bakanlığı (Kısa-Orta Menzil Euro-Business 1.5x / Uzun Menzil 2.9x)</span>
+                            </div>
+                            <i class="fa-solid fa-arrow-up-right-from-square list-item-chevron" style="color:var(--accent-blue);"></i>
+                        </a>
+                        <a href="https://www.science.org/doi/10.1126/science.aaq0216" target="_blank" rel="noopener" class="apple-row" style="text-decoration:none;">
+                            <div class="row-left-text">
+                                <span class="row-title" style="color:var(--accent-blue);">Poore & Nemecek (Science 2018)</span>
+                                <span class="row-sub">science.org — Oxford Üniv. Gıda Yaşam Döngüsü (LCA) Veritabanı</span>
+                            </div>
+                            <i class="fa-solid fa-arrow-up-right-from-square list-item-chevron" style="color:var(--accent-blue);"></i>
+                        </a>
+                        <a href="https://ghgprotocol.org/corporate-standard" target="_blank" rel="noopener" class="apple-row" style="text-decoration:none;">
+                            <div class="row-left-text">
+                                <span class="row-title" style="color:var(--accent-blue);">WRI / WBCSD GHG Protocol</span>
+                                <span class="row-sub">ghgprotocol.org — Kurumsal Değer Zinciri Sera Gazı Hesaplama Standardı</span>
+                            </div>
+                            <i class="fa-solid fa-arrow-up-right-from-square list-item-chevron" style="color:var(--accent-blue);"></i>
+                        </a>
+                        <a href="https://www.ipcc-nggip.iges.or.jp/public/2006gl/" target="_blank" rel="noopener" class="apple-row" style="text-decoration:none;">
+                            <div class="row-left-text">
+                                <span class="row-title" style="color:var(--accent-blue);">IPCC Ulusal Envanter Rehberi</span>
+                                <span class="row-sub">ipcc-nggip.iges.or.jp — BM Küresel Isınma Potansiyeli (GWP100) Faktörleri</span>
+                            </div>
+                            <i class="fa-solid fa-arrow-up-right-from-square list-item-chevron" style="color:var(--accent-blue);"></i>
+                        </a>
+                        <a href="https://enerji.gov.tr/" target="_blank" rel="noopener" class="apple-row" style="text-decoration:none;">
+                            <div class="row-left-text">
+                                <span class="row-title" style="color:var(--accent-blue);">T.C. Enerji Bakanlığı / EPDK</span>
+                                <span class="row-sub">enerji.gov.tr — Türkiye Ulusal Şebeke Elektriği Emisyon Verileri</span>
+                            </div>
+                            <i class="fa-solid fa-arrow-up-right-from-square list-item-chevron" style="color:var(--accent-blue);"></i>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- APPLE FORM SHEET MODAL (HIG COMPLIANT SHEET) -->
+    <div class="event-wizard-overlay" id="eventWizardModal" style="display:none;" role="dialog" aria-modal="true">
+        <div class="event-wizard-container">
+            
+            <!-- Sheet Header (Balanced 3-column layout with neutral cancel button) -->
+            <div class="nav-bar-header">
+                <button class="nav-bar-left-btn neutral-cancel-btn" id="sheetCancelBtn" onclick="closeEventWizardModal()">Vazgeç</button>
+                <div class="nav-bar-title-wrap">
+                    <span class="nav-bar-title" id="sheetTitle">Yeni Etkinlik</span>
+                    <span class="nav-bar-subtitle" id="wizStepSubtitle">1. Seyahat & Lojistik (Adım 1/4)</span>
+                </div>
+                <div class="nav-bar-right-spacer"></div>
+            </div>
+
+            <!-- Progress Track Line -->
+            <div class="wiz-progress-track">
+                <div class="wiz-progress-fill" id="wizProgressFill" style="width: 25%;"></div>
+            </div>
+
+            <!-- Body -->
+            <div class="event-wizard-body">
+                
+                <!-- STEP 1: SEYAHAT -->
+                <div class="event-wizard-step" id="evWizardStep1">
+                    
+                    <div class="group-header-label">HIZLI ŞABLON SEÇİN</div>
+                    
+                    <div class="template-seg-grid" id="templateSegGrid">
+                        <!-- Populated dynamically via JS -->
+                    </div>
+
+                    <div class="group-header-label">ETKİNLİK BİLGİLERİ</div>
+                    <div class="apple-group-box">
+                        <div class="apple-row">
+                            <label for="evTitle" class="row-label">Etkinlik Adı</label>
+                            <input type="text" id="evTitle" value="Kristal Elma 2026 Ödül Töreni" class="row-input-text" placeholder="Etkinlik Adı">
+                        </div>
+                        <div class="apple-row">
+                            <label for="evAttendees" class="row-label">Katılımcı Sayısı</label>
+                            <div class="row-input-unit-group">
+                                <input type="number" inputmode="decimal" pattern="[0-9]*" id="evAttendees" value="750" min="0" class="row-input-num">
+                                <span class="row-unit">kişi</span>
+                            </div>
+                        </div>
+                        <div class="apple-row">
+                            <div class="row-left-text">
+                                <span class="row-title">Online / Hibrit Modu</span>
+                                <span class="row-sub">Dijital yayın / sanal katılım hesabı</span>
+                            </div>
+                            <label class="apple-switch">
+                                <input type="checkbox" id="evIsOnline" onchange="calculateAndRenderEventResult()">
+                                <span class="switch-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="group-header-label">ULAŞIM & LOJİSTİK</div>
+                    <div class="apple-group-box">
+                        <div class="apple-row">
+                            <label for="evFlightKm" class="row-label">Toplam Uçuş Mesafesi</label>
+                            <div class="row-input-unit-group">
+                                <input type="number" inputmode="decimal" pattern="[0-9]*" id="evFlightKm" value="2400" min="0" class="row-input-num">
+                                <span class="row-unit">km</span>
+                            </div>
+                        </div>
+                        <div class="apple-row">
+                            <label class="row-label">Uçuş Kabin Sınıfı</label>
+                            <div class="inline-seg-btn-group">
+                                <button type="button" class="inline-seg-btn active" id="chipClassEconomy" onclick="selectFlightClass('economy')">Ekonomi</button>
+                                <button type="button" class="inline-seg-btn" id="chipClassBusiness" onclick="selectFlightClass('business')">Business</button>
+                            </div>
+                            <input type="hidden" id="evFlightClass" value="economy">
+                        </div>
+                        <div class="apple-row">
+                            <label for="evLocalTransitKm" class="row-label">Şehir İçi Transfer / Taksi</label>
+                            <div class="row-input-unit-group">
+                                <input type="number" inputmode="decimal" pattern="[0-9]*" id="evLocalTransitKm" value="1200" min="0" class="row-input-num">
+                                <span class="row-unit">km</span>
+                            </div>
+                        </div>
+                        <div class="apple-row">
+                            <label for="evFreightTonKm" class="row-label">Lojistik Kargo & Nakliye</label>
+                            <div class="row-input-unit-group">
+                                <input type="number" inputmode="decimal" pattern="[0-9]*" id="evFreightTonKm" value="1500" min="0" class="row-input-num">
+                                <span class="row-unit">ton-km</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEP 2: TESİS & ENERJİ -->
+                <div class="event-wizard-step" id="evWizardStep2" style="display:none;">
+                    <div class="group-header-label">TESİS & ENERJİ</div>
+                    <div class="apple-group-box">
+                        <div class="apple-row">
+                            <label for="evArea" class="row-label">Tesis Büyüklüğü</label>
+                            <div class="row-input-unit-group">
+                                <input type="number" inputmode="decimal" pattern="[0-9]*" id="evArea" value="1800" min="0" class="row-input-num">
+                                <span class="row-unit">m²</span>
+                            </div>
+                        </div>
+                        <div class="apple-row">
+                            <label for="evEleckWh" class="row-label">Şebeke Elektriği</label>
+                            <div class="row-input-unit-group">
+                                <input type="number" inputmode="decimal" pattern="[0-9]*" id="evEleckWh" value="2800" min="0" class="row-input-num">
+                                <span class="row-unit">kWh</span>
+                            </div>
+                        </div>
+                        <div class="apple-row">
+                            <label for="evHotelNights" class="row-label">Konaklama Gecelemesi</label>
+                            <div class="row-input-unit-group">
+                                <input type="number" inputmode="decimal" pattern="[0-9]*" id="evHotelNights" value="40" min="0" class="row-input-num">
+                                <span class="row-unit">oda/gece</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEP 3: İKRAM & GIDA -->
+                <div class="event-wizard-step" id="evWizardStep3" style="display:none;">
+                    <div class="group-header-label">İKRAM & GIDA</div>
+                    <div class="apple-group-box">
+                        <div class="apple-row">
+                            <div class="row-left-text">
+                                <span class="row-title">Kırmızı Et Menüsü</span>
+                                <span class="row-sub">4,2 kg CO₂e / öğün</span>
+                            </div>
+                            <div class="stepper-wrap">
+                                <button type="button" class="stepper-btn" onclick="adjustCounter('evMealsRed', -10)">-</button>
+                                <input type="number" inputmode="decimal" pattern="[0-9]*" id="evMealsRed" value="120" min="0" class="stepper-val">
+                                <button type="button" class="stepper-btn" onclick="adjustCounter('evMealsRed', 10)">+</button>
+                            </div>
+                        </div>
+                        <div class="apple-row">
+                            <div class="row-left-text">
+                                <span class="row-title">Tavuk / Balık Menüsü</span>
+                                <span class="row-sub">1,3 kg CO₂e / öğün</span>
+                            </div>
+                            <div class="stepper-wrap">
+                                <button type="button" class="stepper-btn" onclick="adjustCounter('evMealsChicken', -10)">-</button>
+                                <input type="number" inputmode="decimal" pattern="[0-9]*" id="evMealsChicken" value="200" min="0" class="stepper-val">
+                                <button type="button" class="stepper-btn" onclick="adjustCounter('evMealsChicken', 10)">+</button>
+                            </div>
+                        </div>
+                        <div class="apple-row">
+                            <div class="row-left-text">
+                                <span class="row-title">Vejetaryen / Vegan Menü</span>
+                                <span class="row-sub">0,4 kg CO₂e / öğün</span>
+                            </div>
+                            <div class="stepper-wrap">
+                                <button type="button" class="stepper-btn" onclick="adjustCounter('evMealsVeg', -10)">-</button>
+                                <input type="number" inputmode="decimal" pattern="[0-9]*" id="evMealsVeg" value="300" min="0" class="stepper-val">
+                                <button type="button" class="stepper-btn" onclick="adjustCounter('evMealsVeg', 10)">+</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEP 4: MALZEME & ATIK -->
+                <div class="event-wizard-step" id="evWizardStep4" style="display:none;">
+                    <div class="group-header-label">MALZEME & ATIK</div>
+                    <div class="apple-group-box">
+                        <div class="apple-row">
+                            <label for="evBuildM2" class="row-label">Sahne & Vinil Branda</label>
+                            <div class="row-input-unit-group">
+                                <input type="number" inputmode="decimal" pattern="[0-9]*" id="evBuildM2" value="180" min="0" class="row-input-num">
+                                <span class="row-unit">m²</span>
+                            </div>
+                        </div>
+                        <div class="apple-row">
+                            <label for="evSwagCount" class="row-label">Promosyon / Eşantiyon</label>
+                            <div class="row-input-unit-group">
+                                <input type="number" inputmode="decimal" pattern="[0-9]*" id="evSwagCount" value="500" min="0" class="row-input-num">
+                                <span class="row-unit">adet</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEP 5: RESULT REPORT -->
+                <div class="event-wizard-step" id="evWizardStepResult" style="display:none;">
+                    
+                    <div class="result-summary-card">
+                        <span class="result-subtitle" id="evResultTitle">Kristal Elma 2026 Ödül Töreni</span>
+                        <div class="result-hero-number" id="evResultTotalVal">5.087,00</div>
+                        <div class="result-unit-label">kg CO₂e Toplam Karbon Ayak İzi</div>
+                    </div>
+
+                    <div class="group-header-label">BENCHMARK</div>
+                    <div class="apple-group-box">
+                        <div class="apple-row">
+                            <span class="row-label">Sektör Referans Değeri (Benchmark)</span>
+                            <span class="row-val-bold" id="evBaselineVal">8.100,0 kg</span>
+                        </div>
+                        <div class="apple-row">
+                            <span class="row-label">Gerçekleşen Emisyon</span>
+                            <span class="row-val-bold" id="evCalculatedVal">5.087,0 kg</span>
+                        </div>
+                        <div class="apple-row">
+                            <span class="row-label">Performans Oranı</span>
+                            <span class="row-val-bold green" id="evDiffVal">-%37,2</span>
+                        </div>
+                    </div>
+
+
+                    <div class="group-header-label">EMİSYON KATEGORİ DAĞILIMI</div>
+                    <div class="apple-group-box" style="padding: 1rem 1.1rem;">
+                        <div class="pillar-breakdown-bar" id="evPillarBar">
+                            <div class="pillar-seg seg-p1" id="segP1" style="width: 25%;"></div>
+                            <div class="pillar-seg seg-p2" id="segP2" style="width: 25%;"></div>
+                            <div class="pillar-seg seg-p3" id="segP3" style="width: 25%;"></div>
+                            <div class="pillar-seg seg-p4" id="segP4" style="width: 25%;"></div>
+                        </div>
+                        <div class="pillar-legend-grid" id="evPillarLegend">
+                            <!-- Loaded dynamically -->
+                        </div>
+                    </div>
+
+                    <div class="apple-group-box" id="evResultBreakdownList" style="margin-top: 1rem;">
+                        <!-- Loaded dynamically -->
+                    </div>
+
+                    <!-- GHG Protocol Scope 1, 2, 3 Standard Breakdown -->
+                    <div class="group-header-label">KAPSAM DAĞILIMI</div>
+                    <div class="apple-group-box" id="evResultScopeList">
+                        <!-- Loaded dynamically -->
+                    </div>
+
+
+
+                    <!-- Apple Inset Grouped Danger Zone Delete Button -->
+                    <div id="evResultDangerZone" style="margin-top: 1.8rem;">
+                        <div class="group-header-label">TEHLİKELİ BÖLGE</div>
+                        <div class="apple-group-box">
+                            <button type="button" class="apple-danger-row-btn" onclick="deleteCurrentEvent()">
+                                <i class="fa-solid fa-trash-can"></i> Etkinliği Sil
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Sheet Footer Sticky Bar -->
+            <div class="event-wizard-sticky-bar" id="evWizardStickyBar">
+                <button type="button" class="bar-btn secondary" id="evWizardPrevBtn" onclick="prevEventWizardStep()" style="display:none;">Önceki</button>
+                <button type="button" class="bar-btn primary" id="evWizardNextBtn" onclick="nextEventWizardStep()">Devam Et</button>
+            </div>
+
+            <!-- Step 5 Result Sticky Bar -->
+            <div class="event-wizard-sticky-bar" id="evResultStickyBar" style="display:none;">
+                <button type="button" class="bar-btn secondary icon-btn" onclick="shareCurrentEventFile()" title="Cihazda Paylaş">
+                    <i class="fa-solid fa-arrow-up-from-bracket"></i>
+                </button>
+                <button type="button" class="bar-btn secondary" onclick="downloadCurrentEventPDF()">
+                    <i class="fa-solid fa-file-arrow-down"></i> PDF İndir
+                </button>
+                <button type="button" class="bar-btn primary" id="evResultFinishBtn" onclick="finishEventWizard()">Tamam</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- DEDICATED EXECUTIVE LEGAL PDF CERTIFICATE TEMPLATE (ACCURATE & FULL PAGE A4) -->
+    <div id="pdfCertificatePrintTemplate" class="print-certificate-container">
+        <!-- Header Rule -->
+        <div class="pdf-cert-header">
+            <div class="pdf-cert-brand-wrap">
+                <div class="pdf-brand-seal"><i class="fa-solid fa-shield-halved"></i></div>
+                <div>
+                    <h1 class="pdf-cert-brand-title">EKOTAKİP</h1>
+                    <p class="pdf-cert-brand-sub">Bağımsız Kurumsal Etkinlik Karbon Hesaplayıcısı</p>
+                </div>
+            </div>
+            <div class="pdf-cert-meta">
+                <span class="pdf-cert-iso-badge" id="pdfCertStatusBadge">DİJİTAL HESAPLAMA BEYANI</span>
+                <p class="pdf-meta-line"><strong>Beyanname Kodu:</strong> <span id="pdfCertNo">EKO-2026-RVD-101</span></p>
+                <p class="pdf-meta-line"><strong>Düzenlenme Tarihi:</strong> <span id="pdfCertDate">30 Temmuz 2026</span></p>
+            </div>
+        </div>
+
+        <div class="pdf-cert-divider"></div>
+
+        <!-- Title Block -->
+        <div class="pdf-cert-title-block">
+            <h2 class="pdf-main-title">KURUMSAL ETKİNLİK SÜRDÜRÜLEBİLİRLİK BEYANNAMESİ</h2>
+            <p class="pdf-legal-statement">
+                İşbu belge, aşağıda detayları belirtilen kurumsal etkinliğin sektörel emisyon faktörleri uyarınca hesaplanan sera gazı (GHG) emisyon miktarını belgeleyen dijital emisyon beyannamesidir.
+            </p>
+        </div>
+
+        <!-- Event Summary Grid -->
+        <div class="pdf-cert-info-grid">
+            <div class="pdf-info-cell">
+                <span class="pdf-info-label">ETKİNLİK ADI</span>
+                <span class="pdf-info-val" id="pdfCertEventTitle">Kristal Elma 2026 Ödül Töreni</span>
+            </div>
+            <div class="pdf-info-cell">
+                <span class="pdf-info-label">KATILIMCI SAYISI</span>
+                <span class="pdf-info-val" id="pdfCertAttendees">750 Kişi</span>
+            </div>
+            <div class="pdf-info-cell">
+                <span class="pdf-info-label">TESİS ALANI</span>
+                <span class="pdf-info-val" id="pdfCertArea">1.800 m²</span>
+            </div>
+            <div class="pdf-info-cell">
+                <span class="pdf-info-label">METODOLOJİ</span>
+                <span class="pdf-info-val">GHG Protokolü (Scope 1, 2, 3)</span>
+            </div>
+        </div>
+
+        <!-- Hero Metrics Executive Cards -->
+        <div class="pdf-cert-hero-box">
+            <div class="pdf-hero-col">
+                <span class="pdf-hero-label">TOPLAM KARBON AYAK İZİ</span>
+                <span class="pdf-hero-val" id="pdfCertTotalEmissions">5,09 t CO₂e</span>
+                <span class="pdf-hero-sub">(<span id="pdfCertTotalKg">5.087,00</span> kg CO₂e)</span>
+            </div>
+            <div class="pdf-hero-divider"></div>
+            <div class="pdf-hero-col">
+                <span class="pdf-hero-label">SEKTÖR REFERANS PERFORMANSI</span>
+                <span class="pdf-hero-val green" id="pdfCertPerformance">-%37,2</span>
+                <span class="pdf-hero-sub" id="pdfCertBaselineSub">Baseline: 8.100 kg CO₂e</span>
+            </div>
+        </div>
+
+        <!-- Formal 4-Pillars Table -->
+        <table class="pdf-cert-table">
+            <thead>
+                <tr>
+                    <th style="width: 38%;">EMİSYON KATEGORİSİ (ETKİNLİK KIRILIMI)</th>
+                    <th style="width: 34%; text-align: left;">BEYAN EDİLEN GİRDİ / MİKTAR</th>
+                    <th style="width: 15%; text-align: right;">EMİSYON (t CO₂e)</th>
+                    <th style="width: 13%; text-align: right;">ORAN (%)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>1. Seyahat & Lojistik</strong> (Uçuş, Transfer, Kargo)</td>
+                    <td id="pdfCertP1Inputs">2.400 km Uçuş, 1.200 km Transfer</td>
+                    <td style="text-align: right; font-weight: 700;" id="pdfCertP1Ton">0,69 t</td>
+                    <td style="text-align: right;" id="pdfCertP1Pct">%13,6</td>
+                </tr>
+                <tr>
+                    <td><strong>2. Tesis & Enerji</strong> (Şebeke Elektriği, Konaklama)</td>
+                    <td id="pdfCertP2Inputs">2.800 kWh Elektrik, 40 Oda/Gece</td>
+                    <td style="text-align: right; font-weight: 700;" id="pdfCertP2Ton">1,68 t</td>
+                    <td style="text-align: right;" id="pdfCertP2Pct">%33,0</td>
+                </tr>
+                <tr>
+                    <td><strong>3. İkram & Gıda</strong> (Catering Porsiyon Dağılımı)</td>
+                    <td id="pdfCertP3Inputs">620 Porsiyon Menü</td>
+                    <td style="text-align: right; font-weight: 700;" id="pdfCertP3Ton">0,88 t</td>
+                    <td style="text-align: right;" id="pdfCertP3Pct">%17,4</td>
+                </tr>
+                <tr>
+                    <td><strong>4. Malzeme & Atık</strong> (Sahne, Branda, Swag)</td>
+                    <td id="pdfCertP4Inputs">180 m² Sahne, 500 Promosyon</td>
+                    <td style="text-align: right; font-weight: 700;" id="pdfCertP4Ton">1,83 t</td>
+                    <td style="text-align: right;" id="pdfCertP4Pct">%36,0</td>
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr class="pdf-table-total-row">
+                    <td colspan="2"><strong>TOPLAM GERÇEKLEŞEN SERA GAZI EMİSYONU (GHG)</strong></td>
+                    <td style="text-align: right; font-weight: 900; font-size: 10pt;" id="pdfCertTableTotalTon">5,09 t</td>
+                    <td style="text-align: right; font-weight: 900;">%100,0</td>
+                </tr>
+            </tfoot>
+        </table>
+
+        <!-- Methodology & GHG Protocol Scope Breakdown Information Box -->
+        <div class="pdf-methodology-box">
+            <h4 class="pdf-method-title">GHG PROTOKOLÜ KAPSAM (SCOPE 1, 2, 3) HESAPLAMA DAĞILIMI</h4>
+            <div class="pdf-method-grid">
+                <div>
+                    <p><strong>Scope 1 (Doğrudan Emisyonlar):</strong> <span id="pdfCertScope1Val">0,00 t (%0,0)</span> – <em>Tesis içi doğrudan yakıt/jeneratör emisyonu.</em></p>
+                    <p><strong>Scope 2 (Dolaylı Enerji):</strong> <span id="pdfCertScope2Val">1,12 t (%22,0)</span> – <em>Satın alınan şebeke elektriği (0,40 kg CO₂e/kWh).</em></p>
+                </div>
+                <div>
+                    <p><strong>Scope 3 (Tedarik Zinciri & Seyahat):</strong> <span id="pdfCertScope3Val">3,97 t (%78,0)</span> – <em>Seyahat & konaklama (Kat 6), kargo lojistiği (Kat 4), gıda & malzeme (Kat 1).</em></p>
+                    <p id="pdfCertTaxonomyNote"><strong>Taksonomi Notu:</strong> Otel/konaklama harcaması Etkinlik Kırılımında <em>"Tesis & Enerji"</em>, GHG Protokolü'nde ise iş seyahati (Scope 3 - Kat 6) altında hesaplanır.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Signature Block -->
+        <div class="pdf-cert-footer">
+            <div class="pdf-footer-col">
+                <p class="pdf-sign-header">HAZIRLAYAN</p>
+                <p class="pdf-sign-sub">EkoTakip Karbon Hesaplayıcısı</p>
+                <div class="pdf-seal-badge" id="pdfCertSealBadge">
+                    <i class="fa-solid fa-circle-check"></i> DİJİTAL KARBON BEYANI
+                </div>
+            </div>
+
+            <div class="pdf-footer-col pdf-qr-col">
+                <div class="pdf-qr-box">
+                    <i class="fa-solid fa-qrcode"></i>
+                </div>
+                <span class="pdf-qr-code-text">Referans No:<br><strong id="pdfCertAuthCode">EKO-RVD-2026-101</strong></span>
+            </div>
+
+            <div class="pdf-footer-col" style="text-align: right;">
+                <p class="pdf-sign-header">ETKİNLİK YETKİLİSİ</p>
+                <p class="pdf-sign-sub">Ad Soyad / Unvan:</p>
+                <div class="pdf-sign-space"></div>
+                <p class="pdf-sign-sub">İmza & Kurumsal Kaşe</p>
+            </div>
+        </div>
+
+        <!-- Microprint Legal Disclaimer -->
+        <div class="pdf-microprint-disclaimer">
+            Bu belge, kullanıcı tarafından girilen verilere dayanılarak GHG Protokolü (Scope 1-3) emisyon faktörleriyle otomatik olarak hesaplanmış bir bilgilendirme dokümanıdır. Herhangi bir kurum veya kuruluşun resmi belgesi, sertifikası veya denetim raporu niteliği taşımaz. Bağımsız 3. taraf doğrulaması yerine geçmez. Yasal bağlayıcılığı yoktur.
+        </div>
+    </div>
+
+    <!-- CUSTOM APPLE HIG DIALOG MODALS (CONFIRM / ALERT / PROMPT) -->
+    <div class="anz-dialog-overlay" id="anzCustomDialogModal" style="display:none;" role="dialog" aria-modal="true">
+        <div class="anz-dialog-card">
+            <div class="anz-dialog-header">
+                <i class="fa-solid fa-shield-halved anz-dialog-icon" id="anzDialogIcon"></i>
+                <h3 class="anz-dialog-title" id="anzDialogTitle">Onay</h3>
+                <p class="anz-dialog-message" id="anzDialogMessage">Bu işlemi yapmak istediğinize emin misiniz?</p>
+            </div>
+            
+            <div class="anz-dialog-prompt-wrap" id="anzDialogPromptWrap" style="display:none;">
+                <input type="text" id="anzDialogPromptInput" class="anz-dialog-input" placeholder="Değer giriniz...">
+            </div>
+
+            <div class="anz-dialog-actions" id="anzDialogActions">
+                <button type="button" class="anz-dialog-btn secondary" id="anzDialogCancelBtn">Vazgeç</button>
+                <button type="button" class="anz-dialog-btn primary" id="anzDialogConfirmBtn">Tamam</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- COMPANY DETAIL & BEYANNAME MODAL (MATCHING IMAGE 2 FULL SCREEN) -->
+    <div id="companyDetailModal" class="company-detail-modal-overlay" style="display:none;" role="dialog" aria-modal="true" onclick="if(event.target===this) closeCompanyDetailModal();">
+        <div class="company-detail-modal-card">
+            <!-- Modal Top Navigation Bar -->
+            <div class="company-modal-topbar">
+                <button type="button" class="modal-close-txt-btn" onclick="closeCompanyDetailModal()" aria-label="Kapat">
+                    <span>Kapat</span>
+                </button>
+                <div class="modal-topbar-title-wrap">
+                    <span class="modal-topbar-title">RVD Kurumsal Beyannamesi</span>
+                    <span class="modal-topbar-sub">GHQ & ISO 14064 Standartları</span>
+                </div>
+                <div style="width:50px;"></div>
+            </div>
+
+            <!-- Modal Scrollable Content Area -->
+            <div class="company-modal-scroll-content">
+                <!-- HERO CARD AT TOP (MATCHING IMAGE 2) -->
+                <div class="modal-hero-card">
+                    <h2 class="modal-hero-company-name" id="modalCompanyName">Şirket Unvanı</h2>
+                    <div class="modal-hero-emission-wrap">
+                        <span class="modal-hero-emission-val" id="modalCompanyTotalEmission">0,00 t</span>
+                        <span class="modal-hero-emission-sub">CO₂e Toplam Karbon Ayak İzi</span>
+                    </div>
+                </div>
+
+                <!-- Tesis & Enerji Breakdown -->
+                <div class="modal-scope-card margin-bottom-1" style="flex-direction:column; align-items:stretch; margin-bottom:1rem; padding:0.85rem 1rem;" id="modalSectorBreakdown">
+                    <!-- Populated dynamically -->
+                </div>
+
+                <!-- Scope Distribution Header -->
+                <span class="modal-section-caption">KAPSAM DAĞILIMI</span>
+
+                <!-- Scope 1, 2, 3 Cards -->
+                <div style="display:flex; flex-direction:column; gap:0.6rem; margin-bottom:1rem;">
+                    <!-- Scope 1 -->
+                    <div class="modal-scope-card">
+                        <div>
+                            <strong class="scope-card-title">Scope 1 (Doğrudan Emisyonlar)</strong>
+                            <span class="scope-card-sub">Tesis içi doğrudan sabit yakıt/jeneratör kaynağı</span>
+                        </div>
+                        <span class="scope-card-val" id="modalScope1Val">0,00 t (%0,0)</span>
+                    </div>
+                    <!-- Scope 2 -->
+                    <div class="modal-scope-card">
+                        <div>
+                            <strong class="scope-card-title">Scope 2 (Dolaylı Enerji)</strong>
+                            <span class="scope-card-sub">Satın alınan şebeke elektriği tüketimi</span>
+                        </div>
+                        <span class="scope-card-val" id="modalScope2Val">0,00 t (%0,0)</span>
+                    </div>
+                    <!-- Scope 3 -->
+                    <div class="modal-scope-card">
+                        <div>
+                            <strong class="scope-card-title">Scope 3 (Tedarik Zinciri & Lojistik)</strong>
+                            <span class="scope-card-sub">Değer zinciri emisyonu (Lojistik & Malzeme)</span>
+                        </div>
+                        <span class="scope-card-val" id="modalScope3Val">0,00 t (%0,0)</span>
+                    </div>
+                </div>
+
+                <!-- Taksonomi Note Alert Box -->
+                <div class="modal-info-box">
+                    <i class="fa-solid fa-circle-info info-box-icon"></i>
+                    <div>
+                        <strong>Taksonomi Notu:</strong> Emisyon kırılımları Climate TRACE uydu gözlemleri, ISO 14064-1 standartları ve GHG Protokolü Scope 1-3 faktörlerine göre hesaplanmıştır.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Fixed Bottom Action Toolbar -->
+            <div class="company-modal-bottom-bar">
+                <button type="button" class="modal-action-square-btn" onclick="navigator.share ? navigator.share({title: document.getElementById('modalCompanyName').textContent, url: window.location.href}) : alert('Bağlantı kopyalandı!')" aria-label="Paylaş">
+                    <i class="fa-solid fa-arrow-up-from-bracket"></i>
+                </button>
+                <button type="button" class="modal-bottom-flex-btn modal-bottom-secondary-btn" onclick="downloadCockpitPdf(currentModalCompany)">
+                    <i class="fa-solid fa-file-pdf"></i> PDF İndir
+                </button>
+                <button type="button" class="modal-bottom-flex-btn modal-bottom-primary-btn" onclick="closeCompanyDetailModal();">
+                    Tamam
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- STANDARDIZED COMPANY PICKER MODAL (Mobile Full-Screen & Desktop Dialog) -->
+    <div id="mobilePickerScreen" class="mobile-picker-screen" role="dialog" aria-modal="true" aria-label="Kurum Seç" style="display:none;" onclick="if(event.target===this) closeMobilePicker();">
+        <div class="picker-modal-dialog">
+            <div class="picker-topbar">
+                <button class="picker-back-btn" onclick="closeMobilePicker()" aria-label="Kapat" type="button">
+                    <span>Kapat</span>
+                </button>
+                <span class="picker-title">Kurum Seç</span>
+                <div style="width:60px"></div>
+            </div>
+            <div class="picker-search-wrap">
+                <i class="fa-solid fa-magnifying-glass picker-search-icon" aria-hidden="true"></i>
+                <input
+                    type="search"
+                    id="mobilePickerSearch"
+                    class="picker-search-input"
+                    placeholder="266 kurum arasında ara…"
+                    oninput="filterMobilePicker(this.value)"
+                    autocomplete="off"
+                    autocorrect="off"
+                    spellcheck="false"
+                >
+            </div>
+            <ul id="mobilePickerList" class="picker-list ios-list-group"></ul>
+        </div>
+    </div>
+
+    <!-- Application Script -->
+    <script src="app.js"></script>
+</body>
+</html>

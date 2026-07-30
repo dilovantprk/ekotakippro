@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>EkoTrace Türkiye | Kurumsal Karbon & İklim Zekası Portalı</title>
+    <meta name="description" content="EkoTrace Türkiye üyesi şirketler için Climate TRACE v5.8.0 emisyon analitiği ve 5-Aksiyon Net-Sıfır Simülatörü.">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <link rel="stylesheet" href="style.css">
+    <script>
+        (function() {
+            var saved = localStorage.getItem('anz_theme');
+            if (saved === 'light' || (!saved && window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches)) {
+                document.documentElement.classList.add('apple-light');
+            }
+        })();
+    </script>
+</head>
+<body class="apple-dark">
+
+    <!-- Header (Floating Pill Design) -->
+    <header class="header" role="banner" id="mainHeader">
+        <div class="nav-container">
+            <div class="nav-left-group">
+                <a href="#" class="logo" id="logo-link" onclick="switchTab('macroTab'); return false;">
+                    <div class="app-icon-badge" aria-hidden="true"><i class="fa-solid fa-leaf"></i></div>
+                    <span class="logo-text">EkoTrace <span class="apple-green">Türkiye</span></span>
+                </a>
+                
+                <nav class="nav-menu" id="nav-menu">
+                    <a href="javascript:void(0)" class="nav-link active" onclick="switchTab('macroTab')">
+                        Makro
+                    </a>
+                    <a href="javascript:void(0)" class="nav-link" onclick="switchTab('companyTab')">
+                        Şirketim
+                    </a>
+                    <a href="javascript:void(0)" class="nav-link" onclick="openToolIngestionPage()">
+                        AI Ingestion
+                    </a>
+                    <a href="javascript:void(0)" class="nav-link" onclick="openToolDisclosurePage()">
+                        Beyanname
+                    </a>
+                    <a href="javascript:void(0)" class="nav-link" onclick="switchTab('simulatorTab')">
+                        Simülatör
+                    </a>
+                    <a href="javascript:void(0)" class="nav-link" onclick="switchTab('eventTab')">
+                        Hesaplayıcı
+                    </a>
+                    <a href="javascript:void(0)" class="nav-link" onclick="toggleFloatingAiChat()">
+                        <i class="fa-solid fa-leaf apple-green"></i> AI Asistan
+                    </a>
+                </nav>
+            </div>
+            
+            <div class="nav-actions">
+                <button class="theme-toggle-btn" id="headerSettingsBtn" aria-label="Ayarlar" title="Ayarlar" type="button" onclick="openSettingsPanel()">
+                    <i class="fa-solid fa-gear" aria-hidden="true"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Full-Screen Mobile Settings Panel -->
+    <div class="settings-overlay" id="settingsOverlay" style="display:none;">
+        <div class="settings-panel">
+            <div class="settings-header">
+                <h2>Ayarlar</h2>
+                <button class="settings-close-btn" onclick="closeSettingsPanel()" aria-label="Kapat">Bitti</button>
+            </div>
+            <div class="settings-body">
+                <!-- Appearance Section (iOS Switcher) -->
+                <div class="settings-section">
+                    <h3 class="settings-section-title">Görünüm</h3>
+                    <div class="ios-list-group settings-group">
+                        <div class="ios-list-row settings-row" style="cursor:default;">
+                            <div class="settings-row-left">
+                                <div class="settings-icon dark ios-squircle-badge" id="themeIconBox"><i class="fa-solid fa-moon"></i></div>
+                                <span id="themeToggleText">Koyu Mod</span>
+                            </div>
+                            <label class="apple-switch" aria-label="Koyu Mod Aç/Kapat">
+                                <input type="checkbox" id="themeToggleSwitch" onchange="toggleThemeFromSwitch(this.checked)">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <!-- About Section -->
+                <div class="settings-section">
+                    <h3 class="settings-section-title">Hakkında</h3>
+                    <div class="ios-list-group settings-group">
+                        <div class="ios-list-row settings-row static">
+                            <div class="settings-row-left">
+                                <div class="settings-icon green ios-squircle-badge"><i class="fa-solid fa-leaf"></i></div>
+                                <span>EkoTrace Türkiye</span>
+                            </div>
+                            <span class="settings-row-detail">v1.0</span>
+                        </div>
+                        <div class="ios-list-row settings-row static">
+                            <div class="settings-row-left">
+                                <div class="settings-icon blue ios-squircle-badge"><i class="fa-solid fa-database"></i></div>
+                                <span>Veri Kaynağı</span>
+                            </div>
+                            <span class="settings-row-detail">Climate TRACE</span>
+                        </div>
+                        <div class="ios-list-row settings-row static">
+                            <div class="settings-row-left">
+                                <div class="settings-icon gold ios-squircle-badge"><i class="fa-solid fa-building-columns"></i></div>
+                                <span>Kurum Sayısı</span>
+                            </div>
+                            <span class="settings-row-detail">266</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Native Mobile Bottom Navigation Bar (UITabBar) -->
+    <nav class="apple-tabbar mobile-nav" role="tablist" aria-label="Mobil Tab Bar" id="mobileTabBar">
+        <button class="tabbar-item active" role="tab" aria-selected="true" aria-controls="macroTab" data-tab="macroTab" onclick="switchTab('macroTab')">
+            <i class="fa-solid fa-chart-line" aria-hidden="true"></i>
+            <span>Makro</span>
+        </button>
+
+        <button class="tabbar-item" role="tab" aria-selected="false" aria-controls="companyTab" data-tab="companyTab" onclick="switchTab('companyTab')">
+            <i class="fa-solid fa-building" aria-hidden="true"></i>
+            <span>Şirketim</span>
+        </button>
+
+        <button class="tabbar-item" role="tab" aria-selected="false" onclick="switchTab('toolsTab')">
+            <i class="fa-solid fa-toolbox" aria-hidden="true"></i>
+            <span>Araçlar</span>
+        </button>
+    </nav>
+
+    <!-- System Banner -->
+    <div id="systemStateBanner" class="system-banner hidden" role="alert">
+        <div class="spinner" id="systemSpinner"></div>
+        <span id="systemStateText">Yükleniyor...</span>
+    </div>
+
+    <!-- Main Container -->
+    <main class="apple-main" role="main">
+
+        <!-- 1. MACRO TAB -->
+        <section class="tab-pane active" id="macroTab" role="tabpanel">
+
+            <!-- Page Title Header (Apple HIG Large Title Style) -->
+            <div class="tools-page-header">
+                <h1 class="tools-main-title">Makro İklim Zekası</h1>
+                <p class="tools-main-subtitle">Türkiye genelindeki tesisler, holding emisyonları ve 20 yıllık tarihsel sera gazı verileri.</p>
+            </div>
+
+            <!-- Top 4 KPI Cards Row -->
+            <section class="inset-kpi-group kpi-grid-4 margin-bottom-1" id="macroKpiStrip" aria-label="Temel Göstergeler">
+                <div class="apple-card inset-kpi" tabindex="0">
+                    <div class="kpi-symbol green" aria-hidden="true"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+                    <div class="kpi-content">
+                        <span class="kpi-caption">Türkiye Toplam Emisyon</span>
+                        <span class="kpi-headline" id="kpiTotalEmissions">--- Mt CO₂e</span>
+                        <span class="kpi-footnote"><i class="fa-solid fa-arrow-trend-up"></i> 20 Yıllık Trend</span>
+                    </div>
+                </div>
+
+                <div class="apple-card inset-kpi" tabindex="0">
+                    <div class="kpi-symbol blue" aria-hidden="true"><i class="fa-solid fa-industry"></i></div>
+                    <div class="kpi-content">
+                        <span class="kpi-caption">Haritalanan Tesis Sayısı</span>
+                        <span class="kpi-headline" id="kpiFacilitiesCount">---</span>
+                        <span class="kpi-footnote">Sanayi, Santral, Maden</span>
+                    </div>
+                </div>
+
+                <div class="apple-card inset-kpi" tabindex="0">
+                    <div class="kpi-symbol teal" aria-hidden="true"><i class="fa-solid fa-building-user"></i></div>
+                    <div class="kpi-content">
+                        <span class="kpi-caption">İncelenen Şirket Sayısı</span>
+                        <span class="kpi-headline" id="kpiCompaniesCount">---</span>
+                        <span class="kpi-footnote">Holdingler &amp; Markalar</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Macro Line & Doughnut Charts -->
+            <div class="layout-grid-2-1" id="macroChartsSection">
+                <div class="apple-card">
+                    <div class="card-header-flex">
+                        <div>
+                            <h3 class="card-title-text"><i class="fa-solid fa-chart-line" style="color: var(--apple-green);"></i> Yıllık Toplam Emisyon (Mt CO₂e)</h3>
+                            <p class="card-subtitle">2015 – 2025 resmi Climate TRACE ölçümleri</p>
+                        </div>
+                    </div>
+                    <div class="chart-box margin-top-1">
+                        <canvas id="macroLineChart" aria-label="Yıllık emisyon grafiği"></canvas>
+                    </div>
+                </div>
+
+                <div class="apple-card">
+                    <div class="card-header-flex">
+                        <div>
+                            <h3 class="card-title-text"><i class="fa-solid fa-chart-pie" style="color: var(--apple-blue);"></i> Sera Gazları Dağılımı</h3>
+                            <p class="card-subtitle">CO₂e / CH₄ / N₂O sera gazı kırılımı</p>
+                        </div>
+                    </div>
+                    <div class="chart-box margin-top-1">
+                        <canvas id="gasDoughnutChart" aria-label="Sera gazı dağılım grafiği"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Harita + Sektörel Emisyon Yan Yana -->
+            <div class="layout-grid-2-1 margin-top" id="macroMapSection">
+                <div class="apple-card map-card">
+                    <div class="card-header-flex">
+                        <div>
+                            <h3 class="card-title-text"><i class="fa-solid fa-map-location-dot" style="color: var(--apple-blue);"></i> Türkiye İklim &amp; Tesis Haritası</h3>
+                            <p class="card-subtitle">Climate TRACE tespitli santraller, fabrikalar ve madenler</p>
+                        </div>
+                        <select id="mapSectorSelect" class="apple-select card-header-select" onchange="filterMap(this.value)" aria-label="Sektör Filtresi">
+                            <option value="ALL">Tüm Sektörler</option>
+                            <option value="Enerji">Enerji</option>
+                            <option value="İmalat">İmalat</option>
+                            <option value="Ulaştırma">Ulaştırma</option>
+                            <option value="Maden">Madencilik</option>
+                        </select>
+                    </div>
+                    <div id="turkeyMap" class="apple-map margin-top-1" aria-label="Tesis Haritası"></div>
+                </div>
+
+                <div class="apple-card">
+                    <div class="card-header-flex">
+                        <div>
+                            <h3 class="card-title-text"><i class="fa-solid fa-chart-column" style="color: var(--apple-orange);"></i> Sektörel Emisyon Payları</h3>
+                            <p class="card-subtitle">6 Ana sektör emisyon dağılımı</p>
+                        </div>
+                    </div>
+                    <div class="chart-box margin-top-1">
+                        <canvas id="sectorBarChart" aria-label="Sektörel emisyon bar grafiği"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Karbon Defteri -->
+            <div class="apple-card margin-top" id="macroLedgerSection">
+                <div class="card-header-flex">
+                    <div>
+                        <h3 class="card-title-text"><i class="fa-solid fa-book-bookmark" style="color: var(--apple-green);"></i> Karbon Defteri</h3>
+                        <p class="card-subtitle">Türkiye'deki 266 sanayi kuruluşu ve holding emisyon sıralaması</p>
+                    </div>
+                </div>
+
+                <div class="ledger-filter-bar margin-top-1">
+                    <!-- Direct Search Field for Desktop & Mobile -->
+                    <div class="apple-search-field">
+                        <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+                        <input type="text" id="companySearchInput" placeholder="Şirket ara (Koç, Sabancı, Eti, THY...)" oninput="renderCompanyLedger()" aria-label="Arama">
+                    </div>
+
+                    <div class="ledger-dropdowns-grid">
+                        <div class="ios-select-wrapper">
+                            <i class="fa-solid fa-industry select-icon" aria-hidden="true"></i>
+                            <select id="sectorFilterSelect" class="apple-select ios-styled-select" onchange="renderCompanyLedger()" aria-label="Sektör Filtresi">
+                                <option value="ALL">Tüm Sektörler</option>
+                                <option value="Enerji">Enerji</option>
+                                <option value="İmalat">İmalat</option>
+                                <option value="Ulaştırma">Ulaştırma</option>
+                                <option value="Maden">Maden</option>
+                            </select>
+                        </div>
+                        <div class="ios-select-wrapper">
+                            <i class="fa-solid fa-arrow-down-wide-short select-icon" aria-hidden="true"></i>
+                            <select id="sortFilterSelect" class="apple-select ios-styled-select" onchange="renderCompanyLedger()" aria-label="Sıralama">
+                                <option value="emissions_desc">En Yüksek Emisyon</option>
+                                <option value="emissions_asc">En Düşük Emisyon</option>
+                                <option value="name_asc">A-Z İsim</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div id="companyEmptyState" class="empty-state hidden" role="status">
+                    <i class="fa-solid fa-building-circle-xmark" aria-hidden="true"></i>
+                    <h3>Sonuç Bulunamadı</h3>
+                    <p>Arama kriterlerinize uygun şirket bulunamadı.</p>
+                </div>
+                <!-- Desktop: Table -->
+                <div class="apple-table-wrap desktop-only">
+                    <table class="apple-table" id="companyTable" role="table" aria-label="Şirket Karbon Emisyon Tablosu">
+                        <thead>
+                            <tr role="row">
+                                <th role="columnheader">#</th>
+                                <th role="columnheader">Şirket / Holding</th>
+                                <th role="columnheader">Sektörler</th>
+                                <th role="columnheader">Tesis</th>
+                                <th role="columnheader">Yıllık Emisyon</th>
+                                <th role="columnheader"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="companyTableBody">
+                            <!-- Loaded dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+                <!-- Mobile: Card list -->
+                <div class="ios-grouped-card mobile-only" id="companyMobileCards">
+                    <!-- Loaded dynamically -->
+                </div>
+                <!-- Universal Apple HIG Responsive Pagination Bar -->
+                <div class="apple-pagination-bar" id="companyPaginationBar" role="navigation" aria-label="Tablo Sayfalama">
+                    <div class="pagination-info" id="paginationInfoText">266 kayıttan 1-10 arası gösteriliyor</div>
+                    <div class="pagination-controls" id="paginationControls"></div>
+                    <div class="pagination-per-page">
+                        <label for="itemsPerPageSelect" class="pagination-info">Sayfa Başına:</label>
+                        <select id="itemsPerPageSelect" class="per-page-select" onchange="changeItemsPerPage(this.value)" aria-label="Sayfa Başına Kayıt">
+                            <option value="10" selected>10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+
+        </section>
+
+        <!-- 3. MY COMPANY TAB (ŞİRKETİM PORTALI) -->
+        <section class="tab-pane" id="companyTab" role="tabpanel">
+
+            <!-- Page Title Header (Apple HIG Large Title Style) -->
+            <div class="tools-page-header" id="companyTabHeader">
+                <div class="event-page-top-nav" id="companyBackNav" style="display:none; margin-bottom: 0.5rem;">
+                    <button class="event-back-btn" onclick="switchTab('toolsTab')">
+                        <i class="fa-solid fa-chevron-left"></i> Araçlar
+                    </button>
+                </div>
+                <h1 class="tools-main-title" id="companyMainTitle">Şirketim Portalı</h1>
+                <p class="tools-main-subtitle" id="companyMainSubtitle">Fatura OCR okuma, emisyon kanıt defteri ve resmi TCFD/CDP iklim beyannameleri.</p>
+            </div>
+
+            <!-- Minimal Company Selector Bar -->
+            <div class="company-select-hero-card" id="companySelectHeroCard">
+                <label class="hero-label" for="companyTabSelect">Kurumunuzu Seçin</label>
+                <!-- Desktop: native select -->
+                <div class="hero-select-wrapper desktop-only">
+                    <i class="fa-solid fa-magnifying-glass hero-search-icon" aria-hidden="true"></i>
+                    <select id="companyTabSelect" onchange="selectActiveCompany(this.value)" class="hero-company-dropdown" aria-label="Kurumunuzu Seçin">
+                        <option value="">Koç, Sabancı, Eti, Erdemir, THY…</option>
+                    </select>
+                </div>
+                <!-- Mobile: tap to open full-screen picker -->
+                <button class="hero-mobile-trigger mobile-only" id="mobilePickerTrigger" onclick="openMobilePicker()" aria-label="Kurum Seç">
+                    <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+                    <span id="mobilePickerLabel">Koç, Sabancı, Eti, Erdemir, THY…</span>
+                    <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+                </button>
+            </div>
+
+            <!-- Premium Unselected Welcome View (Shown when no company is selected) -->
+            <div id="companyTabWelcomeView" class="company-welcome-container margin-top">
+
+                <!-- Desktop Empty State View -->
+                <div class="welcome-desktop-grid desktop-only">
+                    <div class="welcome-features-grid">
+                        <div class="apple-card feature-intro-card" onclick="selectActiveCompany('Tüpraş'); switchCockpitMode('ingestion');" style="cursor:pointer;">
+                            <div class="feature-icon blue"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+                            <h3>AI Fatura & ERP Ingestion</h3>
+                            <p>PDF/PNG fatura OCR okuma, Logo/Mikro/Netsis E-Fatura XML ayrıştırma ve otomatik Scope 1 & 2 GHG sınıflandırması.</p>
+                        </div>
+                        <div class="apple-card feature-intro-card" onclick="selectActiveCompany('Tüpraş'); switchCockpitMode('ingestion');" style="cursor:pointer;">
+                            <div class="feature-icon green"><i class="fa-solid fa-shield-halved"></i></div>
+                            <h3>Audit Trail & Belge Kanıtı</h3>
+                            <p>Hesaplanan her bir emisyon tonajı kaynağındaki orijinal fatura belgesine doğrulanabilir kanıt bağı ile kilitlenir.</p>
+                        </div>
+                        <div class="apple-card feature-intro-card" onclick="selectActiveCompany('Tüpraş');" style="cursor:pointer;">
+                            <div class="feature-icon gold"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+                            <h3>EkoTracey AI & Beyanname</h3>
+                            <p>Doğal dil AI asistanı ile faturalarınızı sorgulayın; TCFD, CDP ve ISSB S2 resmi PDF beyannamelerini otomatik üretin.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mobile Empty State View -->
+                <div class="welcome-mobile-card mobile-only">
+                    <div class="ios-list-group mobile-features-list">
+                        <div class="ios-list-row mobile-feature-row" onclick="selectActiveCompany('Tüpraş'); switchCockpitMode('ingestion');">
+                            <div class="settings-row-left">
+                                <div class="feat-icon blue ios-squircle-badge"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+                                <div>
+                                    <h4 style="font-size:0.92rem; font-weight:600; color:var(--apple-label-primary);">AI Fatura & ERP Ingestion</h4>
+                                    <p style="font-size:0.78rem; color:var(--apple-label-secondary);">OCR fatura okuma ve E-Fatura XML ayrıştırma</p>
+                                </div>
+                            </div>
+                            <i class="fa-solid fa-chevron-right ios-chevron"></i>
+                        </div>
+                        <div class="ios-list-row mobile-feature-row" onclick="selectActiveCompany('Tüpraş'); switchCockpitMode('ingestion');">
+                            <div class="settings-row-left">
+                                <div class="feat-icon green ios-squircle-badge"><i class="fa-solid fa-shield-halved"></i></div>
+                                <div>
+                                    <h4 style="font-size:0.92rem; font-weight:600; color:var(--apple-label-primary);">Audit Trail & Kanıt Defteri</h4>
+                                    <p style="font-size:0.78rem; color:var(--apple-label-secondary);">Fatura bağlantılı doğrulanabilir emisyon kanıtları</p>
+                                </div>
+                            </div>
+                            <i class="fa-solid fa-chevron-right ios-chevron"></i>
+                        </div>
+                        <div class="ios-list-row mobile-feature-row" onclick="selectActiveCompany('Tüpraş');">
+                            <div class="settings-row-left">
+                                <div class="feat-icon gold ios-squircle-badge"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+                                <div>
+                                    <h4 style="font-size:0.92rem; font-weight:600; color:var(--apple-label-primary);">EkoTracey AI & PDF Beyanname</h4>
+                                    <p style="font-size:0.78rem; color:var(--apple-label-secondary);">Doğal dilde iklim asistanı ve resmi raporlar</p>
+                                </div>
+                            </div>
+                            <i class="fa-solid fa-chevron-right ios-chevron"></i>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Active Company Dashboard View (Hidden until selected) -->
+            <div id="companyTabActiveContent" class="company-dashboard-content hidden">
+                <!-- Dynamically populated by JS when a company is selected -->
+            </div>
+        </section>
+
+        <!-- 4. STANDALONE SIMULATOR TAB -->
+        <section class="tab-pane" id="simulatorTab" role="tabpanel">
+            
+            <!-- Page Title Header -->
+            <div class="tools-page-header" id="simulatorTabHeader">
+                <div class="event-page-top-nav" id="simBackNav" style="display:none; margin-bottom: 0.5rem;">
+                    <button class="event-back-btn" onclick="switchTab('toolsTab')">
+                        <i class="fa-solid fa-chevron-left"></i> Araçlar
+                    </button>
+                </div>
+                <h1 class="tools-main-title">Karbon &amp; SKDM Simülatörü</h1>
+                <p class="tools-main-subtitle">Sektör, elektrik, yakıt ve araç filosu verilerinizle emisyon ve AB SKDM verginizi anlık simüle edin.</p>
+            </div>
+
+            <!-- Single Master Apple Card -->
+            <div class="apple-card simulator-master-card margin-top-1">
+                
+                <!-- Live KPI Result Banner (Hero Widget) -->
+                <div class="sim-hero-widget" id="csSimResultHero">
+                    <div class="sim-hero-kpi">
+                        <span class="sim-hero-label">TAHMİNİ TOPLAM EMİSYON</span>
+                        <span class="sim-hero-val green" id="simHeroTotal">0.0 kt</span>
+                        <span class="sim-hero-sub">CO₂e / yıl</span>
+                    </div>
+                    <div class="sim-hero-divider"></div>
+                    <div class="sim-hero-kpi">
+                        <span class="sim-hero-label">SBTi 2030 HEDEFİ</span>
+                        <span class="sim-hero-val gold" id="simHeroTarget">0.0 kt</span>
+                        <span class="sim-hero-sub">%55 Azaltım Hedefi</span>
+                    </div>
+                </div>
+
+                <!-- Input Controls Grid -->
+                <div class="sim-inputs-grid margin-top-1">
+                    <div class="sim-field-group">
+                        <label class="sim-field-label">Kurum Doldur (İsteğe Bağlı)</label>
+                        <div class="apple-title-picker-btn" id="simCompanyPickerTrigger" onclick="openMobilePicker(function(companyName){ loadCompanyIntoSimulator(companyName); })" role="button" tabindex="0">
+                            <div class="title-picker-header">
+                                <h3 id="simCompanyPickerLabel" class="title-picker-name">— Kurum Seçip Doldur —</h3>
+                                <i class="fa-solid fa-chevron-down title-picker-chevron" aria-hidden="true"></i>
+                            </div>
+                            <span id="simCompanyPickerSub" class="title-picker-sub">Verileri otomatik yüklemek için tıklayın</span>
+                        </div>
+                    </div>
+
+                    <div class="sim-field-group">
+                        <label for="csSimSector" class="sim-field-label">Sektör</label>
+                        <select id="csSimSector" class="apple-select sim-input" onchange="runCockpitSim()">
+                            <option value="manufacturing">İmalat &amp; Sanayi</option>
+                            <option value="energy">Enerji &amp; Elektrik Üretimi</option>
+                            <option value="transport">Ulaştırma &amp; Lojistik</option>
+                            <option value="construction">İnşaat &amp; Altyapı</option>
+                            <option value="services">Hizmet &amp; Ofis</option>
+                        </select>
+                    </div>
+
+                    <div class="sim-field-group">
+                        <label for="csSimElectricity" class="sim-field-label">Yıllık Elektrik (MWh)</label>
+                        <input type="number" id="csSimElectricity" value="334397" min="0" step="100" class="apple-input sim-input" oninput="runCockpitSim()">
+                    </div>
+
+                    <div class="sim-field-group">
+                        <label for="csSimFuel" class="sim-field-label">Yakıt Tüketimi (Ton/yıl)</label>
+                        <input type="number" id="csSimFuel" value="101900" min="0" step="10" class="apple-input sim-input" oninput="runCockpitSim()">
+                    </div>
+
+                    <div class="sim-field-group" style="grid-column: span 2;">
+                        <label for="csSimFleet" class="sim-field-label">Araç Filosu (Adet)</label>
+                        <input type="number" id="csSimFleet" value="3" min="0" class="apple-input sim-input" oninput="runCockpitSim()">
+                    </div>
+                </div>
+
+                <!-- Scope Breakdown List Output -->
+                <div class="sim-breakdown-container margin-top-1" id="csSimResultBreakdown">
+                    <!-- Loaded dynamically by JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. AD NET ZERO ETKİNLİK KARBON HESAPLAYICISI -->
+        <section class="tab-pane" id="eventTab" role="tabpanel">
+            
+            <!-- Page Title Header -->
+            <div class="tools-page-header" id="eventTabHeader">
+                <div class="event-page-top-nav" id="eventBackNav" style="display:none; margin-bottom: 0.5rem;">
+                    <button class="event-back-btn" onclick="switchTab('toolsTab')">
+                        <i class="fa-solid fa-chevron-left"></i> Araçlar
+                    </button>
+                </div>
+                <h1 class="tools-main-title">Etkinlik Karbon Hesaplayıcısı</h1>
+                <p class="tools-main-subtitle">Ad Net Zero Türkiye 4 Ana Sütun rehberine uygun karbon emisyon hesabı ve RVD beyannamesi.</p>
+            </div>
+
+            <!-- Hero Section Top CTA Card -->
+            <div class="event-hero-cta-card margin-top-1" onclick="openEventWizardModal()">
+                <div class="event-hero-icon-wrap">
+                    <i class="fa-solid fa-calendar-plus"></i>
+                </div>
+                <div class="event-hero-text">
+                    <h2 class="event-hero-title">+ Yeni Etkinlik Hesapla</h2>
+                    <p class="event-hero-sub">Ad Net Zero Türkiye 4 Ana Sütun rehberine uygun karbon emisyonunu ve RVD beyannamesini anında oluşturun.</p>
+                </div>
+                <i class="fa-solid fa-chevron-right event-hero-chevron"></i>
+            </div>
+
+            <!-- Past Declarations Containerless Flat List -->
+            <div class="event-declarations-section margin-top-15">
+                <div class="event-section-header">
+                    <h3 class="event-section-title">Geçmiş Etkinlik Beyannameleri</h3>
+                    <span class="event-section-sub">RVD ve Ad Net Zero standartlarında onaylı kayıtlar</span>
+                </div>
+
+                <div id="eventsListContainer" class="event-flat-list margin-top-1">
+                    <!-- Loaded dynamically by JS -->
+                </div>
+            </div>
+
+        </section>
+
+        <!-- FULL-SCREEN EVENT CALCULATOR WIZARD MODAL -->
+        <div class="event-wizard-overlay" id="eventWizardModal" style="display:none;" role="dialog" aria-modal="true" aria-label="Etkinlik Karbon Hesaplayıcısı">
+            <div class="event-wizard-container">
+                <!-- Wizard Header Bar -->
+                <div class="event-wizard-header">
+                    <button class="event-wizard-close-btn" onclick="closeEventWizardModal()" aria-label="Kapat">
+                        <i class="fa-solid fa-xmark"></i>
+                        <span>Kapat</span>
+                    </button>
+                    <div class="event-wizard-title-group">
+                        <span class="event-wizard-main-title">Etkinlik Karbon Hesaplayıcısı</span>
+                        <span class="event-wizard-step-label" id="evWizardStepBadge">Adım 1 / 4</span>
+                    </div>
+                    <div style="width: 60px;"></div>
+                </div>
+
+                <!-- Dynamic Progress Bar (25%, 50%, 75%, 100%) -->
+                <div class="event-progress-wrap">
+                    <div class="event-progress-bar" id="evWizardProgressBar" style="width: 25%;"></div>
+                </div>
+                <div class="event-pillar-subtitle" id="evWizardPillarSubtitle">1. Seyahat &amp; Lojistik (%70-%90 Karbon Etkisi)</div>
+
+                <!-- Scrollable Wizard Body -->
+                <div class="event-wizard-body">
+                    
+                    <!-- STEP 1: SEYAHAT & LOJİSTİK -->
+                    <div class="event-wizard-step" id="evWizardStep1">
+                        <div class="event-step-header">
+                            <h3 class="event-step-title">1. Ulaşım ve Lojistik</h3>
+                            <p class="event-step-desc">Katılımcı uçuşları, şehir içi transferler ve lojistik kargo taşıma verilerini girin.</p>
+                        </div>
+                        <div class="event-form-grid">
+                            <div class="event-field-group full-width">
+                                <label for="evTitle" class="event-field-label">Etkinlik Adı</label>
+                                <input type="text" id="evTitle" value="Kristal Elma 2026 Ödül Töreni" class="event-input-text" placeholder="Örn: Kristal Elma 2026">
+                            </div>
+                            <div class="event-field-group">
+                                <label for="evAttendees" class="event-field-label">Katılımcı Sayısı (N)</label>
+                                <div class="event-input-unit-wrap">
+                                    <input type="number" inputmode="numeric" id="evAttendees" value="750" min="1" class="event-input-num" placeholder="0">
+                                    <span class="event-input-unit">kişi</span>
+                                </div>
+                            </div>
+                            <div class="event-field-group">
+                                <label for="evFlightKm" class="event-field-label">Uçuş Mesafesi</label>
+                                <div class="event-input-unit-wrap">
+                                    <input type="number" inputmode="numeric" id="evFlightKm" value="45000" min="0" class="event-input-num" placeholder="0">
+                                    <span class="event-input-unit">km</span>
+                                </div>
+                            </div>
+                            <div class="event-field-group full-width">
+                                <label class="event-field-label">Kabin Sınıfı Seçimi</label>
+                                <div class="event-chip-group">
+                                    <button type="button" class="event-chip-btn active" id="chipClassEconomy" onclick="selectFlightClass('economy')">
+                                        <i class="fa-solid fa-user-group"></i> Ekonomi Sınıfı (1x)
+                                    </button>
+                                    <button type="button" class="event-chip-btn" id="chipClassBusiness" onclick="selectFlightClass('business')">
+                                        <i class="fa-solid fa-briefcase"></i> Business Class (3x)
+                                    </button>
+                                </div>
+                                <input type="hidden" id="evFlightClass" value="economy">
+                            </div>
+                            <div class="event-field-group">
+                                <label for="evLocalTransitKm" class="event-field-label">Şehir İçi Transfer / Taksi</label>
+                                <div class="event-input-unit-wrap">
+                                    <input type="number" inputmode="numeric" id="evLocalTransitKm" value="8500" min="0" class="event-input-num" placeholder="0">
+                                    <span class="event-input-unit">km</span>
+                                </div>
+                            </div>
+                            <div class="event-field-group">
+                                <label for="evFreightTonKm" class="event-field-label">Lojistik Kargo &amp; Nakliye</label>
+                                <div class="event-input-unit-wrap">
+                                    <input type="number" inputmode="numeric" id="evFreightTonKm" value="12000" min="0" class="event-input-num" placeholder="0">
+                                    <span class="event-input-unit">ton-km</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- STEP 2: TESİS & ENERJİ -->
+                    <div class="event-wizard-step" id="evWizardStep2" style="display:none;">
+                        <div class="event-step-header">
+                            <h3 class="event-step-title">2. Tesis &amp; Enerji Tüketimi</h3>
+                            <p class="event-step-desc">Etkinlik alanı büyüklüğü, elektrik tüketimi ve konaklama bilgilerini girin.</p>
+                        </div>
+                        <div class="event-form-grid">
+                            <div class="event-field-group">
+                                <label for="evArea" class="event-field-label">Tesis Alanı (m²)</label>
+                                <div class="event-input-unit-wrap">
+                                    <input type="number" inputmode="numeric" id="evArea" value="1800" min="1" class="event-input-num" placeholder="0">
+                                    <span class="event-input-unit">m²</span>
+                                </div>
+                            </div>
+                            <div class="event-field-group">
+                                <label for="evEleckWh" class="event-field-label">Şebeke Elektriği</label>
+                                <div class="event-input-unit-wrap">
+                                    <input type="number" inputmode="numeric" id="evEleckWh" value="14500" min="0" class="event-input-num" placeholder="0">
+                                    <span class="event-input-unit">kWh</span>
+                                </div>
+                            </div>
+                            <div class="event-field-group full-width">
+                                <label for="evHotelNights" class="event-field-label">Konaklama / Otel Gecelemesi</label>
+                                <div class="event-input-unit-wrap">
+                                    <input type="number" inputmode="numeric" id="evHotelNights" value="120" min="0" class="event-input-num" placeholder="0">
+                                    <span class="event-input-unit">oda/gece</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- STEP 3: İKRAM & GIDA -->
+                    <div class="event-wizard-step" id="evWizardStep3" style="display:none;">
+                        <div class="event-step-header">
+                            <h3 class="event-step-title">3. İkram ve Gıda (Catering)</h3>
+                            <p class="event-step-desc">Menü türlerine göre servis edilen öğün sayılarını belirleyin.</p>
+                        </div>
+                        <div class="event-counter-list">
+                            
+                            <!-- Red Meat -->
+                            <div class="event-counter-row">
+                                <div class="counter-row-left">
+                                    <div class="counter-icon red"><i class="fa-solid fa-drumstick-bite"></i></div>
+                                    <div>
+                                        <span class="counter-title">Kırmızı Et Menüsü</span>
+                                        <span class="counter-sub">Yüksek karbon yoğunluğu (6.8 kg CO₂e/öğün)</span>
+                                    </div>
+                                </div>
+                                <div class="counter-control">
+                                    <button type="button" class="counter-btn" onclick="adjustCounter('evMealsRed', -10)">-</button>
+                                    <input type="number" inputmode="numeric" id="evMealsRed" value="250" min="0" class="counter-input">
+                                    <button type="button" class="counter-btn" onclick="adjustCounter('evMealsRed', 10)">+</button>
+                                </div>
+                            </div>
+
+                            <!-- Poultry / Fish -->
+                            <div class="event-counter-row">
+                                <div class="counter-row-left">
+                                    <div class="counter-icon yellow"><i class="fa-solid fa-fish"></i></div>
+                                    <div>
+                                        <span class="counter-title">Tavuk / Balık Menüsü</span>
+                                        <span class="counter-sub">Orta karbon yoğunluğu (2.1 kg CO₂e/öğün)</span>
+                                    </div>
+                                </div>
+                                <div class="counter-control">
+                                    <button type="button" class="counter-btn" onclick="adjustCounter('evMealsChicken', -10)">-</button>
+                                    <input type="number" inputmode="numeric" id="evMealsChicken" value="350" min="0" class="counter-input">
+                                    <button type="button" class="counter-btn" onclick="adjustCounter('evMealsChicken', 10)">+</button>
+                                </div>
+                            </div>
+
+                            <!-- Vegetarian / Vegan -->
+                            <div class="event-counter-row">
+                                <div class="counter-row-left">
+                                    <div class="counter-icon green"><i class="fa-solid fa-seedling"></i></div>
+                                    <div>
+                                        <div class="counter-title-group">
+                                            <span class="counter-title">Vejetaryen / Vegan Menü</span>
+                                            <span class="green-eco-chip">%90 Daha Düşük Ayak İzi</span>
+                                        </div>
+                                        <span class="counter-sub">Düşük karbon yoğunluğu (0.7 kg CO₂e/öğün)</span>
+                                    </div>
+                                </div>
+                                <div class="counter-control">
+                                    <button type="button" class="counter-btn" onclick="adjustCounter('evMealsVeg', -10)">-</button>
+                                    <input type="number" inputmode="numeric" id="evMealsVeg" value="400" min="0" class="counter-input">
+                                    <button type="button" class="counter-btn" onclick="adjustCounter('evMealsVeg', 10)">+</button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- STEP 4: MALZEME & ATIK -->
+                    <div class="event-wizard-step" id="evWizardStep4" style="display:none;">
+                        <div class="event-step-header">
+                            <h3 class="event-step-title">4. Malzeme ve Atık Yönetimi</h3>
+                            <p class="event-step-desc">Kurulan sahne, vinil brandalar ve promosyon malzemelerini girin.</p>
+                        </div>
+                        <div class="event-form-grid">
+                            <div class="event-field-group">
+                                <label for="evBuildM2" class="event-field-label">Sahne &amp; Vinil Branda ALanı</label>
+                                <div class="event-input-unit-wrap">
+                                    <input type="number" inputmode="numeric" id="evBuildM2" value="650" min="0" class="event-input-num" placeholder="0">
+                                    <span class="event-input-unit">m²</span>
+                                </div>
+                            </div>
+                            <div class="event-field-group">
+                                <label for="evSwagCount" class="event-field-label">Promosyon / Eşantiyon Ürün</label>
+                                <div class="event-input-unit-wrap">
+                                    <input type="number" inputmode="numeric" id="evSwagCount" value="1000" min="0" class="event-input-num" placeholder="0">
+                                    <span class="event-input-unit">adet</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- RESULT & DECLARATION SCREEN (STEP 5) -->
+                    <div class="event-wizard-step" id="evWizardStepResult" style="display:none;">
+                        <div class="event-result-hero">
+                            <span class="event-result-badge"><i class="fa-solid fa-shield-check"></i> RVD &amp; ANZ Türkiye Onaylı Beyanname</span>
+                            <h2 class="event-result-name" id="evResultTitle">Kristal Elma 2026 Ödül Töreni</h2>
+                            
+                            <div class="event-result-val-box">
+                                <span class="event-result-number" id="evResultTotalVal">3,420.50</span>
+                                <span class="event-result-unit">kg CO₂e</span>
+                                <span class="event-result-ton-sub" id="evResultTonSub">3.42 Ton CO₂e Toplam Karbon Ayak İzi</span>
+                            </div>
+                        </div>
+
+                        <!-- Ad Net Zero Baseline Comparison Box -->
+                        <div class="event-baseline-card">
+                            <div class="baseline-card-header">
+                                <i class="fa-solid fa-chart-line"></i>
+                                <span>Ad Net Zero Launch Baseline Karşılaştırması</span>
+                            </div>
+                            <div class="baseline-grid">
+                                <div class="baseline-item">
+                                    <span class="baseline-label">Resmi ANZ Baseline</span>
+                                    <span class="baseline-val" id="evBaselineVal">4,380.00 kg</span>
+                                    <span class="baseline-formula">(N × 3.2) + (m² × 1.1)</span>
+                                </div>
+                                <div class="baseline-item highlight">
+                                    <span class="baseline-label">Hesaplanan Emisyon</span>
+                                    <span class="baseline-val" id="evCalculatedVal">3,420.50 kg</span>
+                                    <span class="baseline-formula">Gerçekleşen Toplam</span>
+                                </div>
+                                <div class="baseline-item eco">
+                                    <span class="baseline-label">Performans Dengesi</span>
+                                    <span class="baseline-val" id="evDiffVal">-%21,9</span>
+                                    <span class="baseline-formula" id="evDiffSub">Baseline Altında Başarılı</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 4 Pillar Breakdown Rows -->
+                        <div class="event-breakdown-section margin-top-1">
+                            <h4 class="breakdown-section-title">4 Ana Sütun Emisyon Dağılımı</h4>
+                            <div class="event-breakdown-list" id="evResultBreakdownList">
+                                <!-- Loaded dynamically -->
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Sticky Bottom Action Bar -->
+                <div class="event-wizard-sticky-bar" id="evWizardStickyBar">
+                    <button type="button" class="event-bar-back-btn" id="evWizardPrevBtn" onclick="prevEventWizardStep()" style="display:none;">
+                        <i class="fa-solid fa-arrow-left"></i> Önceki
+                    </button>
+                    <button type="button" class="event-bar-next-btn" id="evWizardNextBtn" onclick="nextEventWizardStep()">
+                        <span>Devam Et</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+
+                <!-- Sticky Result Bottom Actions Bar -->
+                <div class="event-wizard-sticky-bar" id="evResultStickyBar" style="display:none;">
+                    <button type="button" class="event-bar-pdf-btn" onclick="downloadCurrentEventPDF()">
+                        <i class="fa-solid fa-file-pdf"></i> RVD PDF Beyannamesi İndir
+                    </button>
+                    <button type="button" class="event-bar-home-btn" onclick="finishEventWizard()">
+                        <span>Ana Sayfaya Dön</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. ARAÇLAR TAB -->
+        <section class="tab-pane" id="toolsTab" role="tabpanel">
+            
+            <!-- Page Title Header (Apple HIG Large Title Style) -->
+            <div class="tools-page-header">
+                <h1 class="tools-main-title">Araçlar &amp; Modüller</h1>
+                <p class="tools-main-subtitle">İklim zekası, emisyon hesaplama, OCR fatura okuma ve resmi beyanname modülleri.</p>
+            </div>
+
+            <!-- SQUARE CARDS 2 PER ROW GRID (CLEAN APPLE HIG - NO TACKY BADGES) -->
+            <div class="tools-square-grid">
+                
+                <!-- Square Card 1: AI Ingestion -->
+                <div class="apple-card tool-square-card" onclick="openToolIngestionPage()">
+                    <div class="tool-square-top">
+                        <div class="tool-card-icon blue"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+                        <i class="fa-solid fa-chevron-right tool-chevron"></i>
+                    </div>
+                    <div class="tool-square-body">
+                        <h3 class="tool-square-title">AI Fatura &amp; Ingestion</h3>
+                        <p class="tool-square-sub">OCR fatura okuma ve E-Fatura XML ayrıştırma</p>
+                    </div>
+                </div>
+
+                <!-- Square Card 2: Resmi Beyanname -->
+                <div class="apple-card tool-square-card" onclick="openToolDisclosurePage()">
+                    <div class="tool-square-top">
+                        <div class="tool-card-icon green"><i class="fa-solid fa-file-contract"></i></div>
+                        <i class="fa-solid fa-chevron-right tool-chevron"></i>
+                    </div>
+                    <div class="tool-square-body">
+                        <h3 class="tool-square-title">Resmi İklim Beyannamesi</h3>
+                        <p class="tool-square-sub">TCFD, CDP ve ISSB S2 rapor üretimi</p>
+                    </div>
+                </div>
+
+                <!-- Square Card 3: Simülatör -->
+                <div class="apple-card tool-square-card" onclick="openToolSimulatorModal()">
+                    <div class="tool-square-top">
+                        <div class="tool-card-icon gold"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+                        <i class="fa-solid fa-chevron-right tool-chevron"></i>
+                    </div>
+                    <div class="tool-square-body">
+                        <h3 class="tool-square-title">SKDM Simülatörü</h3>
+                        <p class="tool-square-sub">CBAM vergi ve 2030 hedef projeksiyonu</p>
+                    </div>
+                </div>
+
+                <!-- Square Card 4: Etkinlik Hesaplayıcı -->
+                <div class="apple-card tool-square-card" onclick="openToolCalculatorModal()">
+                    <div class="tool-square-top">
+                        <div class="tool-card-icon teal"><i class="fa-solid fa-calculator"></i></div>
+                        <i class="fa-solid fa-chevron-right tool-chevron"></i>
+                    </div>
+                    <div class="tool-square-body">
+                        <h3 class="tool-square-title">Etkinlik Hesaplayıcı</h3>
+                        <p class="tool-square-sub">Ulaşım, tesis, gıda ve atık emisyon hesabı</p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- 6. AYARLAR TAB (MOBILE INLINE TAB PAGE) -->
+        <section class="tab-pane" id="settingsTab" role="tabpanel">
+            
+            <!-- Page Title Header (Apple HIG Large Title Style) -->
+            <div class="tools-page-header">
+                <h1 class="tools-main-title">Ayarlar</h1>
+                <p class="tools-main-subtitle">Görünüm, tema tercihleriniz ve sistem bilgileri.</p>
+            </div>
+
+            <!-- Appearance Section (iOS Switcher) -->
+            <div class="settings-section margin-top-1">
+                <h3 class="settings-section-title">Görünüm</h3>
+                <div class="ios-list-group settings-group">
+                    <div class="ios-list-row settings-row" style="cursor:default;">
+                        <div class="settings-row-left">
+                            <div class="settings-icon dark ios-squircle-badge" id="themeIconBoxMobile"><i class="fa-solid fa-moon"></i></div>
+                            <span id="themeToggleTextMobile">Koyu Mod</span>
+                        </div>
+                        <label class="apple-switch" aria-label="Koyu Mod Aç/Kapat">
+                            <input type="checkbox" id="themeToggleSwitchMobile" onchange="toggleThemeFromSwitch(this.checked)">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- About Section -->
+            <div class="settings-section margin-top-1">
+                <h3 class="settings-section-title">Hakkında</h3>
+                <div class="ios-list-group settings-group">
+                    <div class="ios-list-row settings-row static">
+                        <div class="settings-row-left">
+                            <div class="settings-icon green ios-squircle-badge"><i class="fa-solid fa-leaf"></i></div>
+                            <span>EkoTrace Türkiye</span>
+                        </div>
+                        <span class="settings-row-detail">v1.0</span>
+                    </div>
+                    <div class="ios-list-row settings-row static">
+                        <div class="settings-row-left">
+                            <div class="settings-icon blue ios-squircle-badge"><i class="fa-solid fa-database"></i></div>
+                            <span>Veri Kaynağı</span>
+                        </div>
+                        <span class="settings-row-detail">Climate TRACE</span>
+                    </div>
+                    <div class="ios-list-row settings-row static">
+                        <div class="settings-row-left">
+                            <div class="settings-icon gold ios-squircle-badge"><i class="fa-solid fa-building-columns"></i></div>
+                            <span>Kurum Sayısı</span>
+                        </div>
+                        <span class="settings-row-detail">266</span>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- Apple Native Style Sheet Drawer -->
+    <div class="apple-modal-overlay" id="companyModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" style="display:none;">
+        <div class="apple-modal-sheet">
+            <div class="sheet-header-bar">
+                <button class="modal-close-btn" onclick="closeModal()" aria-label="Kapat"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+            </div>
+            <div id="modalContent" class="sheet-scroll-body">
+                <!-- Loaded dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Extraction Stepper Modal -->
+    <div class="apple-modal-overlay" id="aiExtractionModal" role="dialog" aria-modal="true" aria-labelledby="extractionTitle" style="display:none;">
+        <div class="apple-modal-sheet" style="max-width: 580px;">
+            <div class="sheet-header-bar">
+                <button class="modal-close-btn" onclick="closeAiExtractionModal()" aria-label="Kapat"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+            </div>
+            <div class="extraction-modal-body sheet-scroll-body">
+                <div class="modal-header-icon">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                </div>
+                <h3 id="extractionTitle" class="extraction-modal-title">AI OCR Belge Ayrıştırma Engine</h3>
+                <p class="extraction-modal-sub" id="extractionSub">Fatura içeriği taranıyor ve GHG Protocol kategorisine işleniyor...</p>
+
+                <!-- Progress Bar -->
+                <div class="extraction-progress-wrap margin-top-1">
+                    <div class="extraction-progress-bar" id="extractionProgressBar" style="width: 0%;"></div>
+                </div>
+                <div class="extraction-step-label" id="extractionStepLabel">1/4 Belge OCR Taraması Yapılıyor...</div>
+
+                <!-- Preview Form (Shown after extraction finishes) -->
+                <div id="extractionForm" class="extraction-form hidden margin-top-1">
+                    <div class="form-grid-2">
+                        <div class="form-item">
+                            <label for="extVendor">Tedarikçi / Kurum</label>
+                            <input type="text" id="extVendor" class="apple-input">
+                        </div>
+                        <div class="form-item">
+                            <label for="extPeriod">Dönem / Tarih</label>
+                            <input type="text" id="extPeriod" class="apple-input">
+                        </div>
+                        <div class="form-item">
+                            <label for="extValue">Tüketim Miktarı</label>
+                            <input type="number" id="extValue" class="apple-input" oninput="recalcExtCo2()">
+                        </div>
+                        <div class="form-item">
+                            <label for="extUnit">Birim</label>
+                            <select id="extUnit" class="apple-select" onchange="recalcExtCo2()">
+                                <option value="kWh">kWh (Elektrik)</option>
+                                <option value="m³">m³ (Doğalgaz)</option>
+                                <option value="Litre">Litre (Akaryakıt)</option>
+                            </select>
+                        </div>
+                        <div class="form-item">
+                            <label for="extScope">GHG Scope</label>
+                            <select id="extScope" class="apple-select">
+                                <option value="Scope 1">Scope 1 (Doğrudan Yakıt/Filo)</option>
+                                <option value="Scope 2">Scope 2 (Şebeke Elektriği)</option>
+                            </select>
+                        </div>
+                        <div class="form-item">
+                            <label for="extCo2">Hesaplanan Emisyon (Ton CO₂e)</label>
+                            <input type="text" id="extCo2" class="apple-input" readonly style="font-weight:700; color:var(--apple-green);">
+                        </div>
+                    </div>
+
+                    <div class="modal-action-row margin-top-1">
+                        <button type="button" class="apple-button secondary" onclick="closeAiExtractionModal()">İptal</button>
+                        <button type="button" class="apple-button primary" onclick="confirmSaveExtractedBill()">
+                            <i class="fa-solid fa-check"></i> Veri Defterine Kaydet
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="apple-footer" role="contentinfo">
+        <div class="footer-wrap">
+            <p>&copy; 2026 EkoTrace Türkiye Carbon Intelligence Platform.</p>
+            <p>Data powered by Climate TRACE v5.8.0 | Türkiye Sanayi ve Reklam Sektörü İklim Zekası</p>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+    <!-- ========================================================
+         STANDARDIZED COMPANY PICKER MODAL (Mobile Full-Screen & Desktop Centered Dialog)
+         ======================================================== -->
+    <div id="mobilePickerScreen" class="mobile-picker-screen" role="dialog" aria-modal="true" aria-label="Kurum Seç" style="display:none;" onclick="if(event.target===this) closeMobilePicker();">
+        <div class="picker-modal-dialog">
+            <div class="picker-topbar">
+                <button class="picker-back-btn" onclick="closeMobilePicker()" aria-label="Kapat">
+                    <i class="fa-solid fa-xmark"></i>
+                    <span>Kapat</span>
+                </button>
+                <span class="picker-title">Kurum Seç</span>
+                <div style="width:60px"></div>
+            </div>
+            <div class="picker-search-wrap">
+                <i class="fa-solid fa-magnifying-glass picker-search-icon" aria-hidden="true"></i>
+                <input
+                    type="search"
+                    id="mobilePickerSearch"
+                    class="picker-search-input"
+                    placeholder="266 kurum arasında ara…"
+                    oninput="filterMobilePicker(this.value)"
+                    autocomplete="off"
+                    autocorrect="off"
+                    spellcheck="false"
+                >
+            </div>
+            <ul id="mobilePickerList" class="picker-list ios-list-group"></ul>
+        </div>
+    </div>
+
+    <!-- ========================================================
+         FLOATING AI CHAT WIDGET (EkoTracey AI)
+         ======================================================== -->
+    <!-- Floating Trigger Button -->
+    <button id="floatingAiTrigger" class="floating-ai-trigger desktop-only" onclick="toggleFloatingAiChat()" aria-label="EkoTracey AI Asistanı" type="button">
+        <i class="fa-solid fa-leaf"></i>
+        <span class="fab-tooltip">EkoTracey AI</span>
+    </button>
+
+    <!-- Docked Panel / Mobile Full-Screen Chat Container -->
+    <div id="floatingAiPanel" class="floating-ai-panel hidden" style="display:none;" role="dialog" aria-modal="true" aria-label="EkoTracey AI İklim Asistanı">
+        <!-- Panel Header -->
+        <div class="ai-panel-header">
+            <div class="ai-header-left">
+                <div class="ai-avatar-badge">
+                    <i class="fa-solid fa-leaf"></i>
+                </div>
+                <div>
+                    <h4 class="ai-panel-title">EkoTracey AI</h4>
+                    <span class="ai-panel-status"><i class="fa-solid fa-circle status-dot"></i> Çevrimiçi • İklim Zekası</span>
+                </div>
+            </div>
+            <button class="ai-panel-close" onclick="closeFloatingAiChat()" aria-label="Kapat" type="button">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <!-- Chat Messages Body -->
+        <div id="floatingAiChatBox" class="ai-panel-chat-box">
+            <div class="ai-chat-msg">
+                <div class="ai-chat-avatar"><i class="fa-solid fa-leaf"></i></div>
+                <div class="ai-chat-bubble">
+                    Merhaba! Ben <strong>EkoTracey AI</strong> 👋 Türkiye sanayi emisyonları, faturalarınız ve iklim raporlarınız hakkında dilediğinizi sorabilirsiniz.
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Suggestion Pills -->
+        <div class="ai-panel-pills">
+            <button class="ai-quick-pill" onclick="sendFloatingAiQuestion('Türkiye en yüksek emisyonlu şirketleri hangileri?')" type="button">Türkiye Top 5 Emisyon</button>
+            <button class="ai-quick-pill" onclick="sendFloatingAiQuestion('Scope 1 ve Scope 2 arasındaki fark nedir?')" type="button">Scope 1 & 2 Farkı</button>
+            <button class="ai-quick-pill" onclick="sendFloatingAiQuestion('Enerjisa elektrik faturasından Scope 2 nasıl hesaplanır?')" type="button">Fatura OCR Nasıl Çalışır?</button>
+        </div>
+
+        <!-- Panel Footer / Input Bar -->
+        <div class="ai-panel-input-wrap">
+            <input type="text" id="floatingAiInput" class="ai-panel-input" placeholder="EkoTracey'e soru sorun..." onkeydown="if(event.key==='Enter') sendFloatingAiQuestion(this.value)">
+            <button class="ai-panel-send-btn" onclick="sendFloatingAiQuestion(document.getElementById('floatingAiInput').value)" aria-label="Gönder" type="button">
+                <i class="fa-solid fa-arrow-up"></i>
+            </button>
+        </div>
+    </div>
+
+</body>
+</html>

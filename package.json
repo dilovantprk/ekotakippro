@@ -1,0 +1,17 @@
+{
+  "name": "ekotakippro",
+  "version": "1.0.0",
+  "description": "EkoTakip Pro - Türkiye İklim Zekası & Karbon Portalı",
+  "main": "app.js",
+  "scripts": {
+    "start": "npx -y serve ./"
+  },
+  "keywords": [
+    "carbon",
+    "emissions",
+    "sustainability",
+    "turkey"
+  ],
+  "author": "",
+  "license": "MIT"
+}
