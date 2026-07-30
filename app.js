@@ -1873,8 +1873,8 @@ function renderMacroCharts() {
                 datasets: [{
                     label: 'Türkiye Emisyonu (Mt CO₂e)',
                     data: dataVals,
-                    borderColor: isLight ? '#16A34A' : '#22C55E',
-                    backgroundColor: isLight ? 'rgba(22, 163, 74, 0.16)' : 'rgba(34, 197, 94, 0.14)',
+                    borderColor: isLight ? '#6B8F71' : '#22C55E',
+                    backgroundColor: isLight ? 'rgba(107, 143, 113, 0.14)' : 'rgba(34, 197, 94, 0.14)',
                     fill: true,
                     tension: 0.3,
                     borderWidth: 2.5,
@@ -1913,7 +1913,7 @@ function renderMacroCharts() {
                 labels: ['CO₂', 'CH₄', 'N₂O', 'F-Gaz'],
                 datasets: [{
                     data: [72, 18, 7, 3],
-                    backgroundColor: ['#22C55E', '#3B82F6', '#6366F1', '#F59E0B'],
+                    backgroundColor: ['#6B8F71', '#5B7C99', '#7C5295', '#C2622D'],
                     borderWidth: 0
                 }]
             },
@@ -1972,7 +1972,7 @@ function renderMacroCharts() {
                 datasets: [{
                     label: 'Mt CO₂e / Yıl',
                     data: sectorList.map(s => s.val),
-                    backgroundColor: ['#3B82F6', '#22C55E', '#F59E0B', '#06B6D4', '#8B5CF6', '#EF4444'],
+                    backgroundColor: ['#5B7C99', '#6B8F71', '#C2622D', '#8FA8B8', '#7C5295', '#9C6B5A'],
                     borderRadius: 5,
                     barThickness: 14
                 }]
