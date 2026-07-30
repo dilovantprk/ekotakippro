@@ -4,57 +4,51 @@
 
 :root {
     /* Marka ve etkileşim */
-    --brand-green: #166534;       /* Sadece logo yaprak ikonunda kullanılır */
-    --accent-indigo: #6B4E8F;     /* Birincil etkileşim rengi (butonlar, FAB, aktif sekmeler, ilermeler) */
+    --brand-green: #166534;
+    --accent-indigo: #6B4E8F;
     
-    /* Nötr skala, koyu mod */
-    --bg-system: #0B0D0F;         /* Soğuk koyu gri arkaplan */
-    --bg-grouped: #16181C;        /* Yüzey / Kart arkaplanı */
-    --bg-secondary: #1D1F24;      /* Yüzey 2 / İnput ve ikincil butonlar */
-    --bg-border: #2A2D33;         /* Kenarlık */
+    /* Nötr skala, AÇIK MOD (VARSAYILAN) */
+    --bg-system: #F5F1E8;
+    --bg-grouped: #FDFBF5;
+    --bg-secondary: #EDE7D9;
+    --bg-border: #E0D8C5;
     
-    --text-primary: #F4F5F6;      /* Birincil metin */
-    --text-secondary: #9AA0AA;    /* İkincil metin */
-    --text-tertiary: #6C727F;     /* Üçüncül / Etiket metni */
+    --text-primary: #2B2620;
+    --text-secondary: #5C5344;
+    --text-tertiary: #78705E;
     
-    /* Durum renkleri (Yalnızca performans sinyalleri) */
-    --status-success: #6B8F71;    /* Sıcak Adaçayı Yeşili */
-    --status-warning: #C2622D;    /* Sıcak Terrakota Turuncu */
-    --status-danger: #9C6B5A;     /* Sıcak Kiremit Kırmızı */
+    --status-success: #6B8F71;
+    --status-warning: #C2622D;
+    --status-danger: #9C6B5A;
     
-    /* Kategori paleti, 4 sütun */
-    --pillar-travel: #5B7C99;     /* 1. Seyahat & Lojistik */
-    --pillar-energy: #C2622D;     /* 2. Tesis & Enerji */
-    --pillar-catering: #6B8F71;   /* 3. İkram & Gıda */
-    --pillar-materials: #7C5295;  /* 4. Malzeme & Atık */
+    --pillar-travel: #5B7C99;
+    --pillar-energy: #C2622D;
+    --pillar-catering: #6B8F71;
+    --pillar-materials: #7C5295;
+    
+    --glass-header: rgba(245, 241, 232, 0.88);
+    --glass-sheet-bg: #FDFBF5;
+    --glass-border-light: #E5DCC8;
+    --glass-shadow: 0 12px 32px rgba(43, 38, 32, 0.10);
+    
+    --font-apple: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", system-ui, sans-serif;
+}
+
+html.apple-dark, body.apple-dark {
+    /* Nötr skala, KOYU MOD */
+    --bg-system: #0B0D0F;
+    --bg-grouped: #16181C;
+    --bg-secondary: #1D1F24;
+    --bg-border: #2A2D33;
+    
+    --text-primary: #F4F5F6;
+    --text-secondary: #9AA0AA;
+    --text-tertiary: #6C727F;
     
     --glass-header: rgba(11, 13, 15, 0.85);
     --glass-sheet-bg: #16181C;
     --glass-border-light: #2A2D33;
     --glass-shadow: 0 16px 40px rgba(0, 0, 0, 0.55);
-    
-    --font-apple: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", system-ui, sans-serif;
-}
-
-html.apple-light, body.apple-light {
-    --bg-system: #F5F1E8;        /* Ana arkaplan: sert beyaz-gri yerine sıcak krem */
-    --bg-grouped: #FDFBF5;       /* Kart yüzeyi: saf beyaz yerine hafif fildişi */
-    --bg-secondary: #EDE7D9;     /* İkincil yüzey / input: krem tonunda, biraz daha koyu */
-    --bg-border: #E0D8C5;        /* Kenarlık: gri yerine sıcak bej */
-    
-    --glass-header: rgba(245, 241, 232, 0.88);   /* bg-system ile aynı ton, transparan */
-    --glass-sheet-bg: #FDFBF5;                    /* bg-grouped ile aynı */
-    
-    --text-primary: #2B2620;     /* Saf siyah yerine yumuşak koyu kahve */
-    --text-secondary: #5C5344;   /* İkincil metin, sıcak gri-kahve */
-    --text-tertiary: #78705E;    /* Üçüncül / etiket metni */
-    
-    --status-success: #6B8F71;   /* Sıcak Adaçayı Yeşili */
-    --status-warning: #C2622D;   /* Sıcak Terrakota Turuncu */
-    --status-danger: #9C6B5A;    /* Sıcak Kiremit Kırmızı */
-    
-    --glass-border-light: #E5DCC8;
-    --glass-shadow: 0 12px 32px rgba(43, 38, 32, 0.10);  /* gölge de sıcak tona çekildi (siyah yerine kahve tonlu) */
 }
 
 html.apple-light th, body.apple-light th,
