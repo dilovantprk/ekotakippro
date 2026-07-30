@@ -2081,7 +2081,12 @@ function renderMacroCharts() {
                         grid: { color: gridColor }
                     },
                     y: {
-                        ticks: { color: labelColor, font: { weight: '600', size: 11 } },
+                        ticks: { 
+                            color: labelColor, 
+                            font: { weight: '600', size: 11 },
+                            padding: 10,
+                            crossAlign: 'far'
+                        },
                         grid: { display: false }
                     }
                 }
@@ -3801,8 +3806,20 @@ function openChartFullscreen(type) {
                     }
                 },
                 scales: {
-                    x: { ticks: { color: subLabelColor }, grid: { color: gridColor } },
-                    y: { ticks: { color: subLabelColor }, grid: { color: gridColor } }
+                    x: {
+                        grace: '20%',
+                        ticks: { color: subLabelColor },
+                        grid: { color: gridColor }
+                    },
+                    y: {
+                        ticks: {
+                            color: labelColor,
+                            font: { weight: '600', size: 12 },
+                            padding: 10,
+                            crossAlign: 'far'
+                        },
+                        grid: { display: false }
+                    }
                 }
             }
         });
