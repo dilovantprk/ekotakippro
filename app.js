@@ -3969,20 +3969,15 @@ function selectFsLedgerCompany(companyName) {
     const assets = company.assets || [];
 
     const assetsHtml = (assets.length > 0)
-        ? assets.slice(0, 8).map((a, i) => {
+        ? assets.slice(0, 6).map((a, i) => {
             const assetEm = totalEmissions / assets.length;
-            const pct = Math.round((assetEm / totalEmissions) * 100);
             return `
-            <div style="padding: 0.55rem 0; border-bottom: ${i < Math.min(assets.length, 8) - 1 ? '1px solid var(--bg-border)' : 'none'};">
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <span style="font-size:0.85rem; font-weight:600; color:var(--text-primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; padding-right:0.5rem;">
-                        <i class="fa-solid fa-industry" style="color:var(--accent-indigo); margin-right:6px; font-size:0.8em;"></i>${i+1}. ${escapeHtml(a)}
-                    </span>
-                    <span style="font-size:0.82rem; font-weight:700; color:var(--text-primary); flex-shrink:0;">${fmt(assetEm)}</span>
+            <div style="display:flex; justify-content:space-between; align-items:center; padding: 0.6rem 0; border-bottom: ${i < Math.min(assets.length, 6) - 1 ? '1px solid var(--bg-border)' : 'none'};">
+                <div style="display:flex; align-items:center; gap:0.5rem; min-width:0; flex:1; padding-right:0.5rem;">
+                    <span style="font-size:0.75rem; font-weight:700; color:var(--text-tertiary); width:18px; text-align:right; flex-shrink:0;">${i+1}.</span>
+                    <span style="font-size:0.86rem; font-weight:600; color:var(--text-primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${escapeHtml(a)}</span>
                 </div>
-                <div style="height: 3px; background: rgba(150, 150, 150, 0.15); border-radius: 2px; overflow: hidden; margin-top: 6px;">
-                    <div style="width: ${pct}%; height: 100%; background: var(--accent-indigo); border-radius: 2px;"></div>
-                </div>
+                <span style="font-size:0.82rem; font-weight:700; color:var(--text-primary); flex-shrink:0;">${fmt(assetEm)}</span>
             </div>`;
         }).join('')
         : `<p style="font-size:0.85rem; color:var(--text-secondary); padding: 0.5rem 0;">Kayıtlı tesis bulunamadı.</p>`;
@@ -3993,100 +3988,84 @@ function selectFsLedgerCompany(companyName) {
     detail.style.justifyContent = 'flex-start';
     detail.style.padding = '1.5rem 2rem';
     detail.innerHTML = `
-        <div style="width: 100%; max-width: 1050px; margin: 0 auto; display: flex; flex-direction: column; gap: 1.25rem;">
+        <div style="width: 100%; max-width: 960px; margin: 0 auto; display: flex; flex-direction: column; gap: 1.25rem;">
             
-            <!-- Top Hero Banner & Quick KPI Strip -->
-            <div style="display: grid; grid-template-columns: 1.3fr 1fr; gap: 1rem; align-items: stretch;">
-                <div class="modal-hero-card" style="margin:0; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding: 1.25rem 1.5rem;">
-                    <div style="display:flex; align-items:center; justify-content:center; gap:0.5rem; margin-bottom:0.4rem;">
-                        <span class="status-badge status-active" style="font-size:0.75rem;">${escapeHtml((company.sectors || []).join(' • ') || 'Sanayi')}</span>
-                        <span style="font-size:0.78rem; color:var(--text-secondary);">${assets.length} Aktif Tesis</span>
-                    </div>
-                    <h2 class="modal-hero-company-name" style="font-size: clamp(1.2rem, 2vw, 1.6rem); margin-bottom:0.5rem; text-align:center;">${escapeHtml(company.name)}</h2>
-                    <div class="modal-hero-emission-wrap" style="align-items:center; text-align:center;">
-                        <span class="modal-hero-emission-val">${totalStr}</span>
-                        <span class="modal-hero-emission-sub">Resmi Yıllık CO₂e Karbon Ayak İzi (Climate TRACE 2024/2025)</span>
-                    </div>
+            <!-- Hero Header Card -->
+            <div class="modal-hero-card" style="margin:0; padding: 1.5rem 2rem; display:flex; flex-direction:column; align-items:center; text-align:center;">
+                <div style="display:flex; align-items:center; justify-content:center; gap:0.6rem; margin-bottom:0.5rem; flex-wrap:wrap;">
+                    <span class="status-badge status-active" style="font-size:0.78rem;">${escapeHtml((company.sectors || []).join(' • ') || 'Sanayi')}</span>
+                    <span style="font-size:0.8rem; color:var(--text-secondary); font-weight:500;"><i class="fa-solid fa-industry" style="margin-right:4px;"></i>${assets.length} Aktif Tesis Yerleşkesi</span>
+                    <span style="font-size:0.78rem; color:var(--status-success); font-weight:600;"><i class="fa-solid fa-circle-check" style="margin-right:4px;"></i>IPCC Tier-3 Uydu Doğrulamalı</span>
                 </div>
-
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
-                    <div class="fullscreen-kpi-card" style="padding: 0.85rem; display:flex; flex-direction:column; justify-content:center;">
-                        <span class="fullscreen-kpi-label">Scope 1 (Doğrudan)</span>
-                        <span class="fullscreen-kpi-value" style="color:var(--status-danger,#ff3b30); font-size:1.15rem;">${fmt(s1)}</span>
-                        <span class="fullscreen-kpi-sub">%22 Toplam Pay</span>
-                    </div>
-                    <div class="fullscreen-kpi-card" style="padding: 0.85rem; display:flex; flex-direction:column; justify-content:center;">
-                        <span class="fullscreen-kpi-label">Scope 2 (Şebeke)</span>
-                        <span class="fullscreen-kpi-value" style="color:var(--status-warning,#ff9500); font-size:1.15rem;">${fmt(s2)}</span>
-                        <span class="fullscreen-kpi-sub">%35 Elektrik Tüketimi</span>
-                    </div>
-                    <div class="fullscreen-kpi-card" style="padding: 0.85rem; display:flex; flex-direction:column; justify-content:center;">
-                        <span class="fullscreen-kpi-label">Scope 3 (Tedarik)</span>
-                        <span class="fullscreen-kpi-value" style="color:var(--accent-indigo); font-size:1.15rem;">${fmt(s3)}</span>
-                        <span class="fullscreen-kpi-sub">%43 Değer Zinciri</span>
-                    </div>
-                    <div class="fullscreen-kpi-card" style="padding: 0.85rem; display:flex; flex-direction:column; justify-content:center;">
-                        <span class="fullscreen-kpi-label">Doğrulama Seviyesi</span>
-                        <span class="fullscreen-kpi-value" style="color:var(--status-success,#34c759); font-size:1.15rem;">IPCC Tier-3</span>
-                        <span class="fullscreen-kpi-sub">Uydu Doğrulamalı</span>
-                    </div>
+                <h2 class="modal-hero-company-name" style="font-size: 1.75rem; margin-bottom:0.4rem; text-align:center;">${escapeHtml(company.name)}</h2>
+                <div class="modal-hero-emission-wrap" style="align-items:center; text-align:center;">
+                    <span class="modal-hero-emission-val" style="font-size: 2.2rem;">${totalStr}</span>
+                    <span class="modal-hero-emission-sub">Yıllık Sera Gazı Emisyonu (Climate TRACE v5.8)</span>
                 </div>
             </div>
 
-            <!-- Two-Column Grid: Left Facilities, Right Scope Breakdown -->
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; align-items: start;">
+            <!-- Two Equal-Width Cards Side-by-Side -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; align-items: stretch;">
                 
-                <!-- Left Column: Facilities -->
-                <div class="apple-card" style="margin:0; padding:1.1rem; display:flex; flex-direction:column; gap:0.4rem;">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.3rem;">
-                        <span style="font-size:0.75rem; font-weight:700; letter-spacing:.06em; color:var(--text-tertiary); text-transform:uppercase;">
-                            <i class="fa-solid fa-building-flag" style="margin-right:4px;"></i> BAĞLI TESİSLER (${assets.length})
-                        </span>
-                        <span style="font-size:0.75rem; color:var(--text-secondary);">Tahmini Kırılım</span>
+                <!-- Left Card: Facilities -->
+                <div class="apple-card" style="margin:0; padding:1.25rem; display:flex; flex-direction:column; justify-content:space-between; gap:0.6rem;">
+                    <div>
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem; padding-bottom:0.4rem; border-bottom:1px solid var(--bg-border);">
+                            <span style="font-size:0.75rem; font-weight:700; letter-spacing:.06em; color:var(--text-tertiary); text-transform:uppercase;">
+                                <i class="fa-solid fa-building-flag" style="margin-right:5px; color:var(--accent-indigo);"></i> BAĞLI TESİSLER (${assets.length})
+                            </span>
+                            <span style="font-size:0.75rem; color:var(--text-secondary);">Tahmini Emisyon</span>
+                        </div>
+                        ${assetsHtml}
                     </div>
-                    ${assetsHtml}
+                    <div style="font-size:0.75rem; color:var(--text-tertiary); text-align:right; margin-top:0.4rem;">
+                        Climate TRACE verilerinden derlenmiştir.
+                    </div>
                 </div>
 
-                <!-- Right Column: Scope Breakdown & Methodology -->
-                <div style="display:flex; flex-direction:column; gap:1rem;">
-                    
-                    <div class="apple-card" style="margin:0; padding:1.1rem; display:flex; flex-direction:column; gap:0.75rem;">
-                        <span style="font-size:0.75rem; font-weight:700; letter-spacing:.06em; color:var(--text-tertiary); text-transform:uppercase;">
-                            <i class="fa-solid fa-chart-pie" style="margin-right:4px;"></i> KAPSAM DAĞILIMI (SCOPE 1-3)
-                        </span>
-
-                        <div class="modal-scope-card" style="padding: 0.75rem 0.9rem;">
-                            <div style="flex:1;">
-                                <strong class="scope-card-title">Scope 1 (Doğrudan Emisyonlar)</strong>
-                                <span class="scope-card-sub">Tesis içi jeneratör ve sabit yakıt</span>
-                            </div>
-                            <span class="scope-card-val" style="color:var(--status-danger,#ff3b30); font-weight:700;">${fmt(s1)} (%22)</span>
+                <!-- Right Card: Scope Breakdown & Info -->
+                <div class="apple-card" style="margin:0; padding:1.25rem; display:flex; flex-direction:column; justify-content:space-between; gap:0.75rem;">
+                    <div>
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem; padding-bottom:0.4rem; border-bottom:1px solid var(--bg-border);">
+                            <span style="font-size:0.75rem; font-weight:700; letter-spacing:.06em; color:var(--text-tertiary); text-transform:uppercase;">
+                                <i class="fa-solid fa-chart-pie" style="margin-right:5px; color:var(--accent-green);"></i> KAPSAM DAĞILIMI (SCOPE 1-3)
+                            </span>
+                            <span style="font-size:0.75rem; color:var(--text-secondary);">ISO 14064-1</span>
                         </div>
 
-                        <div class="modal-scope-card" style="padding: 0.75rem 0.9rem;">
-                            <div style="flex:1;">
-                                <strong class="scope-card-title">Scope 2 (Dolaylı Enerji)</strong>
-                                <span class="scope-card-sub">Satın alınan şebeke elektriği</span>
+                        <div style="display:flex; flex-direction:column; gap:0.6rem;">
+                            <div class="modal-scope-card" style="padding: 0.75rem 0.9rem;">
+                                <div style="flex:1;">
+                                    <strong class="scope-card-title">Scope 1 (Doğrudan Emisyon)</strong>
+                                    <span class="scope-card-sub">Tesis içi jeneratör ve sabit yakıt</span>
+                                </div>
+                                <span class="scope-card-val" style="color:var(--status-danger,#ff3b30); font-weight:700;">${fmt(s1)} (%22)</span>
                             </div>
-                            <span class="scope-card-val" style="color:var(--status-warning,#ff9500); font-weight:700;">${fmt(s2)} (%35)</span>
-                        </div>
 
-                        <div class="modal-scope-card" style="padding: 0.75rem 0.9rem;">
-                            <div style="flex:1;">
-                                <strong class="scope-card-title">Scope 3 (Tedarik Zinciri)</strong>
-                                <span class="scope-card-sub">Lojistik, ham madde & değer zinciri</span>
+                            <div class="modal-scope-card" style="padding: 0.75rem 0.9rem;">
+                                <div style="flex:1;">
+                                    <strong class="scope-card-title">Scope 2 (Dolaylı Enerji)</strong>
+                                    <span class="scope-card-sub">Satın alınan şebeke elektriği</span>
+                                </div>
+                                <span class="scope-card-val" style="color:var(--status-warning,#ff9500); font-weight:700;">${fmt(s2)} (%35)</span>
                             </div>
-                            <span class="scope-card-val" style="color:var(--accent-indigo); font-weight:700;">${fmt(s3)} (%43)</span>
+
+                            <div class="modal-scope-card" style="padding: 0.75rem 0.9rem;">
+                                <div style="flex:1;">
+                                    <strong class="scope-card-title">Scope 3 (Tedarik Zinciri)</strong>
+                                    <span class="scope-card-sub">Lojistik, ham madde & değer zinciri</span>
+                                </div>
+                                <span class="scope-card-val" style="color:var(--accent-indigo); font-weight:700;">${fmt(s3)} (%43)</span>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="modal-info-box" style="margin:0; padding:0.85rem 1rem;">
+                    <div class="modal-info-box" style="margin:0; padding:0.75rem 0.9rem;">
                         <i class="fa-solid fa-circle-info info-box-icon"></i>
-                        <div style="font-size:0.8rem; line-height:1.45;">
-                            <strong>Taksonomi & Doğrulama:</strong> Ölçümler Climate TRACE v5.8 uydu gözlemleri, ISO 14064-1 standartları ve GHG Protokolü faktörlerine göre hesaplanmıştır.
+                        <div style="font-size:0.78rem; line-height:1.4;">
+                            <strong>Taksonomi Notu:</strong> Hesaplamalar GHG Protokolü ve ISO 14064-1 standartlarına uygun olarak modellenmiştir.
                         </div>
                     </div>
-
                 </div>
 
             </div>
