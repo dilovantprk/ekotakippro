@@ -15,6 +15,13 @@ const MIME_TYPES = {
 };
 
 http.createServer((req, res) => {
+    // API mock handler for local dev
+    if (req.url === '/api/cloud-sync' && req.method === 'POST') {
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: true, message: 'Local dev cloud sync mocked successfully.' }));
+        return;
+    }
+
     let safePath = path.normalize(req.url).replace(/^(\.\.[\/\\])+/, '');
     if (safePath === '/' || safePath === '\\') safePath = '/index.html';
     

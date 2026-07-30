@@ -1328,7 +1328,13 @@ async function triggerAutoCloudSync(eventData) {
             formatTR(res.scope3Ton, 2)
         ].join(';');
 
-        await fetch('/api/cloud-sync', {
+        // Local dev environment bypass for static servers (localhost/127.0.0.1)
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+            console.log('☁️ [Dev Mock] Cloud sync simulated for:', eventData.title);
+            return;
+        }
+
+        const syncRes = await fetch('/api/cloud-sync', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -1339,8 +1345,12 @@ async function triggerAutoCloudSync(eventData) {
                 reportCsvData: csvRow
             })
         });
+
+        if (!syncRes.ok) {
+            console.log('☁️ Cloud sync response:', syncRes.status);
+        }
     } catch (e) {
-        console.error('Auto cloud sync background fetch error:', e);
+        console.warn('Auto cloud sync fetch notice:', e);
     }
 }
 
