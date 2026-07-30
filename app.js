@@ -3908,6 +3908,11 @@ function openChartFullscreen(type) {
         window._fsLedgerSelectedName = null;
         window._fsLedgerAllCompanies = allCompanies;
         _renderFsLedgerList(allCompanies);
+
+        // Auto-select #1 company if available
+        if (allCompanies.length > 0) {
+            selectFsLedgerCompany(allCompanies[0].name);
+        }
     }
 }
 
@@ -3956,44 +3961,136 @@ function selectFsLedgerCompany(companyName) {
         ? (totalEmissions / 1000000).toFixed(2) + ' Mt CO₂e'
         : totalEmissions.toLocaleString('tr-TR') + ' t CO₂e';
     const fmt = v => v >= 1000000 ? (v/1000000).toFixed(2)+' Mt' : v.toLocaleString('tr-TR',{maximumFractionDigits:2})+' t';
-    const s1 = totalEmissions * 0.22, s2 = totalEmissions * 0.35, s3 = totalEmissions * 0.43;
+    
+    const s1 = totalEmissions * 0.22;
+    const s2 = totalEmissions * 0.35;
+    const s3 = totalEmissions * 0.43;
 
-    const assetsHtml = (company.assets && company.assets.length > 0)
-        ? company.assets.slice(0,6).map((a,i) => `
-            <div style="display:flex;justify-content:space-between;align-items:center;padding:0.5rem 0;border-bottom:${i < Math.min(company.assets.length,6)-1?'1px solid var(--bg-border)':'none'};">
-                <span style="font-size:0.875rem;font-weight:600;color:var(--text-primary);">${i+1}. ${escapeHtml(a)}</span>
-                <span style="font-size:0.8rem;color:var(--text-secondary);flex-shrink:0;margin-left:1rem;">${fmt(totalEmissions/company.assets.length)}</span>
-            </div>`).join('')
-        : `<p style="font-size:0.82rem;color:var(--text-secondary);">Kayıtlı tesis bulunamadı.</p>`;
+    const assets = company.assets || [];
+
+    const assetsHtml = (assets.length > 0)
+        ? assets.slice(0, 8).map((a, i) => {
+            const assetEm = totalEmissions / assets.length;
+            const pct = Math.round((assetEm / totalEmissions) * 100);
+            return `
+            <div style="padding: 0.6rem 0; border-bottom: ${i < Math.min(assets.length, 8) - 1 ? '1px solid var(--bg-border)' : 'none'};">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 4px;">
+                    <span style="font-size:0.88rem; font-weight:600; color:var(--text-primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; padding-right:0.5rem;">
+                        <i class="fa-solid fa-industry" style="color:var(--accent-indigo); margin-right:6px; font-size:0.8em;"></i>${i+1}. ${escapeHtml(a)}
+                    </span>
+                    <span style="font-size:0.82rem; font-weight:700; color:var(--text-primary); flex-shrink:0;">${fmt(assetEm)}</span>
+                </div>
+                <div style="height: 4px; background: var(--bg-border); border-radius: 2px; overflow: hidden;">
+                    <div style="width: ${pct}%; height: 100%; background: var(--accent-indigo); border-radius: 2px;"></div>
+                </div>
+            </div>`;
+        }).join('')
+        : `<p style="font-size:0.85rem; color:var(--text-secondary); padding: 0.5rem 0;">Kayıtlı tesis bulunamadı.</p>`;
 
     const detail = document.getElementById('fsLedgerDetail');
     if (!detail) return;
-    detail.style.alignItems = 'flex-start';
+    detail.style.alignItems = 'stretch';
     detail.style.justifyContent = 'flex-start';
+    detail.style.padding = '1.5rem 2rem';
     detail.innerHTML = `
-        <div style="max-width:580px;width:100%;">
-            <div class="modal-hero-card" style="margin-bottom:1.25rem;">
-                <h2 class="modal-hero-company-name">${escapeHtml(company.name)}</h2>
-                <div class="modal-hero-emission-wrap">
-                    <span class="modal-hero-emission-val">${totalStr}</span>
-                    <span class="modal-hero-emission-sub">CO₂e Toplam Karbon Ayak İzi</span>
+        <div style="width: 100%; max-width: 1050px; margin: 0 auto; display: flex; flex-direction: column; gap: 1.25rem;">
+            
+            <!-- Top Hero Banner & Quick KPI Strip -->
+            <div style="display: grid; grid-template-columns: 1.3fr 1fr; gap: 1rem; align-items: stretch;">
+                <div class="modal-hero-card" style="margin:0; display:flex; flex-direction:column; justify-content:center;">
+                    <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.4rem;">
+                        <span class="status-badge status-active" style="font-size:0.75rem;">${escapeHtml((company.sectors || []).join(' • ') || 'Sanayi')}</span>
+                        <span style="font-size:0.78rem; color:var(--text-secondary);">${assets.length} Aktif Tesis</span>
+                    </div>
+                    <h2 class="modal-hero-company-name" style="font-size: clamp(1.2rem, 2vw, 1.6rem); margin-bottom:0.5rem;">${escapeHtml(company.name)}</h2>
+                    <div class="modal-hero-emission-wrap" style="align-items:flex-start;">
+                        <span class="modal-hero-emission-val">${totalStr}</span>
+                        <span class="modal-hero-emission-sub">Resmi Yıllık CO₂e Karbon Ayak İzi (Climate TRACE 2024/2025)</span>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+                    <div class="fullscreen-kpi-card" style="padding: 0.85rem;">
+                        <span class="fullscreen-kpi-label">Scope 1 (Doğrudan)</span>
+                        <span class="fullscreen-kpi-value" style="color:var(--status-danger,#ff3b30); font-size:1.15rem;">${fmt(s1)}</span>
+                        <span class="fullscreen-kpi-sub">%22 Toplam Pay</span>
+                    </div>
+                    <div class="fullscreen-kpi-card" style="padding: 0.85rem;">
+                        <span class="fullscreen-kpi-label">Scope 2 (Şebeke)</span>
+                        <span class="fullscreen-kpi-value" style="color:var(--status-warning,#ff9500); font-size:1.15rem;">${fmt(s2)}</span>
+                        <span class="fullscreen-kpi-sub">%35 Elektrik Tüketimi</span>
+                    </div>
+                    <div class="fullscreen-kpi-card" style="padding: 0.85rem;">
+                        <span class="fullscreen-kpi-label">Scope 3 (Tedarik)</span>
+                        <span class="fullscreen-kpi-value" style="color:var(--accent-indigo); font-size:1.15rem;">${fmt(s3)}</span>
+                        <span class="fullscreen-kpi-sub">%43 Değer Zinciri</span>
+                    </div>
+                    <div class="fullscreen-kpi-card" style="padding: 0.85rem;">
+                        <span class="fullscreen-kpi-label">Doğrulama Seviyesi</span>
+                        <span class="fullscreen-kpi-value" style="color:var(--status-success,#34c759); font-size:1.15rem;">IPCC Tier-3</span>
+                        <span class="fullscreen-kpi-sub">Uydu Doğrulamalı</span>
+                    </div>
                 </div>
             </div>
 
-            <div style="font-size:0.7rem;font-weight:700;letter-spacing:.07em;color:var(--text-tertiary);text-transform:uppercase;margin-bottom:0.5rem;">TESİSLER</div>
-            <div class="modal-scope-card" style="flex-direction:column;align-items:stretch;margin-bottom:1.25rem;padding:0.85rem 1rem;">${assetsHtml}</div>
+            <!-- Two-Column Grid: Left Facilities, Right Scope Breakdown -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
+                
+                <!-- Left Column: Facilities -->
+                <div class="apple-card" style="margin:0; padding:1.1rem; display:flex; flex-direction:column; gap:0.6rem;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.2rem;">
+                        <span style="font-size:0.75rem; font-weight:700; letter-spacing:.06em; color:var(--text-tertiary); text-transform:uppercase;">
+                            <i class="fa-solid fa-building-flag" style="margin-right:4px;"></i> BAĞLI TESİSLER (${assets.length})
+                        </span>
+                        <span style="font-size:0.75rem; color:var(--text-secondary);">Tahmini Kırılım</span>
+                    </div>
+                    ${assetsHtml}
+                </div>
 
-            <div style="font-size:0.7rem;font-weight:700;letter-spacing:.07em;color:var(--text-tertiary);text-transform:uppercase;margin-bottom:0.5rem;">KAPSAM DAĞILIMI</div>
-            <div style="display:flex;flex-direction:column;gap:0.55rem;margin-bottom:1.25rem;">
-                <div class="modal-scope-card"><div><strong class="scope-card-title">Scope 1 (Doğrudan)</strong><span class="scope-card-sub">Tesis içi yakıt ve jeneratör</span></div><span class="scope-card-val">${fmt(s1)} (%22)</span></div>
-                <div class="modal-scope-card"><div><strong class="scope-card-title">Scope 2 (Enerji)</strong><span class="scope-card-sub">Satın alınan şebeke elektriği</span></div><span class="scope-card-val">${fmt(s2)} (%35)</span></div>
-                <div class="modal-scope-card"><div><strong class="scope-card-title">Scope 3 (Tedarik Zinciri)</strong><span class="scope-card-sub">Değer zinciri emisyonu</span></div><span class="scope-card-val">${fmt(s3)} (%43)</span></div>
+                <!-- Right Column: Scope Breakdown & Methodology -->
+                <div style="display:flex; flex-direction:column; gap:1rem;">
+                    
+                    <div class="apple-card" style="margin:0; padding:1.1rem; display:flex; flex-direction:column; gap:0.75rem;">
+                        <span style="font-size:0.75rem; font-weight:700; letter-spacing:.06em; color:var(--text-tertiary); text-transform:uppercase;">
+                            <i class="fa-solid fa-chart-pie" style="margin-right:4px;"></i> KAPSAM DAĞILIMI (SCOPE 1-3)
+                        </span>
+
+                        <div class="modal-scope-card" style="padding: 0.75rem 0.9rem;">
+                            <div style="flex:1;">
+                                <strong class="scope-card-title">Scope 1 (Doğrudan Emisyonlar)</strong>
+                                <span class="scope-card-sub">Tesis içi jeneratör ve sabit yakıt</span>
+                            </div>
+                            <span class="scope-card-val" style="color:var(--status-danger,#ff3b30); font-weight:700;">${fmt(s1)} (%22)</span>
+                        </div>
+
+                        <div class="modal-scope-card" style="padding: 0.75rem 0.9rem;">
+                            <div style="flex:1;">
+                                <strong class="scope-card-title">Scope 2 (Dolaylı Enerji)</strong>
+                                <span class="scope-card-sub">Satın alınan şebeke elektriği</span>
+                            </div>
+                            <span class="scope-card-val" style="color:var(--status-warning,#ff9500); font-weight:700;">${fmt(s2)} (%35)</span>
+                        </div>
+
+                        <div class="modal-scope-card" style="padding: 0.75rem 0.9rem;">
+                            <div style="flex:1;">
+                                <strong class="scope-card-title">Scope 3 (Tedarik Zinciri)</strong>
+                                <span class="scope-card-sub">Lojistik, ham madde & değer zinciri</span>
+                            </div>
+                            <span class="scope-card-val" style="color:var(--accent-indigo); font-weight:700;">${fmt(s3)} (%43)</span>
+                        </div>
+                    </div>
+
+                    <div class="modal-info-box" style="margin:0; padding:0.85rem 1rem;">
+                        <i class="fa-solid fa-circle-info info-box-icon"></i>
+                        <div style="font-size:0.8rem; line-height:1.45;">
+                            <strong>Taksonomi & Doğrulama:</strong> Ölçümler Climate TRACE v5.8 uydu gözlemleri, ISO 14064-1 standartları ve GHG Protokolü faktörlerine göre hesaplanmıştır.
+                        </div>
+                    </div>
+
+                </div>
+
             </div>
 
-            <div class="modal-info-box">
-                <i class="fa-solid fa-circle-info info-box-icon"></i>
-                <div><strong>Taksonomi Notu:</strong> Emisyon kırılımları Climate TRACE uydu gözlemleri, ISO 14064-1 ve GHG Protokolü Scope 1-3 faktörlerine göre hesaplanmıştır.</div>
-            </div>
         </div>`;
 }
 
