@@ -3561,31 +3561,26 @@ function openChartFullscreen(type) {
     document.body.classList.add('modal-open');
     modal.style.display = 'flex';
 
-    // Reset containers for items 1-5 (All share identical 1.35fr : 1fr grid layout & proportions)
+    // If coming FROM ledger mode, restore the original modal body HTML first
+    // (ledger replaces the entire modal body, so standard element IDs are missing)
+    const modalBodyRestore = modal.querySelector('.fullscreen-modal-body');
+    if (modalBodyRestore && modalBodyRestore.getAttribute('data-ledger-original')) {
+        modalBodyRestore.innerHTML = modalBodyRestore.getAttribute('data-ledger-original');
+        modalBodyRestore.removeAttribute('data-ledger-original');
+        modalBodyRestore.style.cssText = '';
+    }
+
+    // Reset containers — these IDs now guaranteed to exist
     const chartContainer = document.getElementById('fullscreenChartContainer');
     const mapContainer = document.getElementById('fullscreenMapContainer');
-    const ledgerContainer = document.getElementById('fullscreenLedgerContainer');
-    const standardDetails = document.getElementById('fullscreenStandardDetails');
-    const ledgerDetail = document.getElementById('fullscreenLedgerDetail');
+    const kpiGrid = document.getElementById('fullscreenKpiGrid');
+    const tableHead = document.getElementById('fullscreenTableHead');
+    const tableBody = document.getElementById('fullscreenTableBody');
+    const tableTitle = document.getElementById('fullscreenTableTitle');
 
-    if (type === 'ledger') {
-        if (chartContainer) chartContainer.style.display = 'none';
-        if (mapContainer) mapContainer.style.display = 'none';
-        if (ledgerContainer) ledgerContainer.style.display = 'flex';
-        if (standardDetails) standardDetails.style.display = 'none';
-        if (ledgerDetail) ledgerDetail.style.display = 'flex';
-    } else {
-        if (ledgerContainer) ledgerContainer.style.display = 'none';
-        if (ledgerDetail) ledgerDetail.style.display = 'none';
-        if (standardDetails) standardDetails.style.display = 'flex';
-        if (type === 'turkeyMap') {
-            if (chartContainer) chartContainer.style.display = 'none';
-            if (mapContainer) mapContainer.style.display = 'block';
-        } else {
-            if (chartContainer) chartContainer.style.display = 'block';
-            if (mapContainer) mapContainer.style.display = 'none';
-        }
-    }
+    if (!chartContainer || !mapContainer) return;
+    chartContainer.style.display = 'block';
+    mapContainer.style.display = 'none';
 
     if (fullscreenChartInstance) {
         fullscreenChartInstance.destroy();
@@ -4087,6 +4082,39 @@ function openChartFullscreen(type) {
         titleEl.innerHTML = `<i class="fa-solid fa-book-bookmark" style="color:var(--accent-green);"></i> Karbon Defteri`;
         subtitleEl.textContent = `Türkiye sanayi ve holding emisyon sıralaması — 266 kurum`;
 
+        // Take over the entire modal body
+        const modalBody = modal.querySelector('.fullscreen-modal-body');
+        if (modalBody) {
+            modalBody.setAttribute('data-ledger-original', modalBody.innerHTML);
+            modalBody.style.cssText = 'flex:1; overflow:hidden; display:flex; padding:0;';
+            modalBody.innerHTML = `
+                <div id="fsLedgerList" style="
+                    width:340px; min-width:260px; flex-shrink:0;
+                    overflow-y:auto;
+                    border-right:1px solid var(--bg-border);
+                    background:var(--bg-primary);
+                ">
+                    <div style="padding:0.75rem 1rem 0.5rem; border-bottom:1px solid var(--bg-border); position:sticky; top:0; background:var(--bg-primary); z-index:2;">
+                        <div class="search-wrap" style="margin:0;">
+                            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                            <input type="text" id="fsLedgerSearch" class="search-input" placeholder="Kurum ara..." oninput="_filterFsLedger()" autocomplete="off" style="font-size:0.85rem;">
+                        </div>
+                    </div>
+                    <div id="fsLedgerRows"></div>
+                </div>
+                <div id="fsLedgerDetail" style="
+                    flex:1; overflow-y:auto;
+                    background:var(--bg-secondary);
+                    padding:2.5rem 3rem;
+                    display:flex; align-items:center; justify-content:center;
+                ">
+                    <div style="text-align:center; color:var(--text-tertiary);">
+                        <i class="fa-solid fa-arrow-left" style="font-size:2rem; margin-bottom:0.75rem; display:block; opacity:0.4;"></i>
+                        <p style="font-size:0.95rem; font-weight:600;">Listeden bir kurum seçin</p>
+                    </div>
+                </div>`;
+        }
+
         const allCompanies = [...(globalDbData?.companies || [])]
             .sort((a, b) => b.est_co2e_annual - a.est_co2e_annual);
         window._fsLedgerSelectedName = null;
@@ -4168,7 +4196,9 @@ function selectFsLedgerCompany(companyName) {
 
     const detail = document.getElementById('fsLedgerDetail');
     if (!detail) return;
-    detail.style.padding = '1rem 1.25rem';
+    detail.style.alignItems = 'stretch';
+    detail.style.justifyContent = 'flex-start';
+    detail.style.padding = '1.5rem 2rem';
     detail.innerHTML = `
         <div style="width: 100%; max-width: 960px; margin: 0 auto; display: flex; flex-direction: column; gap: 1.25rem;">
             
