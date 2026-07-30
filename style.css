@@ -2972,6 +2972,13 @@ body.apple-light .nav-link.active i {
     align-items: center;
     gap: 1rem;
     flex-shrink: 0;
+    position: relative;
+}
+
+.fullscreen-header-info {
+    flex: 1;
+    min-width: 0;
+    padding-right: 180px;
 }
 
 .fullscreen-modal-title {
@@ -2999,6 +3006,10 @@ body.apple-light .nav-link.active i {
     border: 1px solid var(--bg-border);
     padding: 0.25rem 0.5rem;
     border-radius: 10px;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 5;
 }
 
 .fullscreen-nav-btn {
