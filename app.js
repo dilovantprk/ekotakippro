@@ -4082,19 +4082,20 @@ function openChartFullscreen(type) {
         titleEl.innerHTML = `<i class="fa-solid fa-book-bookmark" style="color:var(--accent-green);"></i> Karbon Defteri`;
         subtitleEl.textContent = `Türkiye sanayi ve holding emisyon sıralaması — 266 kurum`;
 
-        // Take over the entire modal body
+        // Take over the modal body for ledger mode with matching outer padding and card borders
         const modalBody = modal.querySelector('.fullscreen-modal-body');
         if (modalBody) {
             modalBody.setAttribute('data-ledger-original', modalBody.innerHTML);
-            modalBody.style.cssText = 'flex:1; overflow:hidden; display:flex; padding:0;';
+            modalBody.style.cssText = 'flex:1; overflow:hidden; display:flex; padding:1.25rem 1.5rem; gap:1.25rem;';
             modalBody.innerHTML = `
                 <div id="fsLedgerList" style="
-                    width:340px; min-width:260px; flex-shrink:0;
+                    width:360px; min-width:280px; flex-shrink:0;
                     overflow-y:auto;
-                    border-right:1px solid var(--bg-border);
-                    background:var(--bg-primary);
+                    border:1px solid var(--bg-border);
+                    border-radius:14px;
+                    background:var(--bg-secondary);
                 ">
-                    <div style="padding:0.75rem 1rem 0.5rem; border-bottom:1px solid var(--bg-border); position:sticky; top:0; background:var(--bg-primary); z-index:2;">
+                    <div style="padding:0.75rem 1rem 0.5rem; border-bottom:1px solid var(--bg-border); position:sticky; top:0; background:var(--bg-secondary); z-index:2;">
                         <div class="search-wrap" style="margin:0;">
                             <i class="fa-solid fa-magnifying-glass search-icon"></i>
                             <input type="text" id="fsLedgerSearch" class="search-input" placeholder="Kurum ara..." oninput="_filterFsLedger()" autocomplete="off" style="font-size:0.85rem;">
@@ -4105,7 +4106,9 @@ function openChartFullscreen(type) {
                 <div id="fsLedgerDetail" style="
                     flex:1; overflow-y:auto;
                     background:var(--bg-secondary);
-                    padding:2.5rem 3rem;
+                    border:1px solid var(--bg-border);
+                    border-radius:14px;
+                    padding:1.5rem 2rem;
                     display:flex; align-items:center; justify-content:center;
                 ">
                     <div style="text-align:center; color:var(--text-tertiary);">
