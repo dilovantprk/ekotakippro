@@ -459,16 +459,16 @@ body.modal-open .fab-bottom-right-btn {
 .theme-toggle-btn {
     width: 34px;
     height: 34px;
-    border-radius: 50%;
-    border: 1px solid var(--bg-border);
+    border-radius: 8px;
+    border: none;
     background: transparent;
     color: var(--text-primary);
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.95rem;
-    transition: transform 0.15s ease, background 0.15s ease;
+    font-size: 1.05rem;
+    transition: transform 0.15s ease, background 0.15s ease, color 0.15s ease;
 }
 
 .theme-toggle-btn:hover {
