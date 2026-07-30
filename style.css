@@ -26,10 +26,10 @@
     --pillar-catering: #6B8F71;
     --pillar-materials: #7C5295;
     
-    --glass-header: rgba(245, 241, 232, 0.88);
-    --glass-sheet-bg: #FDFBF5;
-    --glass-border-light: #E5DCC8;
-    --glass-shadow: 0 12px 32px rgba(43, 38, 32, 0.10);
+    --glass-header: rgba(255, 255, 255, 0.85);
+    --glass-sheet-bg: #FFFFFF;
+    --glass-border-light: rgba(0, 0, 0, 0.07);
+    --glass-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
     
     --font-apple: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", system-ui, sans-serif;
 }
