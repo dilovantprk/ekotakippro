@@ -791,31 +791,26 @@ body.modal-open .fab-bottom-right-btn {
 }
 
 @media (max-width: 768px) {
-    .pagination-bar {
-        display: grid;
-        grid-template-columns: 1fr auto;
-        grid-template-areas:
-            "controls controls"
-            "info select";
-        gap: 0.75rem 0.5rem;
-        padding: 0.85rem 1rem;
+    .pagination-bar,
+    .apple-pagination-bar {
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        padding: 0.85rem 1rem !important;
+        width: 100% !important;
     }
 
     .pagination-controls {
-        grid-area: controls;
-        justify-self: center;
-        margin-bottom: 0.1rem;
+        justify-content: center !important;
+        width: 100% !important;
+        margin: 0 !important;
     }
 
-    .pagination-info {
-        grid-area: info;
-        justify-self: start;
-        font-size: 0.8rem;
-    }
-
+    .pagination-info,
+    #paginationInfoText,
+    .pagination-per-page,
     .pag-select-wrap {
-        grid-area: select;
-        justify-self: end;
+        display: none !important;
     }
 }
 
