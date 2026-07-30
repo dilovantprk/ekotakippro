@@ -3338,12 +3338,6 @@ function openChartFullscreen(type) {
     const modal = document.getElementById('chartFullscreenModal');
     const titleEl = document.getElementById('fullscreenModalTitle');
     const subtitleEl = document.getElementById('fullscreenModalSubtitle');
-    const chartContainer = document.getElementById('fullscreenChartContainer');
-    const mapContainer = document.getElementById('fullscreenMapContainer');
-    const kpiGrid = document.getElementById('fullscreenKpiGrid');
-    const tableHead = document.getElementById('fullscreenTableHead');
-    const tableBody = document.getElementById('fullscreenTableBody');
-    const tableTitle = document.getElementById('fullscreenTableTitle');
     const navIndicator = document.getElementById('fullscreenNavIndicator');
 
     if (!modal) return;
@@ -3361,7 +3355,24 @@ function openChartFullscreen(type) {
     document.body.classList.add('modal-open');
     modal.style.display = 'flex';
 
-    // Reset containers
+    // If coming FROM ledger mode, restore the original modal body HTML first
+    // (ledger replaces the entire modal body, so standard element IDs are missing)
+    const modalBodyRestore = modal.querySelector('.fullscreen-modal-body');
+    if (modalBodyRestore && modalBodyRestore.getAttribute('data-ledger-original')) {
+        modalBodyRestore.innerHTML = modalBodyRestore.getAttribute('data-ledger-original');
+        modalBodyRestore.removeAttribute('data-ledger-original');
+        modalBodyRestore.style.cssText = '';
+    }
+
+    // Reset containers — these IDs now guaranteed to exist
+    const chartContainer = document.getElementById('fullscreenChartContainer');
+    const mapContainer = document.getElementById('fullscreenMapContainer');
+    const kpiGrid = document.getElementById('fullscreenKpiGrid');
+    const tableHead = document.getElementById('fullscreenTableHead');
+    const tableBody = document.getElementById('fullscreenTableBody');
+    const tableTitle = document.getElementById('fullscreenTableTitle');
+
+    if (!chartContainer || !mapContainer) return;
     chartContainer.style.display = 'block';
     mapContainer.style.display = 'none';
 
