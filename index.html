@@ -31,7 +31,7 @@
     <!-- Theme Sync IIFE -->
     <script>
         (function() {
-            var saved = localStorage.getItem('anz_theme') || 'dark';
+            var saved = localStorage.getItem('anz_theme') || 'light';
             var isDark = saved === 'dark';
             var root = document.documentElement;
             if (isDark) {
@@ -387,6 +387,7 @@
                     <div class="group-header-label">GÖRÜNÜM</div>
                     <div class="apple-group-box">
                         <div class="apple-row">
+                            <div class="settings-row-icon" style="background:#5856D6;"><i class="fa-solid fa-moon"></i></div>
                             <div class="row-left-text">
                                 <span class="row-title">Koyu Mod</span>
                             </div>
@@ -401,20 +402,23 @@
                     <div class="group-header-label">VERİ & DIŞA AKTARMA</div>
                     <div class="apple-group-box">
                         <a class="apple-row" href="https://climatetrace.org/downloads" target="_blank" rel="noopener noreferrer" style="text-decoration:none; color:inherit;">
+                            <div class="settings-row-icon" style="background:#007AFF;"><i class="fa-solid fa-earth-americas"></i></div>
                             <div class="row-left-text">
-                                <span class="row-title"><i class="fa-solid fa-arrow-up-right-from-square" style="color:var(--accent-indigo); margin-right:6px; font-size:0.85em;"></i>Climate TRACE Emisyon Verileri</span>
+                                <span class="row-title">Climate TRACE Emisyon Verileri</span>
                                 <span class="row-sub">Kaynak: climatetrace.org — Türkiye dahil tüm ülke verileri</span>
                             </div>
                             <i class="fa-solid fa-chevron-right list-item-chevron"></i>
                         </a>
                         <a class="apple-row" href="https://www.epa.gov/ghgemissions/global-greenhouse-gas-overview" target="_blank" rel="noopener noreferrer" style="text-decoration:none; color:inherit;">
+                            <div class="settings-row-icon" style="background:#34C759;"><i class="fa-solid fa-leaf"></i></div>
                             <div class="row-left-text">
-                                <span class="row-title"><i class="fa-solid fa-arrow-up-right-from-square" style="color:var(--accent-indigo); margin-right:6px; font-size:0.85em;"></i>EPA Küresel Sera Gazı Verileri</span>
+                                <span class="row-title">EPA Küresel Sera Gazı Verileri</span>
                                 <span class="row-sub">Kaynak: epa.gov — Sektörel emisyon veri seti</span>
                             </div>
                             <i class="fa-solid fa-chevron-right list-item-chevron"></i>
                         </a>
                         <div class="apple-row" onclick="exportEventsCSV()" role="button">
+                            <div class="settings-row-icon" style="background:#FF9500;"><i class="fa-solid fa-file-csv"></i></div>
                             <div class="row-left-text">
                                 <span class="row-title">Etkinlik Kayıtları (CSV)</span>
                                 <span class="row-sub">Kayıtlı etkinliklerinizi ve kişi başı emisyonları aktar</span>
@@ -422,10 +426,9 @@
                             <i class="fa-solid fa-chevron-right list-item-chevron"></i>
                         </div>
                         <div class="apple-row" onclick="resetAllDataToDefault()" role="button">
+                            <div class="settings-row-icon" style="background:#FF3B30;"><i class="fa-solid fa-triangle-exclamation"></i></div>
                             <div class="row-left-text">
-                                <span class="row-title" style="color:#DC2626; font-weight:700;">
-                                    <i class="fa-solid fa-triangle-exclamation" style="color:#DC2626; margin-right:6px;"></i> Etkinlik Kayıtlarını Sıfırla
-                                </span>
+                                <span class="row-title" style="color:#DC2626; font-weight:700;">Etkinlik Kayıtlarını Sıfırla</span>
                                 <span class="row-sub">Kayıtlı tüm etkinlik verilerini siler ve ilk örneklere sıfırlar</span>
                             </div>
                             <button type="button" class="settings-danger-action-btn" onclick="event.stopPropagation(); resetAllDataToDefault();">
@@ -438,6 +441,7 @@
                     <div class="group-header-label">BİLGİ & METODOLOJİ</div>
                     <div class="apple-group-box">
                         <div class="apple-row" onclick="openMethodologySubView()" role="button">
+                            <div class="settings-row-icon" style="background:#AF52DE;"><i class="fa-solid fa-calculator"></i></div>
                             <div class="row-left-text">
                                 <span class="row-title">Hesaplama Metodolojisi & Katsayılar</span>
                                 <span class="row-sub">GHG Protokolü, DEFRA ve IPCC katsayıları</span>
@@ -445,6 +449,7 @@
                             <i class="fa-solid fa-chevron-right list-item-chevron"></i>
                         </div>
                         <div class="apple-row" onclick="openKvkkModal()" role="button">
+                            <div class="settings-row-icon" style="background:#30B0C7;"><i class="fa-solid fa-shield-halved"></i></div>
                             <div class="row-left-text">
                                 <span class="row-title">KVKK & Veri Güvenliği</span>
                                 <span class="row-sub">%100 yerel işleme ve gizlilik politikası</span>
@@ -452,6 +457,7 @@
                             <i class="fa-solid fa-chevron-right list-item-chevron"></i>
                         </div>
                         <a href="https://ekotakippro.vercel.app" target="_blank" rel="noopener" class="apple-row" style="text-decoration:none;">
+                            <div class="settings-row-icon" style="background:#6366F1;"><i class="fa-solid fa-globe"></i></div>
                             <div class="row-left-text">
                                 <span class="row-title" style="color:var(--accent-indigo);">ekotakippro.vercel.app</span>
                                 <span class="row-sub">Platform Web Sitesi</span>

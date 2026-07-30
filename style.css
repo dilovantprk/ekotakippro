@@ -1164,6 +1164,20 @@ body.modal-open .fab-bottom-right-btn {
 
 .apple-row:last-child { border-bottom: none; }
 
+.settings-row-icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+    margin-right: 0.15rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
 .row-label { font-size: 0.95rem; flex-shrink: 0; }
 .row-left-text { display: flex; flex-direction: column; gap: 0.15rem; flex: 1; min-width: 0; }
 .row-title { font-size: 0.95rem; font-weight: 500; color: var(--text-primary); }

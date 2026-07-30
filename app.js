@@ -444,7 +444,7 @@ function getActiveTheme() {
     const saved = localStorage.getItem('anz_theme');
     if (saved) return saved;
     const root = document.documentElement;
-    return root.classList.contains('apple-light') ? 'light' : 'dark';
+    return root.classList.contains('apple-dark') ? 'dark' : 'light';
 }
 
 function applyTheme(themeName) {
@@ -3390,6 +3390,7 @@ function openChartFullscreen(type) {
         mapDomResetNode.innerHTML = '';
     }
 
+    const computedStyles = getComputedStyle(document.documentElement);
     const isLightMode = document.documentElement.classList.contains('apple-light');
     const labelColor = isLightMode ? '#2B2620' : (computedStyles.getPropertyValue('--text-primary').trim() || '#F4F5F6');
     const subLabelColor = isLightMode ? '#5C5344' : (computedStyles.getPropertyValue('--text-secondary').trim() || '#9AA0AA');
