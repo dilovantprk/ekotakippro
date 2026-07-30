@@ -1220,31 +1220,46 @@
 
             <!-- Modal Content Layout -->
             <div class="fullscreen-modal-body">
-                <!-- Sol / Üst Ana Grafik / Harita Alanı -->
+                <!-- Sol / Üst Ana Grafik / Harita / Defter Listesi Alanı -->
                 <div class="fullscreen-main-viz-wrap">
                     <div class="fullscreen-chart-box" id="fullscreenChartContainer">
                         <canvas id="fullscreenChartCanvas"></canvas>
                     </div>
                     <div id="fullscreenMapContainer" class="fullscreen-map-box" style="display:none;"></div>
+                    <div id="fullscreenLedgerContainer" class="fullscreen-ledger-box" style="display:none;">
+                        <div class="ledger-fs-search-wrap">
+                            <div class="search-wrap" style="margin:0;">
+                                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                                <input type="text" id="fsLedgerSearch" class="search-input" placeholder="Kurum ara (örn: Erdemir, TÜPRAŞ)..." oninput="_filterFsLedger()" autocomplete="off">
+                            </div>
+                        </div>
+                        <div id="fsLedgerRows" class="ledger-fs-rows-wrap"></div>
+                    </div>
                 </div>
 
                 <!-- Sağ / Alt Detay & İstatistik Paneli -->
                 <div class="fullscreen-details-side">
-                    <!-- Dinamik KPI kartları -->
-                    <div class="fullscreen-kpi-grid" id="fullscreenKpiGrid"></div>
+                    <!-- Standard Details Container (Items 1-4) -->
+                    <div id="fullscreenStandardDetails" style="display:flex; flex-direction:column; gap:1.25rem; height:100%;">
+                        <!-- Dinamik KPI kartları -->
+                        <div class="fullscreen-kpi-grid" id="fullscreenKpiGrid"></div>
 
-                    <!-- Detaylı Veri Tablosu / Analizler -->
-                    <div class="fullscreen-table-section">
-                        <div class="fullscreen-section-title" id="fullscreenTableTitle">
-                            <i class="fa-solid fa-table-list"></i> Detaylı Veri Kırılımı
-                        </div>
-                        <div class="fullscreen-table-wrap" id="fullscreenTableWrap">
-                            <table class="apple-table fullscreen-data-table">
-                                <thead id="fullscreenTableHead"></thead>
-                                <tbody id="fullscreenTableBody"></tbody>
-                            </table>
+                        <!-- Detaylı Veri Tablosu / Analizler -->
+                        <div class="fullscreen-table-section">
+                            <div class="fullscreen-section-title" id="fullscreenTableTitle">
+                                <i class="fa-solid fa-table-list"></i> Detaylı Veri Kırılımı
+                            </div>
+                            <div class="fullscreen-table-wrap" id="fullscreenTableWrap">
+                                <table class="apple-table fullscreen-data-table">
+                                    <thead id="fullscreenTableHead"></thead>
+                                    <tbody id="fullscreenTableBody"></tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
+
+                    <!-- Ledger Detail Container (Item 5) -->
+                    <div id="fullscreenLedgerDetail" class="fullscreen-ledger-detail-box" style="display:none;"></div>
                 </div>
             </div>
         </div>
