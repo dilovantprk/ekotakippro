@@ -1948,6 +1948,22 @@ function renderMacroCharts() {
             }
         };
 
+        const legendContainer = document.getElementById('gasDoughnutLegend');
+        if (legendContainer) {
+            if (isMobile) {
+                legendContainer.innerHTML = `
+                    <span class="legend-item"><span class="legend-dot" style="background:#6B8F71"></span>CO₂ (%72)</span>
+                    <span class="legend-item"><span class="legend-dot" style="background:#5B7C99"></span>CH₄ (%18)</span>
+                    <span class="legend-item"><span class="legend-dot" style="background:#7C5295"></span>N₂O (%7)</span>
+                    <span class="legend-item"><span class="legend-dot" style="background:#C2622D"></span>F-Gaz (%3)</span>
+                `;
+                legendContainer.style.display = 'flex';
+            } else {
+                legendContainer.innerHTML = '';
+                legendContainer.style.display = 'none';
+            }
+        }
+
         gasDoughnutChart = new Chart(ctxDoughnut, {
             type: 'doughnut',
             data: {
@@ -1965,19 +1981,19 @@ function renderMacroCharts() {
                 maintainAspectRatio: false,
                 cutout: isMobile ? '68%' : '72%',
                 layout: {
-                    padding: isMobile ? { top: 2, bottom: 4, left: 2, right: 2 } : { top: 6, bottom: 6, left: 6, right: 6 }
+                    padding: isMobile ? { top: 2, bottom: 2, left: 2, right: 2 } : { top: 6, bottom: 6, left: 6, right: 6 }
                 },
                 plugins: {
                     legend: {
-                        position: isMobile ? 'bottom' : 'right',
-                        align: isMobile ? 'center' : 'start',
+                        display: !isMobile,
+                        position: 'right',
                         labels: {
                             color: labelColor,
                             usePointStyle: true,
                             pointStyle: 'circle',
-                            boxWidth: 7,
-                            padding: isMobile ? 8 : 12,
-                            font: { size: isMobile ? 11 : 12, weight: '600' }
+                            boxWidth: 8,
+                            padding: 12,
+                            font: { size: 12, weight: '600' }
                         }
                     },
                     tooltip: {
