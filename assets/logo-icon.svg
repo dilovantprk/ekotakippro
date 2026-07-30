@@ -1,89 +1,29 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="100%" height="100%">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="100%" height="100%" fill="none">
   <defs>
-    <!-- Renk Gradyanları -->
-    <!-- 1. Çubuk (En Açık Yeşil) -->
-    <linearGradient id="bar1Grad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#CBEB45" />
-      <stop offset="100%" stop-color="#76C828" />
+    <linearGradient id="barGradA1" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0%" stop-color="#059669"/>
+      <stop offset="100%" stop-color="#10B981"/>
     </linearGradient>
-
-    <!-- 2. Çubuk (Orta Yeşil) -->
-    <linearGradient id="bar2Grad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#80D639" />
-      <stop offset="100%" stop-color="#22963B" />
+    <linearGradient id="barGradA2" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0%" stop-color="#10B981"/>
+      <stop offset="100%" stop-color="#34D399"/>
     </linearGradient>
-
-    <!-- 3. Çubuk (Koyu Yeşil) -->
-    <linearGradient id="bar3Grad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#3FA836" />
-      <stop offset="100%" stop-color="#116A2E" />
+    <linearGradient id="barGradA3" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0%" stop-color="#0D9488"/>
+      <stop offset="100%" stop-color="#2DD4BF"/>
     </linearGradient>
-
-    <!-- Ön Yaprak Gradyanı -->
-    <linearGradient id="leafGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#5CC83B" />
-      <stop offset="50%" stop-color="#24973B" />
-      <stop offset="100%" stop-color="#0E5728" />
+    <linearGradient id="swooshGrad" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0%" stop-color="#047857"/>
+      <stop offset="100%" stop-color="#10B981"/>
     </linearGradient>
-
-    <!-- Gölge Efekti (Derinlik için) -->
-    <filter id="shadow" x="-10%" y="-10%" width="130%" height="130%">
-      <feDropShadow dx="-2" dy="4" stdDeviation="4" flood-color="#000" flood-opacity="0.15" />
-    </filter>
   </defs>
 
-  <g transform="translate(10, 15)">
-    <!-- 1. Büyüme Çubuğu (Sol - Küçük) -->
-    <path d="M 125,240 
-             Q 125,230 135,230 
-             L 175,230 
-             Q 190,230 190,245 
-             L 190,360 
-             Q 160,365 125,360 Z" 
-          fill="url(#bar1Grad)" />
-    <!-- Sol Çubuk Yuvarlatılmış Sol Üst Detay -->
-    <path d="M 125,240 Q 125,230 135,230 L 140,230 Q 125,250 125,270 Z" fill="#D2F14C" opacity="0.8" />
+  <!-- 3 Rising Data Columns -->
+  <rect x="7" y="14" width="4.5" height="11" rx="2.25" fill="url(#barGradA1)"/>
+  <rect x="13.75" y="8" width="4.5" height="17" rx="2.25" fill="url(#barGradA2)"/>
+  <rect x="20.5" y="4" width="4.5" height="21" rx="2.25" fill="url(#barGradA3)"/>
 
-    <!-- 2. Büyüme Çubuğu (Orta) -->
-    <path d="M 205,190 
-             Q 205,180 215,180 
-             L 255,180 
-             Q 270,180 270,195 
-             L 270,320 
-             Q 230,340 205,310 Z" 
-          fill="url(#bar2Grad)" />
-    <!-- Orta Çubuk Üst Işık Detayı -->
-    <path d="M 205,190 Q 205,180 215,180 L 220,180 Q 205,200 205,220 Z" fill="#9AE347" opacity="0.8" />
-
-    <!-- 3. Büyüme Çubuğu (Sağ - Uzun) -->
-    <path d="M 285,135 
-             Q 285,125 295,125 
-             L 335,125 
-             Q 350,125 350,140 
-             L 350,250 
-             Q 310,280 285,250 Z" 
-          fill="url(#bar3Grad)" />
-    <!-- Sağ Çubuk Üst Işık Detayı -->
-    <path d="M 285,135 Q 285,125 295,125 L 300,125 Q 285,145 285,165 Z" fill="#58C43E" opacity="0.8" />
-
-    <!-- Ön Yaprak ve Kıvrımlı Gövde (Main Leaf) -->
-    <path d="M 180,420 
-             C 170,430 155,420 165,400 
-             C 185,360 210,310 250,270 
-             C 300,220 345,150 365,150 
-             C 365,150 380,220 375,270 
-             C 365,330 310,380 230,385 
-             C 200,387 185,405 180,420 Z" 
-          fill="url(#leafGrad)" 
-          filter="url(#shadow)" />
-
-    <!-- Yaprak Damarı / Beyaz Kavisli Çizgi -->
-    <path d="M 172,408 
-             C 200,350 240,290 290,235 
-             C 325,195 355,160 368,148 
-             C 360,170 330,220 285,268 
-             C 235,320 190,375 172,408 Z" 
-          fill="#FFFFFF" 
-          opacity="0.95" />
-  </g>
+  <!-- Leaf Swoosh Curve & Stem Wrapping Base -->
+  <path d="M6 28C6 28 8 20 14 20C19 20 25 17 28 8C28.5 15 26.5 24 20.5 27C15 29.5 6 28 6 28Z" fill="url(#swooshGrad)"/>
+  <path d="M6 28C6 28 9 24 11 20" stroke="#047857" stroke-width="2" stroke-linecap="round"/>
 </svg>
