@@ -2412,7 +2412,7 @@ function renderCompanyTabCockpit() {
                             <h3 class="card-title-text"><i class="fa-solid fa-map-location-dot" style="color: var(--accent-indigo);"></i> Tesis Konumları</h3>
                             <p class="card-subtitle">Uydulardan doğrulanmış fabrika ve santral lokasyonları</p>
                         </div>
-                        <button type="button" class="card-expand-btn" onclick="openChartFullscreen('companyMap')" title="Tam Ekran & Detaylar" aria-label="Büyüt">
+                        <button type="button" class="card-expand-btn" onclick="openChartFullscreen('turkeyMap')" title="Tam Ekran & Detaylar" aria-label="Büyüt">
                             <i class="fa-solid fa-expand"></i>
                         </button>
                     </div>
@@ -3032,8 +3032,13 @@ function openChartFullscreen(type) {
         fullscreenChartInstance = null;
     }
     if (fullscreenMapInstance) {
-        fullscreenMapInstance.remove();
+        try { fullscreenMapInstance.remove(); } catch(e){}
         fullscreenMapInstance = null;
+    }
+    const mapDomResetNode = document.getElementById('fullscreenMapContainer');
+    if (mapDomResetNode) {
+        mapDomResetNode._leaflet_id = null;
+        mapDomResetNode.innerHTML = '';
     }
 
     const isLightMode = document.documentElement.classList.contains('apple-light');
@@ -3406,11 +3411,8 @@ function getFacilityCity(fac) {
     return 'Sivas';
 }
 
-    } else if (type === 'turkeyMap' || type === 'companyMap') {
-        titleEl.innerHTML = type === 'turkeyMap' 
-            ? `<i class="fa-solid fa-map-location-dot" style="color: var(--accent-indigo);"></i> Türkiye Tesis Haritası (Tam Ekran)` 
-            : `<i class="fa-solid fa-map-location-dot" style="color: var(--accent-indigo);"></i> Kurum Tesis Konumları (Tam Ekran)`;
-        
+    } else if (type === 'turkeyMap') {
+        titleEl.innerHTML = `<i class="fa-solid fa-map-location-dot" style="color: var(--accent-indigo);"></i> Türkiye Tesis Haritası (Tam Ekran)`;
         subtitleEl.textContent = `Climate TRACE uydularıyla tespit edilen santral, fabrika ve sanayi lokasyonları`;
         tableTitle.innerHTML = `<i class="fa-solid fa-building-flag"></i> Haritada İncelemekte Olunan Tesisler`;
 
@@ -3418,12 +3420,7 @@ function getFacilityCity(fac) {
         mapContainer.style.display = 'block';
 
         const facilities = (globalDbData && globalDbData.facilities) || [];
-        const isCompanyMap = type === 'companyMap' && activeSelectedCompany;
-
         let filteredFacilities = [...facilities];
-        if (isCompanyMap) {
-            filteredFacilities = facilities.filter(f => f.company === activeSelectedCompany || (f.companies && f.companies.includes(activeSelectedCompany)));
-        }
 
         // Sort by emissions descending for table and top visibility
         filteredFacilities.sort((a, b) => (b.emissions_tonnes || 0) - (a.emissions_tonnes || 0));
@@ -3492,9 +3489,18 @@ function getFacilityCity(fac) {
             'İnşaat & Binalar': '#6B4E8F'
         };
 
-        // Initialize Leaflet Map in Fullscreen
+        // Initialize Leaflet Map in Fullscreen cleanly
         setTimeout(() => {
-            if (fullscreenMapInstance) fullscreenMapInstance.remove();
+            const mapDom = document.getElementById('fullscreenMapContainer');
+            if (mapDom) {
+                if (fullscreenMapInstance) {
+                    try { fullscreenMapInstance.remove(); } catch(e){}
+                    fullscreenMapInstance = null;
+                }
+                mapDom._leaflet_id = null;
+                mapDom.innerHTML = '';
+            }
+
             fullscreenMapInstance = L.map('fullscreenMapContainer', { zoomControl: false }).setView([39.0, 35.2], 6);
 
             const isDark = !document.documentElement.classList.contains('apple-light');
@@ -3566,8 +3572,13 @@ function closeChartFullscreen() {
         fullscreenChartInstance = null;
     }
     if (fullscreenMapInstance) {
-        fullscreenMapInstance.remove();
+        try { fullscreenMapInstance.remove(); } catch(e){}
         fullscreenMapInstance = null;
+    }
+    const mapDomNode = document.getElementById('fullscreenMapContainer');
+    if (mapDomNode) {
+        mapDomNode._leaflet_id = null;
+        mapDomNode.innerHTML = '';
     }
     currentFullscreenType = null;
 
