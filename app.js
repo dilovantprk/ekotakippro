@@ -2412,7 +2412,7 @@ function renderCompanyTabCockpit() {
                             <h3 class="card-title-text"><i class="fa-solid fa-map-location-dot" style="color: var(--accent-indigo);"></i> Tesis Konumları</h3>
                             <p class="card-subtitle">Uydulardan doğrulanmış fabrika ve santral lokasyonları</p>
                         </div>
-                        <button type="button" class="card-expand-btn" onclick="openChartFullscreen('turkeyMap')" title="Tam Ekran & Detaylar" aria-label="Büyüt">
+                        <button type="button" class="card-expand-btn" onclick="openCompanyMapFullscreen()" title="Tam Ekran & Detaylar" aria-label="Büyüt">
                             <i class="fa-solid fa-expand"></i>
                         </button>
                     </div>
@@ -2978,6 +2978,141 @@ function exportEventsCSV() {
    ========================================================================== */
 let fullscreenChartInstance = null;
 let fullscreenMapInstance = null;
+
+function openCompanyMapFullscreen() {
+    if (window.innerWidth <= 992) return;
+    if (!activeSelectedCompany || !globalDbData) return;
+
+    const company = globalDbData.companies.find(c => c.name === activeSelectedCompany);
+    if (!company) return;
+
+    const modal = document.getElementById('chartFullscreenModal');
+    if (!modal) return;
+
+    // Hide nav arrows — company map is a standalone view
+    const navGroup = modal.querySelector('.fullscreen-nav-group');
+    if (navGroup) navGroup.style.display = 'none';
+
+    document.body.classList.add('modal-open');
+    modal.style.display = 'flex';
+
+    // Set header texts
+    document.getElementById('fullscreenModalTitle').innerHTML =
+        `<i class="fa-solid fa-map-location-dot" style="color:var(--accent-indigo);"></i> ${escapeHtml(company.name)} — Tesis Haritası`;
+    document.getElementById('fullscreenModalSubtitle').textContent =
+        `${company.name} bünyesindeki uydu doğrulamalı fabrika ve santral lokasyonları`;
+    document.getElementById('fullscreenTableTitle').innerHTML =
+        `<i class="fa-solid fa-building-flag"></i> ${escapeHtml(company.name)} Tesisleri`;
+
+    // Switch to map view
+    document.getElementById('fullscreenChartContainer').style.display = 'none';
+    document.getElementById('fullscreenMapContainer').style.display = 'block';
+
+    // Match facilities
+    const compAssetsLower = (company.assets || []).map(a => a.toLowerCase().trim());
+    const matchedFacs = (globalDbData.facilities || []).filter(f =>
+        compAssetsLower.includes((f.name || '').toLowerCase().trim())
+    );
+    matchedFacs.sort((a, b) => (b.emissions_tonnes || 0) - (a.emissions_tonnes || 0));
+
+    // KPI cards
+    const totalEmissions = matchedFacs.reduce((s, f) => s + (f.emissions_tonnes || 0), 0);
+    const citiesCount = new Set(matchedFacs.map(f => getFacilityCity(f))).size;
+    const kpiGrid = document.getElementById('fullscreenKpiGrid');
+    kpiGrid.innerHTML = `
+        <div class="fullscreen-kpi-card">
+            <span class="fullscreen-kpi-label">Bağlı Tesis</span>
+            <span class="fullscreen-kpi-value" style="color:var(--accent-indigo);">${matchedFacs.length} Tesis</span>
+            <span class="fullscreen-kpi-sub">Uydu Tespiti Yapılmış</span>
+        </div>
+        <div class="fullscreen-kpi-card">
+            <span class="fullscreen-kpi-label">Toplam Emisyon</span>
+            <span class="fullscreen-kpi-value" style="color:var(--status-danger,#dc2626);">${(totalEmissions/1000000).toFixed(2)} Mt</span>
+            <span class="fullscreen-kpi-sub">CO₂e / Yıl</span>
+        </div>
+        <div class="fullscreen-kpi-card">
+            <span class="fullscreen-kpi-label">Kapsanan İller</span>
+            <span class="fullscreen-kpi-value">${citiesCount} İl</span>
+            <span class="fullscreen-kpi-sub">Coğrafi Dağılım</span>
+        </div>
+        <div class="fullscreen-kpi-card">
+            <span class="fullscreen-kpi-label">Doğrulama</span>
+            <span class="fullscreen-kpi-value" style="color:var(--status-success,#34c759);">IPCC Tier-3</span>
+            <span class="fullscreen-kpi-sub">Climate TRACE 2024/2025</span>
+        </div>
+    `;
+
+    // Table
+    document.getElementById('fullscreenTableHead').innerHTML = `
+        <tr><th>Tesis Adı</th><th>Sektör</th><th>Yıllık Emisyon</th><th>Konum</th></tr>
+    `;
+    document.getElementById('fullscreenTableBody').innerHTML = matchedFacs.map(f => {
+        const lon = f.lon || f.lng;
+        const city = getFacilityCity(f);
+        const emStr = (f.emissions_tonnes || 0) >= 1000000
+            ? ((f.emissions_tonnes || 0)/1000000).toFixed(2) + ' Mt CO₂e'
+            : (f.emissions_tonnes || 0).toLocaleString('tr-TR') + ' Ton CO₂e';
+        return `
+            <tr style="cursor:pointer;" onclick="focusFullscreenMapMarker(${f.lat}, ${lon}, '${escapeHtml(f.name)}')">
+                <td><strong><i class="fa-solid fa-location-dot" style="color:var(--accent-indigo); margin-right:4px;"></i>${escapeHtml(f.name)}</strong></td>
+                <td><span class="status-badge status-active">${escapeHtml(f.sector || 'Sanayi')}</span></td>
+                <td><strong>${emStr}</strong></td>
+                <td>${escapeHtml(city)}</td>
+            </tr>`;
+    }).join('');
+
+    // Render map
+    setTimeout(() => {
+        const mapDom = document.getElementById('fullscreenMapContainer');
+        if (mapDom) {
+            if (fullscreenMapInstance) {
+                try { fullscreenMapInstance.remove(); } catch(e){}
+                fullscreenMapInstance = null;
+            }
+            mapDom._leaflet_id = null;
+            mapDom.innerHTML = '';
+        }
+
+        const isDark = !document.documentElement.classList.contains('apple-light');
+        const tileUrl = isDark
+            ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
+            : 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
+
+        fullscreenMapInstance = L.map('fullscreenMapContainer', { zoomControl: false }).setView([39.0, 35.2], 6);
+        L.tileLayer(tileUrl, { attribution: '&copy; OpenStreetMap &copy; CARTO', maxZoom: 18 }).addTo(fullscreenMapInstance);
+        L.control.zoom({ position: 'topright' }).addTo(fullscreenMapInstance);
+
+        const bounds = [];
+        matchedFacs.forEach(fac => {
+            const lon = fac.lon || fac.lng;
+            if (!fac.lat || !lon) return;
+            bounds.push([fac.lat, lon]);
+            const radius = Math.min(Math.max((fac.emissions_tonnes || 500) / 100, 6), 16);
+            const marker = L.circleMarker([fac.lat, lon], {
+                radius, fillColor: '#6366f1', color: '#ffffff', weight: 2, opacity: 0.95, fillOpacity: 0.85
+            }).addTo(fullscreenMapInstance);
+
+            const city = getFacilityCity(fac);
+            const emStr = (fac.emissions_tonnes || 0).toLocaleString('tr-TR') + ' Ton CO₂e';
+            marker.bindPopup(`
+                <div style="font-family:system-ui; padding:4px; color:#1e293b;">
+                    <strong style="font-size:0.95rem;">${escapeHtml(fac.name)}</strong><br/>
+                    <span style="font-size:0.82rem;color:#555;">${escapeHtml(fac.sector || 'Sanayi')} • ${escapeHtml(city)}</span><br/>
+                    <span style="font-size:0.8rem;color:#6366f1;font-weight:600;">Emisyon: ${emStr}</span>
+                </div>
+            `);
+        });
+
+        if (bounds.length === 1) {
+            fullscreenMapInstance.setView(bounds[0], 9);
+        } else if (bounds.length > 1) {
+            fullscreenMapInstance.fitBounds(bounds, { padding: [40, 40] });
+        }
+
+        fullscreenMapInstance.invalidateSize();
+    }, 100);
+}
+
 let currentFullscreenType = null;
 
 const fullscreenChartList = ['lineChart', 'doughnutChart', 'barChart', 'turkeyMap'];
@@ -3055,6 +3190,10 @@ function openChartFullscreen(type) {
     if (navIndicator) {
         navIndicator.textContent = currentNavIdx >= 0 ? `${currentNavIdx + 1} / ${fullscreenChartList.length}` : `1 / 4`;
     }
+
+    // Hide/show nav group depending on context (company map hides it)
+    const navGroup = modal.querySelector('.fullscreen-nav-group');
+    if (navGroup) navGroup.style.display = '';
 
     document.body.classList.add('modal-open');
     modal.style.display = 'flex';
