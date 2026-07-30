@@ -7,6 +7,15 @@ let currentFlightClass = 'economy';
 let isNewWizardFlow = true;
 let activeEventId = null;
 
+// Global Error Boundary for Leaflet Unmounted DOM _leaflet_pos Race Conditions
+window.addEventListener('error', function(e) {
+    if (e && e.message && (e.message.includes('_leaflet_pos') || e.message.includes('reading \'_leaflet_pos\''))) {
+        if (e.stopImmediatePropagation) e.stopImmediatePropagation();
+        if (e.preventDefault) e.preventDefault();
+        return true;
+    }
+}, true);
+
 // Helper utilities for number safety & Turkish formatting
 function safeNum(val, defaultVal = 0, maxVal = 10000000) {
     const parsed = parseFloat(val);
@@ -1779,6 +1788,34 @@ let currentSubTab = 'overview';
 let companyTabMapInstance = null;
 let companyMapMarkers = [];
 
+function safeInvalidateSize(mapInstance, containerId) {
+    if (!mapInstance) return;
+    const container = typeof containerId === 'string' ? document.getElementById(containerId) : containerId;
+    if (container && container.offsetWidth > 0 && container.offsetHeight > 0) {
+        try {
+            mapInstance.invalidateSize();
+        } catch (e) {}
+    }
+}
+
+function destroyLeafletMap(mapInstance, containerId) {
+    if (mapInstance) {
+        try {
+            mapInstance.stop();
+            mapInstance.off();
+            mapInstance.remove();
+        } catch (e) {}
+    }
+    const container = typeof containerId === 'string' ? document.getElementById(containerId) : containerId;
+    if (container) {
+        try {
+            delete container._leaflet_id;
+            container._leaflet_id = null;
+        } catch (e) {}
+    }
+    return null;
+}
+
 function switchTab(tabId) {
     currentActiveTabId = tabId;
 
@@ -1807,11 +1844,12 @@ function switchTab(tabId) {
 
     if (tabId === 'macroTab') {
         setTimeout(() => {
-            if (leafletMap) leafletMap.invalidateSize();
+            if (leafletMap) safeInvalidateSize(leafletMap, 'turkeyMap');
             else initOrUpdateMap('ALL');
         }, 150);
     } else if (tabId === 'companyTab') {
         setTimeout(() => {
+            if (companyTabMapInstance) safeInvalidateSize(companyTabMapInstance, 'companyTabMap');
             if (!activeSelectedCompany && globalDbData && globalDbData.companies && globalDbData.companies.length > 0) {
                 selectActiveCompany(globalDbData.companies[0].name);
             } else if (activeSelectedCompany) {
@@ -2628,15 +2666,7 @@ function initOrUpdateCompanyTabMap(company) {
     if (!mapDiv || mapDiv.offsetWidth === 0 || mapDiv.offsetHeight === 0) return;
 
     if (companyTabMapInstance) {
-        try {
-            companyTabMapInstance.off();
-            companyTabMapInstance.remove();
-        } catch (e) {}
-        companyTabMapInstance = null;
-    }
-
-    if (mapDiv._leaflet_id) {
-        delete mapDiv._leaflet_id;
+        companyTabMapInstance = destroyLeafletMap(companyTabMapInstance, mapDiv);
     }
 
     const isLightMode = document.documentElement.classList.contains('apple-light') || document.body.classList.contains('apple-light') || (localStorage.getItem('anz_theme') === 'light');
@@ -3512,13 +3542,7 @@ function openChartFullscreen(type) {
         fullscreenChartInstance = null;
     }
     if (fullscreenMapInstance) {
-        try { fullscreenMapInstance.remove(); } catch(e){}
-        fullscreenMapInstance = null;
-    }
-    const mapDomResetNode = document.getElementById('fullscreenMapContainer');
-    if (mapDomResetNode) {
-        mapDomResetNode._leaflet_id = null;
-        mapDomResetNode.innerHTML = '';
+        fullscreenMapInstance = destroyLeafletMap(fullscreenMapInstance, 'fullscreenMapContainer');
     }
 
     const computedStyles = getComputedStyle(document.documentElement);
@@ -4238,13 +4262,7 @@ function closeChartFullscreen() {
         fullscreenChartInstance = null;
     }
     if (fullscreenMapInstance) {
-        try { fullscreenMapInstance.remove(); } catch(e){}
-        fullscreenMapInstance = null;
-    }
-    const mapDomNode = document.getElementById('fullscreenMapContainer');
-    if (mapDomNode) {
-        mapDomNode._leaflet_id = null;
-        mapDomNode.innerHTML = '';
+        fullscreenMapInstance = destroyLeafletMap(fullscreenMapInstance, 'fullscreenMapContainer');
     }
     currentFullscreenType = null;
 
