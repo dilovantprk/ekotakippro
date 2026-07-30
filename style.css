@@ -2013,22 +2013,32 @@ body.apple-light .nav-link.active i {
     font-weight: 700;
 }
 
-/* Mobile TabBar */
+/* Mobile TabBar - Apple iOS Frosted Glass Overhaul */
 .apple-tabbar {
     display: none;
     position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
-    height: calc(3.2rem + env(safe-area-inset-bottom));
+    height: calc(3.6rem + env(safe-area-inset-bottom));
     padding-bottom: env(safe-area-inset-bottom);
-    background: var(--glass-header);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-top: 1px solid var(--bg-border);
+    padding-top: 0.3rem;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(25px) saturate(180%);
+    -webkit-backdrop-filter: blur(25px) saturate(180%);
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.04);
     z-index: 99;
     justify-content: space-around;
     align-items: center;
+}
+
+html.apple-dark .apple-tabbar {
+    background: rgba(15, 17, 23, 0.85);
+    border-top-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
 }
 
 @media (max-width: 768px) {
@@ -2039,7 +2049,7 @@ body.apple-light .nav-link.active i {
         display: flex;
     }
     .main-content {
-        padding-bottom: calc(4.5rem + env(safe-area-inset-bottom));
+        padding-bottom: calc(4.8rem + env(safe-area-inset-bottom));
     }
 }
 
@@ -2048,24 +2058,42 @@ body.apple-light .nav-link.active i {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background: none;
+    background: transparent;
     border: none;
-    color: var(--text-tertiary);
+    color: var(--text-tertiary, #6b7280);
     font-size: 0.72rem;
-    gap: 0.2rem;
+    font-weight: 500;
+    gap: 0.25rem;
     cursor: pointer;
-    width: 33%;
-    padding: 0.3rem 0;
-    transition: color 0.2s ease;
+    flex: 1;
+    max-width: 110px;
+    padding: 0.4rem 0.6rem;
+    border-radius: 12px;
+    transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .tabbar-item i {
-    font-size: 1.1rem;
+    font-size: 1.15rem;
+    transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.tabbar-item:active {
+    transform: scale(0.94);
 }
 
 .tabbar-item.active {
-    color: var(--accent-indigo);
+    color: var(--accent-indigo, #6366f1);
     font-weight: 700;
+    background: rgba(99, 102, 241, 0.12);
+}
+
+html.apple-dark .tabbar-item.active {
+    background: rgba(99, 102, 241, 0.22);
+    color: #818cf8;
+}
+
+.tabbar-item.active i {
+    transform: scale(1.15);
 }
 
 /* Macro Layout Grid & Cards */
