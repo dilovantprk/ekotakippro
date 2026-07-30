@@ -2982,6 +2982,42 @@ let currentFullscreenType = null;
 
 const fullscreenChartList = ['lineChart', 'doughnutChart', 'barChart', 'turkeyMap'];
 
+function getFacilityCity(fac) {
+    if (!fac) return 'Türkiye';
+    if (fac.city) return fac.city;
+    if (fac.province && fac.province !== 'Türkiye') return fac.province;
+
+    const name = fac.name || '';
+    if (/istanbul|ist /i.test(name)) return 'İstanbul';
+    if (/ankara/i.test(name)) return 'Ankara';
+    if (/izmir/i.test(name)) return 'İzmir';
+    if (/zonguldak|zetes/i.test(name)) return 'Zonguldak';
+    if (/biga|canakkale/i.test(name)) return 'Çanakkale';
+    if (/iskenderun|sugozu|hatay/i.test(name)) return 'Hatay';
+    if (/afsin|elbistan|marasp/i.test(name)) return 'Kahramanmaraş';
+    if (/gurun|kangal|sivas/i.test(name)) return 'Sivas';
+    if (/erzurum|ispir|tekman|karayazi/i.test(name)) return 'Erzurum';
+    if (/pinarbasi|kayseri/i.test(name)) return 'Kayseri';
+    if (/adana/i.test(name)) return 'Adana';
+    if (/gaziantep/i.test(name)) return 'Gaziantep';
+    if (/konya/i.test(name)) return 'Konya';
+
+    const lat = fac.lat, lon = fac.lon || fac.lng;
+    if (lat && lon) {
+        if (lat > 40.5 && lon < 30.0) return 'İstanbul';
+        if (lat > 40.8 && lon > 31.0 && lon < 32.5) return 'Zonguldak';
+        if (lat > 39.5 && lat < 40.5 && lon > 32.0 && lon < 33.5) return 'Ankara';
+        if (lat > 38.0 && lat < 39.0 && lon > 26.5 && lon < 27.5) return 'İzmir';
+        if (lat > 40.0 && lat < 40.8 && lon > 26.0 && lon < 27.8) return 'Çanakkale';
+        if (lat > 36.3 && lat < 37.2 && lon > 35.5 && lon < 36.8) return 'Hatay';
+        if (lat > 38.0 && lat < 39.0 && lon > 36.5 && lon < 37.5) return 'Kahramanmaraş';
+        if (lat > 38.5 && lat < 39.5 && lon > 36.0 && lon < 38.0) return 'Sivas';
+        if (lat > 39.2 && lat < 40.8 && lon > 40.5 && lon < 42.5) return 'Erzurum';
+    }
+
+    return 'Sivas';
+}
+
 function navigateChartFullscreen(direction) {
     if (!currentFullscreenType) {
         openChartFullscreen(fullscreenChartList[0]);
@@ -3374,42 +3410,6 @@ function openChartFullscreen(type) {
                 }
             }
         });
-
-function getFacilityCity(fac) {
-    if (!fac) return 'Türkiye';
-    if (fac.city) return fac.city;
-    if (fac.province && fac.province !== 'Türkiye') return fac.province;
-    
-    const name = fac.name || '';
-    if (/istanbul|ist /i.test(name)) return 'İstanbul';
-    if (/ankara/i.test(name)) return 'Ankara';
-    if (/izmir/i.test(name)) return 'İzmir';
-    if (/zonguldak|zetes/i.test(name)) return 'Zonguldak';
-    if (/biga|canakkale/i.test(name)) return 'Çanakkale';
-    if (/iskenderun|sugozu|hatay/i.test(name)) return 'Hatay';
-    if (/afsin|elbistan|marasp/i.test(name)) return 'Kahramanmaraş';
-    if (/gurun|kangal|sivas/i.test(name)) return 'Sivas';
-    if (/erzurum|ispir|tekman|karayazi/i.test(name)) return 'Erzurum';
-    if (/pinarbasi|kayseri/i.test(name)) return 'Kayseri';
-    if (/adana/i.test(name)) return 'Adana';
-    if (/gaziantep/i.test(name)) return 'Gaziantep';
-    if (/konya/i.test(name)) return 'Konya';
-
-    const lat = fac.lat, lon = fac.lon || fac.lng;
-    if (lat && lon) {
-        if (lat > 40.5 && lon < 30.0) return 'İstanbul';
-        if (lat > 40.8 && lon > 31.0 && lon < 32.5) return 'Zonguldak';
-        if (lat > 39.5 && lat < 40.5 && lon > 32.0 && lon < 33.5) return 'Ankara';
-        if (lat > 38.0 && lat < 39.0 && lon > 26.5 && lon < 27.5) return 'İzmir';
-        if (lat > 40.0 && lat < 40.8 && lon > 26.0 && lon < 27.8) return 'Çanakkale';
-        if (lat > 36.3 && lat < 37.2 && lon > 35.5 && lon < 36.8) return 'Hatay';
-        if (lat > 38.0 && lat < 39.0 && lon > 36.5 && lon < 37.5) return 'Kahramanmaraş';
-        if (lat > 38.5 && lat < 39.5 && lon > 36.0 && lon < 38.0) return 'Sivas';
-        if (lat > 39.2 && lat < 40.8 && lon > 40.5 && lon < 42.5) return 'Erzurum';
-    }
-
-    return 'Sivas';
-}
 
     } else if (type === 'turkeyMap') {
         titleEl.innerHTML = `<i class="fa-solid fa-map-location-dot" style="color: var(--accent-indigo);"></i> Türkiye Tesis Haritası (Tam Ekran)`;
