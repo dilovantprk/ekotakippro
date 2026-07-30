@@ -2371,13 +2371,15 @@ body.modal-open .fab-bottom-right-btn {
 
 /* ==========================================================================
    STANDARDIZED MOBILE FULLSCREEN PICKER SHEET (iOS Apple HIG DARK)
+   =============================/* ==========================================================================
+   MOBILE PICKER & MODAL DIALOG STYLES (DYNAMIC APPLE LIGHT/DARK THEME)
    ========================================================================== */
 
 .mobile-picker-screen {
     position: fixed;
     inset: 0;
     z-index: 99999 !important;
-    background: #121316;
+    background: var(--bg-system);
     display: flex;
     flex-direction: column;
     opacity: 0;
@@ -2395,13 +2397,13 @@ body.modal-open .fab-bottom-right-btn {
     flex-direction: column;
     width: 100%;
     height: 100%;
-    background: #121316;
+    background: var(--bg-system);
     box-sizing: border-box;
 }
 
 @media (min-width: 769px) {
     .mobile-picker-screen {
-        background: rgba(0, 0, 0, 0.75) !important;
+        background: rgba(0, 0, 0, 0.5) !important;
         backdrop-filter: blur(14px) saturate(180%);
         -webkit-backdrop-filter: blur(14px) saturate(180%);
         align-items: center;
@@ -2415,9 +2417,9 @@ body.modal-open .fab-bottom-right-btn {
         height: 620px !important;
         max-height: 85vh !important;
         border-radius: 20px !important;
-        background: #1c1c1e !important;
-        border: 1px solid rgba(255, 255, 255, 0.12) !important;
-        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.7) !important;
+        background: var(--bg-grouped) !important;
+        border: 1px solid var(--bg-border) !important;
+        box-shadow: var(--glass-shadow) !important;
         overflow: hidden;
         transform: scale(0.95);
         transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
@@ -2434,15 +2436,15 @@ body.modal-open .fab-bottom-right-btn {
     justify-content: space-between;
     padding: 0 1rem;
     height: 54px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    background: #1c1c1e;
+    border-bottom: 1px solid var(--bg-border);
+    background: var(--bg-grouped);
     flex-shrink: 0;
 }
 
 .picker-title {
     font-size: 1.05rem;
     font-weight: 700;
-    color: #f3f4f6;
+    color: var(--text-primary);
     letter-spacing: -0.01em;
     text-align: center;
     flex: 1;
@@ -2455,7 +2457,7 @@ body.modal-open .fab-bottom-right-btn {
     gap: 0.35rem;
     background: none;
     border: none;
-    color: #98989d;
+    color: var(--text-tertiary);
     font-size: 0.95rem;
     font-weight: 600;
     cursor: pointer;
@@ -2464,14 +2466,14 @@ body.modal-open .fab-bottom-right-btn {
 }
 
 .picker-back-btn:hover {
-    color: #ffffff;
+    color: var(--text-primary);
 }
 
 .picker-search-wrap {
     position: relative;
     padding: 0.75rem 1rem;
     flex-shrink: 0;
-    background: #121316;
+    background: var(--bg-system);
 }
 
 .picker-search-icon {
@@ -2479,7 +2481,7 @@ body.modal-open .fab-bottom-right-btn {
     left: 1.85rem;
     top: 50%;
     transform: translateY(-50%);
-    color: #9ca3af;
+    color: var(--text-tertiary);
     font-size: 0.85rem;
     pointer-events: none;
 }
@@ -2488,16 +2490,16 @@ body.modal-open .fab-bottom-right-btn {
     width: 100%;
     padding: 0.7rem 0.9rem 0.7rem 2.4rem;
     border-radius: 10px;
-    background: #1c1c1e;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    color: #ffffff;
+    background: var(--bg-grouped);
+    border: 1px solid var(--bg-border);
+    color: var(--text-primary);
     font-size: 1rem;
     outline: none;
     box-sizing: border-box;
 }
 
 .picker-search-input:focus {
-    border-color: #6366f1;
+    border-color: var(--accent-indigo);
 }
 
 .picker-list {
@@ -2507,7 +2509,7 @@ body.modal-open .fab-bottom-right-btn {
     flex: 1;
     margin: 0;
     padding: 0 0 2rem;
-    background: #121316;
+    background: var(--bg-system);
 }
 
 .picker-list-item {
@@ -2516,25 +2518,25 @@ body.modal-open .fab-bottom-right-btn {
     justify-content: space-between;
     gap: 0.75rem;
     padding: 0.9rem 1.25rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    border-bottom: 1px solid var(--bg-border);
     cursor: pointer;
     transition: background 0.15s ease;
     font-size: 0.95rem;
-    color: #f3f4f6;
+    color: var(--text-primary);
 }
 
 .picker-list-item:hover, .picker-list-item:active {
-    background: #1c1c1e;
+    background: var(--bg-secondary);
 }
 
 .picker-list-item .item-sector {
     font-size: 0.78rem;
-    color: #9ca3af;
+    color: var(--text-secondary);
     flex-shrink: 0;
 }
 
 .picker-list-item .item-check {
-    color: #6366f1;
+    color: var(--accent-indigo);
     font-size: 0.95rem;
     display: none;
 }
@@ -2544,14 +2546,14 @@ body.modal-open .fab-bottom-right-btn {
 }
 
 /* ==========================================================================
-   COMPANY DETAIL MODAL STYLES (EXACT APPLE HIG DARK MATCHING IMAGE 2)
+   COMPANY DETAIL MODAL STYLES (DYNAMIC APPLE LIGHT/DARK THEME)
    ========================================================================== */
 
 .company-detail-modal-overlay {
     position: fixed;
     inset: 0;
     z-index: 99999 !important;
-    background: #121316;
+    background: var(--bg-system);
     display: flex;
     flex-direction: column;
 }
@@ -2561,13 +2563,13 @@ body.modal-open .fab-bottom-right-btn {
     flex-direction: column;
     width: 100vw;
     height: 100vh;
-    background: #121316;
+    background: var(--bg-system);
     box-sizing: border-box;
 }
 
 @media (min-width: 769px) {
     .company-detail-modal-overlay {
-        background: rgba(0, 0, 0, 0.75) !important;
+        background: rgba(0, 0, 0, 0.5) !important;
         backdrop-filter: blur(14px) saturate(180%);
         -webkit-backdrop-filter: blur(14px) saturate(180%);
         align-items: center;
@@ -2581,9 +2583,9 @@ body.modal-open .fab-bottom-right-btn {
         height: auto !important;
         max-height: 88vh !important;
         border-radius: 20px !important;
-        background: #1c1c1e !important;
-        border: 1px solid rgba(255, 255, 255, 0.12) !important;
-        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.7) !important;
+        background: var(--bg-grouped) !important;
+        border: 1px solid var(--bg-border) !important;
+        box-shadow: var(--glass-shadow) !important;
         overflow: hidden;
     }
 }
@@ -2594,15 +2596,15 @@ body.modal-open .fab-bottom-right-btn {
     justify-content: space-between;
     padding: 0 1rem;
     height: 54px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    background: #1c1c1e;
+    border-bottom: 1px solid var(--bg-border);
+    background: var(--bg-grouped);
     flex-shrink: 0;
 }
 
 .modal-close-txt-btn {
     background: none;
     border: none;
-    color: #98989d;
+    color: var(--text-tertiary);
     font-size: 0.95rem;
     font-weight: 600;
     cursor: pointer;
@@ -2611,7 +2613,7 @@ body.modal-open .fab-bottom-right-btn {
 }
 
 .modal-close-txt-btn:hover {
-    color: #ffffff;
+    color: var(--text-primary);
 }
 
 .modal-topbar-title-wrap {
@@ -2623,7 +2625,7 @@ body.modal-open .fab-bottom-right-btn {
 .modal-topbar-title {
     font-size: 0.95rem;
     font-weight: 700;
-    color: #f3f4f6;
+    color: var(--text-primary);
     display: block;
     white-space: nowrap;
     overflow: hidden;
@@ -2632,7 +2634,7 @@ body.modal-open .fab-bottom-right-btn {
 
 .modal-topbar-sub {
     font-size: 0.72rem;
-    color: #9ca3af;
+    color: var(--text-tertiary);
     display: block;
 }
 
@@ -2641,12 +2643,12 @@ body.modal-open .fab-bottom-right-btn {
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
     padding: 1rem;
-    background: #121316;
+    background: var(--bg-system);
 }
 
 .modal-hero-card {
-    background: #1c1c1e;
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: var(--bg-grouped);
+    border: 1px solid var(--bg-border);
     border-radius: 16px;
     padding: 1.5rem 1.2rem;
     text-align: center;
@@ -2656,7 +2658,7 @@ body.modal-open .fab-bottom-right-btn {
 .modal-hero-company-name {
     font-size: 1.35rem;
     font-weight: 800;
-    color: #ffffff;
+    color: var(--text-primary);
     margin: 0 0 0.75rem 0;
     letter-spacing: -0.02em;
     line-height: 1.25;
@@ -2665,7 +2667,7 @@ body.modal-open .fab-bottom-right-btn {
 .modal-hero-emission-val {
     font-size: 2.1rem;
     font-weight: 800;
-    color: #ffffff;
+    color: var(--text-primary);
     display: block;
     letter-spacing: -0.03em;
     line-height: 1.1;
@@ -2673,16 +2675,15 @@ body.modal-open .fab-bottom-right-btn {
 
 .modal-hero-emission-sub {
     font-size: 0.8rem;
-    color: #98989d;
+    color: var(--text-secondary);
     display: block;
     margin-top: 0.35rem;
 }
 
-
 .modal-section-caption {
     font-size: 0.72rem;
     font-weight: 700;
-    color: #6b7280;
+    color: var(--text-tertiary);
     letter-spacing: 0.04em;
     text-transform: uppercase;
     display: block;
@@ -2690,8 +2691,8 @@ body.modal-open .fab-bottom-right-btn {
 }
 
 .modal-scope-card {
-    background: #1c1c1e;
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: var(--bg-grouped);
+    border: 1px solid var(--bg-border);
     border-radius: 12px;
     padding: 0.85rem 1rem;
     display: flex;
@@ -2702,35 +2703,35 @@ body.modal-open .fab-bottom-right-btn {
 .scope-card-title {
     font-size: 0.9rem;
     display: block;
-    color: #f3f4f6;
+    color: var(--text-primary);
 }
 
 .scope-card-sub {
     font-size: 0.78rem;
-    color: #9ca3af;
+    color: var(--text-secondary);
 }
 
 .scope-card-val {
     font-weight: 700;
     font-size: 0.9rem;
-    color: #ffffff;
+    color: var(--text-primary);
 }
 
 .modal-info-box {
-    background: rgba(99, 102, 241, 0.12);
-    border: 1px solid rgba(99, 102, 241, 0.25);
+    background: var(--bg-secondary);
+    border: 1px solid var(--bg-border);
     border-radius: 12px;
     padding: 0.85rem 1rem;
     margin-bottom: 1rem;
     font-size: 0.8rem;
-    color: #d1d5db;
+    color: var(--text-secondary);
     display: flex;
     gap: 0.6rem;
     align-items: flex-start;
 }
 
 .info-box-icon {
-    color: #818cf8;
+    color: var(--accent-indigo);
     margin-top: 2px;
 }
 
@@ -2739,8 +2740,8 @@ body.modal-open .fab-bottom-right-btn {
     gap: 0.6rem;
     align-items: center;
     padding: 0.8rem 1rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
-    background: #121316;
+    border-top: 1px solid var(--bg-border);
+    background: var(--bg-grouped);
     flex-shrink: 0;
 }
 
@@ -2748,9 +2749,9 @@ body.modal-open .fab-bottom-right-btn {
     width: 42px;
     height: 42px;
     border-radius: 10px;
-    background: #1c1c1e;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    color: #f3f4f6;
+    background: var(--bg-secondary);
+    border: 1px solid var(--bg-border);
+    color: var(--text-primary);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -2773,16 +2774,16 @@ body.modal-open .fab-bottom-right-btn {
 }
 
 .modal-bottom-primary-btn {
-    background: linear-gradient(135deg, #6366f1, #4f46e5) !important;
+    background: var(--accent-indigo) !important;
     color: #ffffff !important;
     border: none !important;
-    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.35);
+    box-shadow: 0 4px 12px rgba(67, 56, 202, 0.25);
 }
 
 .modal-bottom-secondary-btn {
-    background: #1c1c1e !important;
-    color: #f3f4f6 !important;
-    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    background: var(--bg-secondary) !important;
+    color: var(--text-primary) !important;
+    border: 1px solid var(--bg-border) !important;
 }
 
 
