@@ -59,16 +59,16 @@ html.apple-light, body.apple-light {
 
 html.apple-light th, body.apple-light th,
 html.apple-light .apple-table th, body.apple-light .apple-table th {
-    color: #334155 !important;
+    color: var(--text-secondary) !important;
     font-weight: 700 !important;
 }
 
 html.apple-light .card-subtitle, body.apple-light .card-subtitle {
-    color: #475569 !important;
+    color: var(--text-tertiary) !important;
 }
 
 html.apple-light .group-header-label, body.apple-light .group-header-label {
-    color: #334155 !important;
+    color: var(--text-secondary) !important;
     font-weight: 800 !important;
 }
 

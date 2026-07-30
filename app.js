@@ -466,6 +466,11 @@ function applyTheme(themeName) {
 
     localStorage.setItem('anz_theme', isDark ? 'dark' : 'light');
 
+    const themeColorMeta = document.querySelector('meta[name="theme-color"]');
+    if (themeColorMeta) {
+        themeColorMeta.setAttribute('content', isDark ? '#0B0D0F' : '#F5F1E8');
+    }
+
     const switchToggle = document.getElementById('themeSwitchToggle');
     if (switchToggle) switchToggle.checked = isDark;
 
