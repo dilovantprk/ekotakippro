@@ -1919,11 +1919,13 @@ function renderMacroCharts() {
         });
     }
 
-    // 2. GAS DOUGHNUT CHART (Donut Center Text & Right Legend)
+    // 2. GAS DOUGHNUT CHART (Donut Center Text & Responsive 2x2 Mobile Legend)
     const canvasDoughnut = document.getElementById('gasDoughnutChart');
     if (canvasDoughnut) {
         const ctxDoughnut = canvasDoughnut.getContext('2d');
         if (gasDoughnutChart) gasDoughnutChart.destroy();
+
+        const isMobile = window.innerWidth <= 768;
 
         const donutCenterPlugin = {
             id: 'donutCenterText',
@@ -1935,13 +1937,13 @@ function renderMacroCharts() {
                 const centerX = left + width / 2;
                 const centerY = top + height / 2;
 
-                ctx.font = '700 15px -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif';
+                ctx.font = isMobile ? '700 14px -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif' : '700 15px -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif';
                 ctx.fillStyle = labelColor;
-                ctx.fillText('%100', centerX, centerY - 7);
+                ctx.fillText('%100', centerX, centerY - (isMobile ? 5 : 7));
 
-                ctx.font = '500 11px -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif';
+                ctx.font = isMobile ? '500 10px -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif' : '500 11px -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif';
                 ctx.fillStyle = subLabelColor;
-                ctx.fillText('Sera Gazı', centerX, centerY + 9);
+                ctx.fillText('Sera Gazı', centerX, centerY + (isMobile ? 7 : 9));
                 ctx.restore();
             }
         };
@@ -1961,20 +1963,21 @@ function renderMacroCharts() {
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                cutout: '72%',
+                cutout: isMobile ? '68%' : '72%',
                 layout: {
-                    padding: { top: 6, bottom: 6, left: 6, right: 6 }
+                    padding: isMobile ? { top: 2, bottom: 4, left: 2, right: 2 } : { top: 6, bottom: 6, left: 6, right: 6 }
                 },
                 plugins: {
                     legend: {
-                        position: 'right',
+                        position: isMobile ? 'bottom' : 'right',
+                        align: isMobile ? 'center' : 'start',
                         labels: {
                             color: labelColor,
                             usePointStyle: true,
                             pointStyle: 'circle',
-                            boxWidth: 8,
-                            padding: 12,
-                            font: { size: 12, weight: '600' }
+                            boxWidth: 7,
+                            padding: isMobile ? 8 : 12,
+                            font: { size: isMobile ? 11 : 12, weight: '600' }
                         }
                     },
                     tooltip: {
@@ -1987,11 +1990,13 @@ function renderMacroCharts() {
         });
     }
 
-    // 3. SECTOR BAR CHART (Bar-End Value Labels Plugin)
+    // 3. SECTOR BAR CHART (Bar-End Value Labels Plugin & Mobile Grace Protection)
     const canvasBar = document.getElementById('sectorBarChart');
     if (canvasBar) {
         const ctxBar = canvasBar.getContext('2d');
         if (sectorBarChart) sectorBarChart.destroy();
+
+        const isMobile = window.innerWidth <= 768;
 
         const sectorTranslations = {
             'power': 'Santraller & Elektrik',
@@ -2036,11 +2041,11 @@ function renderMacroCharts() {
                     const text = `${val} Mt (%${pct})`;
 
                     ctx.save();
-                    ctx.font = '600 11px -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif';
+                    ctx.font = isMobile ? '600 10px -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif' : '600 11px -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif';
                     ctx.fillStyle = subLabelColor;
                     ctx.textAlign = 'left';
                     ctx.textBaseline = 'middle';
-                    ctx.fillText(text, bar.x + 8, bar.y);
+                    ctx.fillText(text, bar.x + (isMobile ? 5 : 8), bar.y);
                     ctx.restore();
                 });
             }
@@ -2055,7 +2060,7 @@ function renderMacroCharts() {
                     data: sectorList.map(s => s.val),
                     backgroundColor: ['#5B7C99', '#6B8F71', '#C2622D', '#8FA8B8', '#7C5295', '#9C6B5A'],
                     borderRadius: 6,
-                    barThickness: 16
+                    barThickness: isMobile ? 13 : 16
                 }]
             },
             plugins: [barValuesPlugin],
@@ -2064,7 +2069,7 @@ function renderMacroCharts() {
                 responsive: true,
                 maintainAspectRatio: false,
                 layout: {
-                    padding: { right: 55, top: 4, bottom: 4 }
+                    padding: { right: isMobile ? 65 : 55, top: 4, bottom: 4 }
                 },
                 plugins: {
                     legend: { display: false },
@@ -2076,15 +2081,15 @@ function renderMacroCharts() {
                 },
                 scales: {
                     x: {
-                        grace: '25%',
+                        grace: isMobile ? '36%' : '25%',
                         ticks: { color: subLabelColor, font: { size: 10 } },
                         grid: { color: gridColor }
                     },
                     y: {
                         ticks: { 
                             color: labelColor, 
-                            font: { weight: '600', size: 11 },
-                            padding: 10,
+                            font: { weight: '600', size: isMobile ? 10 : 11 },
+                            padding: isMobile ? 6 : 10,
                             crossAlign: 'far'
                         },
                         grid: { display: false }
@@ -2104,8 +2109,15 @@ function initOrUpdateMap(sectorFilter = 'ALL') {
         ? 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png'
         : 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
 
+    const isMobile = window.innerWidth <= 768;
+
     if (!leafletMap) {
-        leafletMap = L.map('turkeyMap', { zoomControl: false }).setView([39.0, 35.2], 6);
+        leafletMap = L.map('turkeyMap', { 
+            zoomControl: false, 
+            dragging: !isMobile,
+            tap: !isMobile
+        }).setView([39.0, 35.2], 6);
+
         L.tileLayer(tileUrl, {
             attribution: '&copy; OpenStreetMap &copy; CARTO',
             maxZoom: 19
@@ -2113,6 +2125,12 @@ function initOrUpdateMap(sectorFilter = 'ALL') {
         
         L.control.zoom({ position: 'topright' }).addTo(leafletMap);
     } else {
+        if (isMobile) {
+            leafletMap.dragging.disable();
+        } else {
+            leafletMap.dragging.enable();
+        }
+
         leafletMap.eachLayer(layer => {
             if (layer instanceof L.TileLayer) {
                 leafletMap.removeLayer(layer);
@@ -2122,6 +2140,16 @@ function initOrUpdateMap(sectorFilter = 'ALL') {
             attribution: '&copy; OpenStreetMap &copy; CARTO',
             maxZoom: 19
         }).addTo(leafletMap);
+    }
+
+    // Add Mobile Hint Badge if on mobile screen
+    if (isMobile && !document.getElementById('mapMobileHint')) {
+        const hintEl = document.createElement('div');
+        hintEl.id = 'mapMobileHint';
+        hintEl.className = 'map-mobile-hint';
+        hintEl.innerHTML = `<i class="fa-solid fa-expand"></i> Tam ekranda gezinmek için dokunun`;
+        hintEl.onclick = function() { openChartFullscreen('turkeyMap'); };
+        mapDiv.appendChild(hintEl);
     }
 
     mapMarkers.forEach(m => leafletMap.removeLayer(m));
