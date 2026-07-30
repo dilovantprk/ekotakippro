@@ -3278,7 +3278,7 @@ function openCompanyMapFullscreen() {
 
 let currentFullscreenType = null;
 
-const fullscreenChartList = ['lineChart', 'doughnutChart', 'barChart', 'turkeyMap'];
+const fullscreenChartList = ['lineChart', 'doughnutChart', 'barChart', 'turkeyMap', 'ledger'];
 
 function getFacilityCity(fac) {
     if (!fac) return 'Türkiye';
@@ -3351,7 +3351,7 @@ function openChartFullscreen(type) {
     // Update indicator
     const currentNavIdx = fullscreenChartList.indexOf(type);
     if (navIndicator) {
-        navIndicator.textContent = currentNavIdx >= 0 ? `${currentNavIdx + 1} / ${fullscreenChartList.length}` : `1 / 4`;
+        navIndicator.textContent = currentNavIdx >= 0 ? `${currentNavIdx + 1} / ${fullscreenChartList.length}` : `1 / 5`;
     }
 
     // Hide/show nav group depending on context (company map hides it)
@@ -3851,8 +3851,51 @@ function openChartFullscreen(type) {
                 fullscreenMapInstance.fitBounds(bounds, { padding: [30, 30] });
             }
 
-            fullscreenMapInstance.invalidateSize();
+        fullscreenMapInstance.invalidateSize();
         }, 100);
+
+    } else if (type === 'ledger') {
+        titleEl.innerHTML = `<i class="fa-solid fa-book-bookmark" style="color:var(--accent-green);"></i> Karbon Defteri`;
+        subtitleEl.textContent = `Türkiye sanayi ve holding emisyon sıralaması — 266 kurum`;
+
+        // Take over the entire modal body
+        const modalBody = modal.querySelector('.fullscreen-modal-body');
+        if (modalBody) {
+            modalBody.setAttribute('data-ledger-original', modalBody.innerHTML);
+            modalBody.style.cssText = 'flex:1; overflow:hidden; display:flex; padding:0;';
+            modalBody.innerHTML = `
+                <div id="fsLedgerList" style="
+                    width:340px; min-width:260px; flex-shrink:0;
+                    overflow-y:auto;
+                    border-right:1px solid var(--bg-border);
+                    background:var(--bg-primary);
+                ">
+                    <div style="padding:0.75rem 1rem 0.5rem; border-bottom:1px solid var(--bg-border); position:sticky; top:0; background:var(--bg-primary); z-index:2;">
+                        <div class="search-wrap" style="margin:0;">
+                            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                            <input type="text" id="fsLedgerSearch" class="search-input" placeholder="Kurum ara..." oninput="_filterFsLedger()" autocomplete="off" style="font-size:0.85rem;">
+                        </div>
+                    </div>
+                    <div id="fsLedgerRows"></div>
+                </div>
+                <div id="fsLedgerDetail" style="
+                    flex:1; overflow-y:auto;
+                    background:var(--bg-secondary);
+                    padding:2.5rem 3rem;
+                    display:flex; align-items:center; justify-content:center;
+                ">
+                    <div style="text-align:center; color:var(--text-tertiary);">
+                        <i class="fa-solid fa-arrow-left" style="font-size:2rem; margin-bottom:0.75rem; display:block; opacity:0.4;"></i>
+                        <p style="font-size:0.95rem; font-weight:600;">Listeden bir kurum seçin</p>
+                    </div>
+                </div>`;
+        }
+
+        const allCompanies = [...(globalDbData?.companies || [])]
+            .sort((a, b) => b.est_co2e_annual - a.est_co2e_annual);
+        window._fsLedgerSelectedName = null;
+        window._fsLedgerAllCompanies = allCompanies;
+        _renderFsLedgerList(allCompanies);
     }
 }
 
@@ -3862,9 +3905,99 @@ function focusFullscreenMapMarker(lat, lng, name) {
     }
 }
 
+function _renderFsLedgerList(companies) {
+    const rows = document.getElementById('fsLedgerRows');
+    if (!rows) return;
+    rows.innerHTML = companies.map((c, idx) => {
+        const emStr = c.est_co2e_annual >= 1000000
+            ? (c.est_co2e_annual / 1000000).toFixed(2) + ' Mt'
+            : c.est_co2e_annual.toLocaleString('tr-TR') + ' t';
+        const isActive = c.name === window._fsLedgerSelectedName;
+        return `<div class="ledger-fs-row${isActive ? ' ledger-fs-row--active' : ''}" onclick="selectFsLedgerCompany('${escapeHtml(c.name).replace(/'/g, "\\'")}')">
+            <div class="ledger-fs-row-rank">${idx + 1}</div>
+            <div class="ledger-fs-row-info">
+                <div class="ledger-fs-row-name">${escapeHtml(c.name)}</div>
+                <div class="ledger-fs-row-sub">${escapeHtml((c.sectors || []).slice(0,2).join(' · '))}</div>
+            </div>
+            <div class="ledger-fs-row-em">${emStr}</div>
+        </div>`;
+    }).join('');
+}
+
+function _filterFsLedger() {
+    const q = (document.getElementById('fsLedgerSearch')?.value || '').toLowerCase().trim();
+    const filtered = (window._fsLedgerAllCompanies || []).filter(c =>
+        !q || c.name.toLowerCase().includes(q) || (c.sectors || []).some(s => s.toLowerCase().includes(q))
+    );
+    _renderFsLedgerList(filtered);
+}
+
+function selectFsLedgerCompany(companyName) {
+    if (!globalDbData || !globalDbData.companies) return;
+    const company = globalDbData.companies.find(c => c.name === companyName);
+    if (!company) return;
+    window._fsLedgerSelectedName = companyName;
+    _filterFsLedger();
+
+    const totalEmissions = company.est_co2e_annual || 0;
+    const totalStr = totalEmissions >= 1000000
+        ? (totalEmissions / 1000000).toFixed(2) + ' Mt CO₂e'
+        : totalEmissions.toLocaleString('tr-TR') + ' t CO₂e';
+    const fmt = v => v >= 1000000 ? (v/1000000).toFixed(2)+' Mt' : v.toLocaleString('tr-TR',{maximumFractionDigits:2})+' t';
+    const s1 = totalEmissions * 0.22, s2 = totalEmissions * 0.35, s3 = totalEmissions * 0.43;
+
+    const assetsHtml = (company.assets && company.assets.length > 0)
+        ? company.assets.slice(0,6).map((a,i) => `
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:0.5rem 0;border-bottom:${i < Math.min(company.assets.length,6)-1?'1px solid var(--bg-border)':'none'};">
+                <span style="font-size:0.875rem;font-weight:600;color:var(--text-primary);">${i+1}. ${escapeHtml(a)}</span>
+                <span style="font-size:0.8rem;color:var(--text-secondary);flex-shrink:0;margin-left:1rem;">${fmt(totalEmissions/company.assets.length)}</span>
+            </div>`).join('')
+        : `<p style="font-size:0.82rem;color:var(--text-secondary);">Kayıtlı tesis bulunamadı.</p>`;
+
+    const detail = document.getElementById('fsLedgerDetail');
+    if (!detail) return;
+    detail.style.alignItems = 'flex-start';
+    detail.style.justifyContent = 'flex-start';
+    detail.innerHTML = `
+        <div style="max-width:580px;width:100%;">
+            <div class="modal-hero-card" style="margin-bottom:1.25rem;">
+                <h2 class="modal-hero-company-name">${escapeHtml(company.name)}</h2>
+                <div class="modal-hero-emission-wrap">
+                    <span class="modal-hero-emission-val">${totalStr}</span>
+                    <span class="modal-hero-emission-sub">CO₂e Toplam Karbon Ayak İzi</span>
+                </div>
+            </div>
+
+            <div style="font-size:0.7rem;font-weight:700;letter-spacing:.07em;color:var(--text-tertiary);text-transform:uppercase;margin-bottom:0.5rem;">TESİSLER</div>
+            <div class="modal-scope-card" style="flex-direction:column;align-items:stretch;margin-bottom:1.25rem;padding:0.85rem 1rem;">${assetsHtml}</div>
+
+            <div style="font-size:0.7rem;font-weight:700;letter-spacing:.07em;color:var(--text-tertiary);text-transform:uppercase;margin-bottom:0.5rem;">KAPSAM DAĞILIMI</div>
+            <div style="display:flex;flex-direction:column;gap:0.55rem;margin-bottom:1.25rem;">
+                <div class="modal-scope-card"><div><strong class="scope-card-title">Scope 1 (Doğrudan)</strong><span class="scope-card-sub">Tesis içi yakıt ve jeneratör</span></div><span class="scope-card-val">${fmt(s1)} (%22)</span></div>
+                <div class="modal-scope-card"><div><strong class="scope-card-title">Scope 2 (Enerji)</strong><span class="scope-card-sub">Satın alınan şebeke elektriği</span></div><span class="scope-card-val">${fmt(s2)} (%35)</span></div>
+                <div class="modal-scope-card"><div><strong class="scope-card-title">Scope 3 (Tedarik Zinciri)</strong><span class="scope-card-sub">Değer zinciri emisyonu</span></div><span class="scope-card-val">${fmt(s3)} (%43)</span></div>
+            </div>
+
+            <div class="modal-info-box">
+                <i class="fa-solid fa-circle-info info-box-icon"></i>
+                <div><strong>Taksonomi Notu:</strong> Emisyon kırılımları Climate TRACE uydu gözlemleri, ISO 14064-1 ve GHG Protokolü Scope 1-3 faktörlerine göre hesaplanmıştır.</div>
+            </div>
+        </div>`;
+}
+
 function closeChartFullscreen() {
     const modal = document.getElementById('chartFullscreenModal');
     if (!modal) return;
+
+    // If ledger view, restore modal body HTML first
+    if (currentFullscreenType === 'ledger') {
+        const modalBody = modal.querySelector('.fullscreen-modal-body');
+        if (modalBody && modalBody.getAttribute('data-ledger-original')) {
+            modalBody.innerHTML = modalBody.getAttribute('data-ledger-original');
+            modalBody.removeAttribute('data-ledger-original');
+            modalBody.style.cssText = '';
+        }
+    }
 
     modal.style.display = 'none';
     document.body.classList.remove('modal-open');
