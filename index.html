@@ -420,10 +420,14 @@
                         </div>
                         <div class="apple-row" onclick="resetAllDataToDefault()" role="button">
                             <div class="row-left-text">
-                                <span class="row-title" style="color:var(--status-danger);">Etkinlik Kayıtlarını Sıfırla</span>
-                                <span class="row-sub">Oluşturulan etkinlikleri silip varsayılan örneklere dön</span>
+                                <span class="row-title" style="color:#DC2626; font-weight:700;">
+                                    <i class="fa-solid fa-triangle-exclamation" style="color:#DC2626; margin-right:6px;"></i> Etkinlik Kayıtlarını Sıfırla
+                                </span>
+                                <span class="row-sub">Kayıtlı tüm etkinlik verilerini siler ve ilk örneklere sıfırlar</span>
                             </div>
-                            <i class="fa-solid fa-rotate-left list-item-chevron" style="color:var(--status-danger);"></i>
+                            <button type="button" class="settings-danger-action-btn" onclick="event.stopPropagation(); resetAllDataToDefault();">
+                                <i class="fa-solid fa-rotate-left"></i> Sıfırla
+                            </button>
                         </div>
                     </div>
 

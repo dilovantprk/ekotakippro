@@ -975,6 +975,32 @@ body.modal-open .fab-bottom-right-btn {
 }
 .settings-dev-footer:hover { opacity: 1; }
 
+.settings-danger-action-btn {
+    padding: 0.35rem 0.75rem;
+    border-radius: 8px;
+    border: 1px solid rgba(220, 38, 38, 0.3);
+    background: rgba(220, 38, 38, 0.08);
+    color: #DC2626;
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+}
+
+.settings-danger-action-btn:hover {
+    background: #DC2626;
+    color: #FFFFFF;
+    border-color: #DC2626;
+}
+
+.settings-danger-action-btn:active {
+    transform: scale(0.96);
+}
+
 @media (min-width: 769px) {
     .settings-sheet-overlay {
         background: rgba(0, 0, 0, 0.65);
