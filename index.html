@@ -364,7 +364,7 @@
     <div class="settings-sheet-overlay" id="settingsSheetModal" style="display:none;" role="dialog" aria-modal="true">
         <div class="settings-sheet-container">
             
-            <!-- Settings Header (Consistent Green Leaf Brand Logo) -->
+            <!-- Settings Header -->
             <div class="nav-bar-header" id="settingsMainHeader">
                 <button type="button" class="nav-bar-left-btn" id="settingsNavBackBtn" onclick="closeSettingsSheet()">
                     <i class="fa-solid fa-chevron-left"></i>
@@ -378,15 +378,14 @@
                 
                 <!-- Main Settings View -->
                 <div id="settingsMainView">
-                    <h1 class="settings-large-title">Ayarlar & Platform Bilgisi</h1>
+                    <h1 class="settings-large-title">Ayarlar</h1>
 
                     <!-- 1. APPEARANCE -->
-                    <div class="group-header-label">GÖRÜNÜM & TEMA</div>
+                    <div class="group-header-label">GÖRÜNÜM</div>
                     <div class="apple-group-box">
                         <div class="apple-row">
                             <div class="row-left-text">
                                 <span class="row-title">Koyu Mod</span>
-                                <span class="row-sub">Karanlık sistem arayüzü</span>
                             </div>
                             <label class="apple-switch">
                                 <input type="checkbox" id="themeSwitchToggle" onchange="toggleThemeFromSwitch(this.checked)">
@@ -395,19 +394,27 @@
                         </div>
                     </div>
 
-                    <!-- 2. EVENTS PAGE SPECIFIC SETTINGS -->
-                    <div class="group-header-label">ETKİNLİKLER SAYFASI AYARLARI</div>
+                    <!-- 2. DATA & EXPORT -->
+                    <div class="group-header-label">VERİ & DIŞA AKTARMA</div>
                     <div class="apple-group-box">
-                        <div class="apple-row" style="cursor:default;">
+                        <div class="apple-row" onclick="exportDeclarationsCSV()" role="button">
                             <div class="row-left-text">
-                                <span class="row-title">Scope 1-3 Hesaplama Motoru</span>
-                                <span class="row-sub">Konaklama, ulaşım, lojistik ve atık emisyon katsayıları</span>
+                                <span class="row-title">Kurumsal Emisyon Verileri (CSV)</span>
+                                <span class="row-sub">266 Şirket, 472 tesis ve beyanname kayıtları</span>
                             </div>
+                            <i class="fa-solid fa-chevron-right list-item-chevron"></i>
+                        </div>
+                        <div class="apple-row" onclick="exportDeclarationsJSON()" role="button">
+                            <div class="row-left-text">
+                                <span class="row-title">Veritabanı Yedeği (JSON)</span>
+                                <span class="row-sub">Tüm sanayi verilerini tam yedekleme formatında indir</span>
+                            </div>
+                            <i class="fa-solid fa-chevron-right list-item-chevron"></i>
                         </div>
                         <div class="apple-row" onclick="exportEventsCSV()" role="button">
                             <div class="row-left-text">
-                                <span class="row-title">Etkinlik Hesaplamaları Excel (CSV)</span>
-                                <span class="row-sub">Kayıtlı etkinliklerinizi ve kişi başı emisyonları CSV olarak indir</span>
+                                <span class="row-title">Etkinlik Kayıtları (CSV)</span>
+                                <span class="row-sub">Kayıtlı etkinliklerinizi ve kişi başı emisyonları aktar</span>
                             </div>
                             <i class="fa-solid fa-chevron-right list-item-chevron"></i>
                         </div>
@@ -420,107 +427,64 @@
                         </div>
                     </div>
 
-                    <!-- 3. COMPANY & MACRO CLIMATE DATABASE -->
-                    <div class="group-header-label">ŞİRKETİM & TÜRKİYE İKLİM VERİTABANI</div>
-                    <div class="apple-group-box">
-                        <div class="apple-row" style="cursor:default;">
-                            <div class="row-left-text">
-                                <span class="row-title">Sanayi & Holding Veritabanı</span>
-                                <span class="row-sub">Türkiye genelinde 266 Sanayi Kuruluşu ve 472 Tesis Yerleşkesi</span>
-                            </div>
-                        </div>
-                        <div class="apple-row" style="cursor:default;">
-                            <div class="row-left-text">
-                                <span class="row-title">Uydu Gözlem & Doğrulama</span>
-                                <span class="row-sub">Climate TRACE uyduları, IPCC 2024 ve ISO 14064-1 faktörleri</span>
-                            </div>
-                        </div>
-                        <div class="apple-row" style="cursor:default;">
-                            <div class="row-left-text">
-                                <span class="row-title">Raporlama Standartları</span>
-                                <span class="row-sub">TCFD Finansal Açıklamalar, CDP Anketi & ISSB IFRS S2</span>
-                            </div>
-                        </div>
-                        <div class="apple-row" onclick="exportDeclarationsCSV()" role="button">
-                            <div class="row-left-text">
-                                <span class="row-title">Kurumsal Verileri Dışa Aktar (CSV)</span>
-                                <span class="row-sub">266 Şirket emisyonları, tesis verileri ve beyannameleri CSV indir</span>
-                            </div>
-                            <i class="fa-solid fa-chevron-right list-item-chevron"></i>
-                        </div>
-                        <div class="apple-row" onclick="exportDeclarationsJSON()" role="button">
-                            <div class="row-left-text">
-                                <span class="row-title">Veri Yedekleme (JSON)</span>
-                                <span class="row-sub">Tüm veritabanını ve beyannameleri yedekleme formatında indir</span>
-                            </div>
-                            <i class="fa-solid fa-chevron-right list-item-chevron"></i>
-                        </div>
-                    </div>
-
-                    <!-- 4. ABOUT & METHODOLOGY -->
-                    <div class="group-header-label">HAKKINDA & METODOLOJİ</div>
+                    <!-- 3. ABOUT & METHODOLOGY -->
+                    <div class="group-header-label">BİLGİ & METODOLOJİ</div>
                     <div class="apple-group-box">
                         <div class="apple-row" onclick="openMethodologySubView()" role="button">
                             <div class="row-left-text">
-                                <span class="row-title">Hesaplama Metodolojisi & Kaynaklar</span>
-                                <span class="row-sub">Climate TRACE, IPCC EF2024, GHG Protokolü Scope 1-3 formülleri</span>
+                                <span class="row-title">Hesaplama Metodolojisi & Katsayılar</span>
+                                <span class="row-sub">GHG Protokolü, DEFRA ve IPCC katsayıları</span>
                             </div>
                             <i class="fa-solid fa-chevron-right list-item-chevron"></i>
                         </div>
                         <div class="apple-row" onclick="openKvkkModal()" role="button">
                             <div class="row-left-text">
-                                <span class="row-title">Gizlilik & KVKK Güvenliği</span>
-                                <span class="row-sub">%100 Yerel işleme — Verileriniz sadece cihazınızda saklanır</span>
+                                <span class="row-title">KVKK & Veri Güvenliği</span>
+                                <span class="row-sub">%100 yerel işleme ve gizlilik politikası</span>
                             </div>
                             <i class="fa-solid fa-chevron-right list-item-chevron"></i>
                         </div>
                         <a href="https://ekotakippro.vercel.app" target="_blank" rel="noopener" class="apple-row" style="text-decoration:none;">
                             <div class="row-left-text">
                                 <span class="row-title" style="color:var(--accent-indigo);">ekotakippro.vercel.app</span>
-                                <span class="row-sub">Resmi Eko Takip pro Platformu</span>
+                                <span class="row-sub">Platform Web Sitesi</span>
                             </div>
                             <i class="fa-solid fa-arrow-up-right-from-square list-item-chevron" style="color:var(--accent-indigo);"></i>
                         </a>
                     </div>
 
-                    <!-- Transparency Note Box -->
-                    <div class="settings-disclaimer-box">
-                        <i class="fa-solid fa-shield-halved"></i>
-                        <p><strong>Eko Takip pro Platformu:</strong> Türkiye genelindeki 266 büyük sanayi kuruluşu ve holdingin sera gazı emisyonlarını, uydulardan doğrulanmış tesis lokasyonlarını ve kurumsal iklim beyannamelerini (TCFD, CDP, ISSB S2) analiz etmek amacıyla geliştirilmiştir. Tüm hesaplamalar GHG Protokolü (Scope 1-3) standartlarına ve Climate TRACE verilerine dayanır. Verileriniz %100 yerel tarayıcınızda işlenir.</p>
-                    </div>
-
-                    <!-- Developer Attribution -->
+                    <!-- Developer Attribution Footer -->
                     <a href="https://dilovantprk.github.io/" target="_blank" rel="noopener" class="settings-dev-footer">
                         Geliştirici: Dilovan Toprak <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.7rem;"></i>
                     </a>
                 </div>
 
-                <!-- KVKK Sub View (Apple HIG Settings Sub-Page) -->
+                <!-- KVKK Sub View -->
                 <div id="settingsKvkkSubView" style="display:none;">
                     <h1 class="settings-large-title">KVKK & Veri Güvenliği</h1>
 
-                    <div class="group-header-label">GİZLİLİK</div>
+                    <div class="group-header-label">GİZLİLİK İLKELERİ</div>
                     <div class="apple-group-box">
                         <div class="apple-row" style="flex-direction:column; align-items:flex-start; gap:0.3rem; padding: 1.1rem;">
-                            <span class="row-title" style="font-weight:600; color:var(--text-primary);">1. Kişisel Verisizlik Politikası (Zero-PII)</span>
-                            <span class="row-sub" style="line-height:1.5; color:var(--text-secondary);">Uygulamada T.C. Kimlik No, Ad-Soyad, e-posta veya finansal kişisel veri toplanmaz, istenmez ve işlenmez.</span>
+                            <span class="row-title" style="font-weight:600; color:var(--text-primary);">1. Sıfır Kişisel Veri (Zero-PII)</span>
+                            <span class="row-sub" style="line-height:1.5; color:var(--text-secondary);">T.C. Kimlik No, Ad-Soyad, e-posta veya kişisel veri toplanmaz, işlenmez.</span>
                         </div>
                         <div class="apple-row" style="flex-direction:column; align-items:flex-start; gap:0.3rem; padding: 1.1rem;">
-                            <span class="row-title" style="font-weight:600; color:var(--text-primary);">2. Yerel Cihaz İçi Depolama (Local Edge Privacy)</span>
-                            <span class="row-sub" style="line-height:1.5; color:var(--text-secondary);">Girilen etkinlik operasyonel parametreleri harici sunucu veritabanlarında saklanmaz, yalnızca kendi tarayıcınızda (localStorage) tutulur.</span>
+                            <span class="row-title" style="font-weight:600; color:var(--text-primary);">2. Cihaz İçi Yerel Depolama (Local Storage)</span>
+                            <span class="row-sub" style="line-height:1.5; color:var(--text-secondary);">Girilen veriler sunucuda tutulmaz, yalnızca cihazınızda yerel olarak saklanır.</span>
                         </div>
                         <div class="apple-row" style="flex-direction:column; align-items:flex-start; gap:0.3rem; padding: 1.1rem;">
                             <span class="row-title" style="font-weight:600; color:var(--text-primary);">3. Çerez & Takipçi Yoktur</span>
-                            <span class="row-sub" style="line-height:1.5; color:var(--text-secondary);">Sitede 3. taraf reklam veya kullanıcı davranışı takip çerezleri (cookies) barındırılmaz.</span>
+                            <span class="row-sub" style="line-height:1.5; color:var(--text-secondary);">Platformda reklam veya davranış takip çerezleri barındırılmaz.</span>
                         </div>
                         <div class="apple-row" style="flex-direction:column; align-items:flex-start; gap:0.3rem; padding: 1.1rem;">
-                            <span class="row-title" style="font-weight:600; color:var(--text-primary);">4. SSL / TLS 1.3 Şifreleme</span>
-                            <span class="row-sub" style="line-height:1.5; color:var(--text-secondary);">Tüm ağ iletişimleri 256-bit TLS 1.3 şifreli kanallar üzerinden gerçekleşir.</span>
+                            <span class="row-title" style="font-weight:600; color:var(--text-primary);">4. TLS 1.3 Şifreleme</span>
+                            <span class="row-sub" style="line-height:1.5; color:var(--text-secondary);">Tüm ağ iletimleri 256-bit TLS şifreli kanallar üzerinden gerçekleşir.</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Methodology Sub View (Apple HIG Settings Sub-Page) -->
+                <!-- Methodology Sub View -->
                 <div id="settingsMethodologySubView" style="display:none;">
                     <h1 class="settings-large-title">Metodoloji & Katsayılar</h1>
 
@@ -529,7 +493,7 @@
                         <div class="apple-row">
                             <div class="row-left-text">
                                 <span class="row-title">GHG Protokolü (Scope 1, 2, 3)</span>
-                                <span class="row-sub">Emisyon (kg CO₂e) = Aktivite Miktarı × Emisyon Faktörü</span>
+                                <span class="row-sub">Emisyon (kg CO₂e) = Miktar × Emisyon Faktörü</span>
                             </div>
                         </div>
                     </div>
@@ -538,10 +502,10 @@
                     <div class="apple-group-box">
                         <div class="apple-row">
                             <span class="row-label">Uçuş (Hava Yolu)</span>
-                            <span class="row-val-bold">0,14 kg CO₂e / km (Biz: 1.5x Kısa / 2.9x Uzun)</span>
+                            <span class="row-val-bold">0,14 kg CO₂e / km</span>
                         </div>
                         <div class="apple-row">
-                            <span class="row-label">Ulaşım (Transfer)</span>
+                            <span class="row-label">Şehir İçi Transfer</span>
                             <span class="row-val-bold">0,16 kg CO₂e / km</span>
                         </div>
                         <div class="apple-row">
@@ -572,46 +536,28 @@
                             <span class="row-label">Sahne / Vinil Branda</span>
                             <span class="row-val-bold">8,50 kg CO₂e / m²</span>
                         </div>
-                        <div class="apple-row">
-                            <span class="row-label">Promosyon Ürünü</span>
-                            <span class="row-val-bold">0,60 kg CO₂e / adet</span>
-                        </div>
                     </div>
 
-                    <div class="group-header-label">VERİ KAYNAKLARI & KLAVUZLAR</div>
+                    <div class="group-header-label">VERİ KAYNAKLARI</div>
                     <div class="apple-group-box">
                         <a href="https://www.gov.uk/government/collections/government-conversion-factors-for-company-reporting" target="_blank" rel="noopener" class="apple-row" style="text-decoration:none;">
                             <div class="row-left-text">
-                                <span class="row-title" style="color:var(--accent-indigo);">DEFRA / DESNZ Havacılık Dönüşüm Faktörleri</span>
-                                <span class="row-sub">gov.uk — BK Çevre Bakanlığı (Kısa-Orta Menzil Euro-Business 1.5x / Uzun Menzil 2.9x)</span>
-                            </div>
-                            <i class="fa-solid fa-arrow-up-right-from-square list-item-chevron" style="color:var(--accent-indigo);"></i>
-                        </a>
-                        <a href="https://www.science.org/doi/10.1126/science.aaq0216" target="_blank" rel="noopener" class="apple-row" style="text-decoration:none;">
-                            <div class="row-left-text">
-                                <span class="row-title" style="color:var(--accent-indigo);">Poore & Nemecek (Science 2018)</span>
-                                <span class="row-sub">science.org — Oxford Üniv. Gıda Yaşam Döngüsü (LCA) Veritabanı</span>
+                                <span class="row-title" style="color:var(--accent-indigo);">DEFRA / DESNZ Dönüşüm Faktörleri</span>
+                                <span class="row-sub">UK Environment Agency Standard</span>
                             </div>
                             <i class="fa-solid fa-arrow-up-right-from-square list-item-chevron" style="color:var(--accent-indigo);"></i>
                         </a>
                         <a href="https://ghgprotocol.org/corporate-standard" target="_blank" rel="noopener" class="apple-row" style="text-decoration:none;">
                             <div class="row-left-text">
-                                <span class="row-title" style="color:var(--accent-indigo);">WRI / WBCSD GHG Protocol</span>
-                                <span class="row-sub">ghgprotocol.org — Kurumsal Değer Zinciri Sera Gazı Hesaplama Standardı</span>
+                                <span class="row-title" style="color:var(--accent-indigo);">GHG Protocol Corporate Standard</span>
+                                <span class="row-sub">WRI / WBCSD Standardı</span>
                             </div>
                             <i class="fa-solid fa-arrow-up-right-from-square list-item-chevron" style="color:var(--accent-indigo);"></i>
                         </a>
                         <a href="https://www.ipcc-nggip.iges.or.jp/public/2006gl/" target="_blank" rel="noopener" class="apple-row" style="text-decoration:none;">
                             <div class="row-left-text">
                                 <span class="row-title" style="color:var(--accent-indigo);">IPCC Ulusal Envanter Rehberi</span>
-                                <span class="row-sub">ipcc-nggip.iges.or.jp — BM Küresel Isınma Potansiyeli (GWP100) Faktörleri</span>
-                            </div>
-                            <i class="fa-solid fa-arrow-up-right-from-square list-item-chevron" style="color:var(--accent-indigo);"></i>
-                        </a>
-                        <a href="https://enerji.gov.tr/" target="_blank" rel="noopener" class="apple-row" style="text-decoration:none;">
-                            <div class="row-left-text">
-                                <span class="row-title" style="color:var(--accent-indigo);">T.C. Enerji Bakanlığı / EPDK</span>
-                                <span class="row-sub">enerji.gov.tr — Türkiye Ulusal Şebeke Elektriği Emisyon Verileri</span>
+                                <span class="row-sub">Küresel Isınma Potansiyeli (GWP100)</span>
                             </div>
                             <i class="fa-solid fa-arrow-up-right-from-square list-item-chevron" style="color:var(--accent-indigo);"></i>
                         </a>
