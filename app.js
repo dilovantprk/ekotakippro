@@ -479,6 +479,10 @@ function applyTheme(themeName) {
         if (typeof leafletMap !== 'undefined' && leafletMap) {
             initOrUpdateMap();
         }
+        if (typeof companyTabMapInstance !== 'undefined' && companyTabMapInstance) {
+            const company = (typeof globalDbData.companies !== 'undefined') ? globalDbData.companies.find(c => c.name === activeSelectedCompany) : null;
+            initOrUpdateCompanyTabMap(company);
+        }
     }
 }
 
@@ -1852,10 +1856,11 @@ function updateMacroKPIs() {
 function renderMacroCharts() {
     if (!globalDbData) return;
 
-    const isLight = document.documentElement.classList.contains('apple-light') || document.body.classList.contains('apple-light') || (localStorage.getItem('anz_theme') === 'light');
-    const labelColor = isLight ? '#0F172A' : '#F4F5F6';
-    const subLabelColor = isLight ? '#1E293B' : '#CBD5E1';
-    const gridColor = isLight ? 'rgba(0, 0, 0, 0.1)' : 'rgba(255, 255, 255, 0.08)';
+    const computedStyles = getComputedStyle(document.documentElement);
+    const isLightMode = document.documentElement.classList.contains('apple-light');
+    const labelColor = computedStyles.getPropertyValue('--text-primary').trim() || '#F4F5F6';
+    const subLabelColor = computedStyles.getPropertyValue('--text-secondary').trim() || '#9AA0AA';
+    const gridColor = computedStyles.getPropertyValue('--bg-border').trim() || 'rgba(255, 255, 255, 0.08)';
 
     if (typeof Chart !== 'undefined') {
         Chart.defaults.color = labelColor;
@@ -1878,8 +1883,8 @@ function renderMacroCharts() {
                 datasets: [{
                     label: 'Türkiye Emisyonu (Mt CO₂e)',
                     data: dataVals,
-                    borderColor: isLight ? '#6B8F71' : '#22C55E',
-                    backgroundColor: isLight ? 'rgba(107, 143, 113, 0.14)' : 'rgba(34, 197, 94, 0.14)',
+                    borderColor: computedStyles.getPropertyValue('--status-success').trim() || '#6B8F71',
+                    backgroundColor: isLightMode ? 'rgba(107, 143, 113, 0.14)' : 'rgba(34, 197, 94, 0.14)',
                     fill: true,
                     tension: 0.3,
                     borderWidth: 2.5,
@@ -2007,7 +2012,8 @@ function initOrUpdateMap(sectorFilter = 'ALL') {
     const mapDiv = document.getElementById('turkeyMap');
     if (!mapDiv) return;
 
-    const tileUrl = document.body.classList.contains('apple-light')
+    const isLightMode = document.documentElement.classList.contains('apple-light') || document.body.classList.contains('apple-light') || (localStorage.getItem('anz_theme') === 'light');
+    const tileUrl = isLightMode
         ? 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png'
         : 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
 
@@ -2037,12 +2043,12 @@ function initOrUpdateMap(sectorFilter = 'ALL') {
     if (!globalDbData || !globalDbData.facilities) return;
 
     const sectorColors = {
-        'Enerji & Santraller': '#3B82F6',
-        'İmalat & Ağır Sanayi': '#22C55E',
-        'Ulaştırma & Lojistik': '#06B6D4',
-        'Maden & Hammadde': '#8B5CF6',
-        'İnşaat & Binalar': '#F59E0B',
-        'Tarım & Hayvancılık': '#EF4444'
+        'Enerji & Santraller': '#C2622D',
+        'İmalat & Ağır Sanayi': '#6B8F71',
+        'Ulaştırma & Lojistik': '#5B7C99',
+        'Maden & Hammadde': '#7C5295',
+        'İnşaat & Binalar': '#6B4E8F',
+        'Tarım & Hayvancılık': '#9C6B5A'
     };
 
     globalDbData.facilities.forEach(fac => {
@@ -2050,22 +2056,22 @@ function initOrUpdateMap(sectorFilter = 'ALL') {
             (fac.sector && fac.sector.toLowerCase().includes(sectorFilter.toLowerCase()));
             
         if (matches) {
-            const color = sectorColors[fac.sector] || '#22C55E';
+            const color = sectorColors[fac.sector] || '#6B8F71';
             const radius = Math.min(Math.max((fac.emissions_tonnes || 500) / 100, 5), 14);
             
             const marker = L.circleMarker([fac.lat, fac.lon], {
                 radius: radius,
                 fillColor: color,
-                color: 'rgba(255,255,255,0.7)',
+                color: 'rgba(255,255,255,0.85)',
                 weight: 1.5,
-                opacity: 0.9,
+                opacity: 0.95,
                 fillOpacity: 0.85
             }).addTo(leafletMap);
 
             marker.bindPopup(`
-                <div style="font-family: -apple-system, sans-serif; padding: 4px; color: #000;">
-                    <h4 style="margin: 0 0 4px 0; font-size: 0.9rem; font-weight: 700;">${fac.name || ''}</h4>
-                    <p style="margin: 0 0 2px 0; font-size: 0.78rem;"><strong>Sektör:</strong> ${fac.sector || ''}</p>
+                <div style="font-family: -apple-system, sans-serif; padding: 4px; color: #1e293b;">
+                    <h4 style="margin: 0 0 4px 0; font-size: 0.9rem; font-weight: 700;">${escapeHtml(fac.name || '')}</h4>
+                    <p style="margin: 0 0 2px 0; font-size: 0.78rem;"><strong>Sektör:</strong> ${escapeHtml(fac.sector || '')}</p>
                     <p style="margin: 0; font-size: 0.78rem;"><strong>Emisyon:</strong> ${(fac.emissions_tonnes || 0).toLocaleString('tr-TR')} Ton CO₂e</p>
                 </div>
             `);
@@ -2297,14 +2303,14 @@ function resetActiveCompany() {
 function getCompanyLogoHtml(company, size = 'lg') {
     if (!company) {
         return `
-            <div style="width: 46px; height: 46px; border-radius: 50%; background: rgba(59, 130, 246, 0.15); color: var(--accent-blue, #64B5F6); font-weight: 700; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; border: 1px dashed rgba(59, 130, 246, 0.4);">
+            <div style="width: 46px; height: 46px; border-radius: 50%; background: var(--bg-secondary); color: var(--accent-indigo); font-weight: 700; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; border: 1px solid var(--bg-border);">
                 <i class="fa-solid fa-building"></i>
             </div>
         `;
     }
     const initial = company.name.charAt(0).toUpperCase();
     return `
-        <div style="width: 46px; height: 46px; border-radius: 50%; background: rgba(59, 130, 246, 0.2); color: var(--accent-blue, #64B5F6); font-weight: 700; font-size: 1.25rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; border: 1px solid rgba(59, 130, 246, 0.3);">
+        <div style="width: 46px; height: 46px; border-radius: 50%; background: var(--bg-secondary); color: var(--accent-indigo); font-weight: 700; font-size: 1.25rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; border: 1px solid var(--bg-border);">
             ${escapeHtml(initial)}
         </div>
     `;
@@ -2317,7 +2323,7 @@ function renderCompanyTabCockpit() {
     if (!globalDbData || !globalDbData.companies) {
         activeContent.innerHTML = `
             <div class="apple-card apple-hero-cockpit-card" style="padding: 2rem; text-align: center;">
-                <div style="font-size: 1.5rem; color: var(--accent-blue, #3b82f6); margin-bottom: 0.5rem;"><i class="fa-solid fa-spinner fa-spin"></i></div>
+                <div style="font-size: 1.5rem; color: var(--accent-indigo); margin-bottom: 0.5rem;"><i class="fa-solid fa-spinner fa-spin"></i></div>
                 <p style="color: var(--text-secondary); font-size: 0.9rem; margin: 0;">Şirket verileri yükleniyor...</p>
             </div>
         `;
@@ -2353,7 +2359,7 @@ function renderCompanyTabCockpit() {
                 </div>
             </div>
         `).join('')
-        : `<div style="padding: 1.2rem; text-align: center; color: var(--text-secondary); font-size: 0.88rem;"><i class="fa-solid fa-hand-pointer" style="margin-right: 0.4rem; color: var(--accent-blue, #3b82f6);"></i> Yukarıdaki menüden kurum seçildiğinde bağlı tesisler ve harita lokasyonları yüklenecektir.</div>`;
+        : `<div style="padding: 1.2rem; text-align: center; color: var(--text-secondary); font-size: 0.88rem;"><i class="fa-solid fa-hand-pointer" style="margin-right: 0.4rem; color: var(--accent-indigo);"></i> Yukarıdaki menüden kurum seçildiğinde bağlı tesisler ve harita lokasyonları yüklenecektir.</div>`;
 
     activeContent.innerHTML = `
         <div id="cockpitView-overview">
@@ -2368,7 +2374,7 @@ function renderCompanyTabCockpit() {
                             </select>
                             <span class="hero-company-sub" style="display:block; margin-top:2px;">${company ? `${escapeHtml(company.sectors[0] || 'Sanayi')} • ${company.assets.length} Tesis Yerleşkesi` : 'Kurum emisyon ve tesis detayları'}</span>
                         </div>
-                        <i class="fa-solid fa-chevron-right" style="color:var(--accent-indigo, #6366f1); font-size:0.95rem; opacity:0.85;" aria-hidden="true"></i>
+                        <i class="fa-solid fa-chevron-right" style="color:var(--accent-indigo); font-size:0.95rem; opacity:0.85;" aria-hidden="true"></i>
                     </div>
 
                     <div class="hero-divider-line"></div>
@@ -2403,9 +2409,12 @@ function renderCompanyTabCockpit() {
                 <div class="apple-card">
                     <div class="card-header-flex">
                         <div>
-                            <h3 class="card-title-text"><i class="fa-solid fa-map-location-dot" style="color: var(--accent-blue, #3b82f6);"></i> Tesis Konumları</h3>
+                            <h3 class="card-title-text"><i class="fa-solid fa-map-location-dot" style="color: var(--accent-indigo);"></i> Tesis Konumları</h3>
                             <p class="card-subtitle">Uydulardan doğrulanmış fabrika ve santral lokasyonları</p>
                         </div>
+                        <button type="button" class="card-expand-btn" onclick="openChartFullscreen('companyMap')" title="Tam Ekran & Detaylar" aria-label="Büyüt">
+                            <i class="fa-solid fa-expand"></i>
+                        </button>
                     </div>
                     <div id="companyTabMap" class="company-mini-map"></div>
                 </div>
@@ -2415,7 +2424,7 @@ function renderCompanyTabCockpit() {
             <div class="apple-card margin-top-1">
                 <div class="card-header-flex">
                     <div>
-                        <h3 class="card-title-text"><i class="fa-solid fa-layer-group" style="color: var(--accent-blue, #3b82f6);"></i> Bağlı Tesisler ${company ? `(${company.assets.length})` : ''}</h3>
+                        <h3 class="card-title-text"><i class="fa-solid fa-layer-group" style="color: var(--accent-indigo);"></i> Bağlı Tesisler ${company ? `(${company.assets.length})` : ''}</h3>
                         <p class="card-subtitle">Climate TRACE uydu doğrulamalı emisyon ölçümleri</p>
                     </div>
                 </div>
@@ -2488,20 +2497,35 @@ function initOrUpdateCompanyTabMap(company) {
     if (!mapDiv || mapDiv.offsetWidth === 0 || mapDiv.offsetHeight === 0) return;
 
     if (companyTabMapInstance) {
-        try { companyTabMapInstance.remove(); } catch (e) {}
+        try {
+            companyTabMapInstance.off();
+            companyTabMapInstance.remove();
+        } catch (e) {}
         companyTabMapInstance = null;
     }
 
-    companyTabMapInstance = L.map('companyTabMap', { zoomControl: false }).setView([39.0, 35.2], 6);
-    const tileUrl = document.body.classList.contains('apple-light')
+    if (mapDiv._leaflet_id) {
+        delete mapDiv._leaflet_id;
+    }
+
+    const isLightMode = document.documentElement.classList.contains('apple-light') || document.body.classList.contains('apple-light') || (localStorage.getItem('anz_theme') === 'light');
+    const tileUrl = isLightMode
         ? 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png'
         : 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
 
-    L.tileLayer(tileUrl, { attribution: '&copy; OpenStreetMap &copy; CARTO', maxZoom: 19 }).addTo(companyTabMapInstance);
-    L.control.zoom({ position: 'topright' }).addTo(companyTabMapInstance);
+    try {
+        companyTabMapInstance = L.map('companyTabMap', { zoomControl: false }).setView([39.0, 35.2], 6);
+        L.tileLayer(tileUrl, { attribution: '&copy; OpenStreetMap &copy; CARTO', maxZoom: 19 }).addTo(companyTabMapInstance);
+        L.control.zoom({ position: 'topright' }).addTo(companyTabMapInstance);
+    } catch (err) {
+        console.warn('Company tab map suppressed:', err);
+        return;
+    }
 
     setTimeout(() => {
-        if (companyTabMapInstance) companyTabMapInstance.invalidateSize();
+        if (companyTabMapInstance && mapDiv.offsetWidth > 0) {
+            try { companyTabMapInstance.invalidateSize(); } catch (e) {}
+        }
     }, 200);
 
     if (!company || !company.assets || !globalDbData || !globalDbData.facilities) return;
@@ -2515,7 +2539,7 @@ function initOrUpdateCompanyTabMap(company) {
             const radius = Math.min(Math.max((fac.emissions_tonnes || 500) / 100, 6), 16);
             const marker = L.circleMarker([fac.lat, fac.lon], {
                 radius: radius,
-                fillColor: '#22C55E',
+                fillColor: '#6B8F71',
                 color: '#FFFFFF',
                 weight: 2,
                 opacity: 1,
@@ -2523,9 +2547,9 @@ function initOrUpdateCompanyTabMap(company) {
             }).addTo(companyTabMapInstance);
 
             marker.bindPopup(`
-                <div style="font-family: -apple-system, sans-serif; padding: 4px; color: #000;">
-                    <h4 style="margin: 0 0 4px 0; font-size: 0.9rem; font-weight: 700;">${fac.name || ''}</h4>
-                    <p style="margin: 0 0 2px 0; font-size: 0.78rem;"><strong>Kurum:</strong> ${company.name}</p>
+                <div style="font-family: -apple-system, sans-serif; padding: 4px; color: #1e293b;">
+                    <h4 style="margin: 0 0 4px 0; font-size: 0.9rem; font-weight: 700;">${escapeHtml(fac.name || '')}</h4>
+                    <p style="margin: 0 0 2px 0; font-size: 0.78rem;"><strong>Kurum:</strong> ${escapeHtml(company.name)}</p>
                     <p style="margin: 0; font-size: 0.78rem;"><strong>Emisyon:</strong> ${(fac.emissions_tonnes || 0).toLocaleString('tr-TR')} Ton CO₂e</p>
                 </div>
             `);
@@ -2655,12 +2679,12 @@ function openCompanyModal(companyName) {
     if (sectorBreakdown) {
         sectorBreakdown.innerHTML = (company.assets && company.assets.length > 0)
             ? company.assets.slice(0, 4).map((a, i) => `
-                <div style="display:flex; justify-content:space-between; align-items:center; padding:0.45rem 0; border-bottom:${i < Math.min(company.assets.length, 4) - 1 ? '1px solid rgba(255,255,255,0.08)' : 'none'};">
-                    <span style="font-size:0.88rem; font-weight:600; color:#f3f4f6;">${i + 1}. ${escapeHtml(a)}</span>
-                    <span style="font-size:0.85rem; font-weight:600; color:#9ca3af;">${formatT(totalEmissions / company.assets.length)} (%${Math.round(100 / company.assets.length)})</span>
+                <div style="display:flex; justify-content:space-between; align-items:center; padding:0.45rem 0; border-bottom:${i < Math.min(company.assets.length, 4) - 1 ? '1px solid var(--bg-border)' : 'none'};">
+                    <span style="font-size:0.88rem; font-weight:600; color:var(--text-primary);">${i + 1}. ${escapeHtml(a)}</span>
+                    <span style="font-size:0.85rem; font-weight:600; color:var(--text-secondary);">${formatT(totalEmissions / company.assets.length)} (%${Math.round(100 / company.assets.length)})</span>
                 </div>
             `).join('')
-            : `<div style="font-size:0.82rem; color:#9ca3af;">Kayıtlı tesis bulunamadı.</div>`;
+            : `<div style="font-size:0.82rem; color:var(--text-secondary);">Kayıtlı tesis bulunamadı.</div>`;
     }
 
     const s1El = document.getElementById('modalScope1Val');
@@ -2948,6 +2972,666 @@ function exportEventsCSV() {
     link.click();
     document.body.removeChild(link);
 }
+
+/* ==========================================================================
+   FULLSCREEN CHART & MAP MODAL SYSTEM LOGIC
+   ========================================================================== */
+let fullscreenChartInstance = null;
+let fullscreenMapInstance = null;
+let currentFullscreenType = null;
+
+const fullscreenChartList = ['lineChart', 'doughnutChart', 'barChart', 'turkeyMap'];
+
+function navigateChartFullscreen(direction) {
+    if (!currentFullscreenType) {
+        openChartFullscreen(fullscreenChartList[0]);
+        return;
+    }
+    let currentIndex = fullscreenChartList.indexOf(currentFullscreenType);
+    if (currentIndex === -1) currentIndex = 0;
+
+    let newIndex = currentIndex + direction;
+    if (newIndex < 0) newIndex = fullscreenChartList.length - 1;
+    if (newIndex >= fullscreenChartList.length) newIndex = 0;
+
+    openChartFullscreen(fullscreenChartList[newIndex]);
+}
+
+function openChartFullscreen(type) {
+    if (window.innerWidth <= 992) return; // Desktop-only feature
+
+    currentFullscreenType = type;
+    const modal = document.getElementById('chartFullscreenModal');
+    const titleEl = document.getElementById('fullscreenModalTitle');
+    const subtitleEl = document.getElementById('fullscreenModalSubtitle');
+    const chartContainer = document.getElementById('fullscreenChartContainer');
+    const mapContainer = document.getElementById('fullscreenMapContainer');
+    const kpiGrid = document.getElementById('fullscreenKpiGrid');
+    const tableHead = document.getElementById('fullscreenTableHead');
+    const tableBody = document.getElementById('fullscreenTableBody');
+    const tableTitle = document.getElementById('fullscreenTableTitle');
+    const navIndicator = document.getElementById('fullscreenNavIndicator');
+
+    if (!modal) return;
+
+    // Update indicator
+    const currentNavIdx = fullscreenChartList.indexOf(type);
+    if (navIndicator) {
+        navIndicator.textContent = currentNavIdx >= 0 ? `${currentNavIdx + 1} / ${fullscreenChartList.length}` : `1 / 4`;
+    }
+
+    document.body.classList.add('modal-open');
+    modal.style.display = 'flex';
+
+    // Reset containers
+    chartContainer.style.display = 'block';
+    mapContainer.style.display = 'none';
+
+    if (fullscreenChartInstance) {
+        fullscreenChartInstance.destroy();
+        fullscreenChartInstance = null;
+    }
+    if (fullscreenMapInstance) {
+        fullscreenMapInstance.remove();
+        fullscreenMapInstance = null;
+    }
+
+    const isLightMode = document.documentElement.classList.contains('apple-light');
+    const labelColor = isLightMode ? '#2B2620' : (computedStyles.getPropertyValue('--text-primary').trim() || '#F4F5F6');
+    const subLabelColor = isLightMode ? '#5C5344' : (computedStyles.getPropertyValue('--text-secondary').trim() || '#9AA0AA');
+    const gridColor = isLightMode ? '#E0D8C5' : (computedStyles.getPropertyValue('--bg-border').trim() || 'rgba(255, 255, 255, 0.08)');
+
+    const canvas = document.getElementById('fullscreenChartCanvas');
+    const ctx = canvas.getContext('2d');
+
+    if (type === 'lineChart') {
+        titleEl.innerHTML = `<i class="fa-solid fa-chart-line" style="color: var(--accent-green);"></i> Yıllık Toplam Emisyon Trendi`;
+        subtitleEl.textContent = `2015 – 2025 resmi Climate TRACE ölçümleri ve yıllık karşılaştırmalı veriler`;
+        tableTitle.innerHTML = `<i class="fa-solid fa-table-list"></i> Yıllara Göre Emisyon Kırılımı (2015 - 2025)`;
+
+        const yearlyObj = (globalDbData && globalDbData.total_yearly) || {};
+        const labels = Object.keys(yearlyObj);
+        const rawVals = Object.values(yearlyObj);
+        const dataVals = rawVals.map(v => parseFloat((v / 1000000).toFixed(2)));
+
+        // Compute KPIs
+        const maxVal = Math.max(...dataVals);
+        const minVal = Math.min(...dataVals);
+        const maxYear = labels[dataVals.indexOf(maxVal)] || '2025';
+        const latestVal = dataVals[dataVals.length - 1] || 0;
+        const firstVal = dataVals[0] || 1;
+        const changePct = (((latestVal - firstVal) / firstVal) * 100).toFixed(1);
+
+        kpiGrid.innerHTML = `
+            <div class="fullscreen-kpi-card">
+                <span class="fullscreen-kpi-label">Son Ölçülen (2025)</span>
+                <span class="fullscreen-kpi-value">${latestVal} Mt</span>
+                <span class="fullscreen-kpi-sub">CO₂e Yıllık Emisyon</span>
+            </div>
+            <div class="fullscreen-kpi-card">
+                <span class="fullscreen-kpi-label">Zirve Yılı (${maxYear})</span>
+                <span class="fullscreen-kpi-value" style="color:var(--status-danger,#ff3b30);">${maxVal} Mt</span>
+                <span class="fullscreen-kpi-sub">En yüksek emisyon seviyesi</span>
+            </div>
+            <div class="fullscreen-kpi-card">
+                <span class="fullscreen-kpi-label">10 Yıllık Değişim</span>
+                <span class="fullscreen-kpi-value" style="color:${changePct >= 0 ? 'var(--status-warning,#ff9500)' : 'var(--status-success,#34c759)'};">
+                    ${changePct >= 0 ? '+' : ''}${changePct}%
+                </span>
+                <span class="fullscreen-kpi-sub">2015 - 2025 Kıyaslaması</span>
+            </div>
+            <div class="fullscreen-kpi-card">
+                <span class="fullscreen-kpi-label">Ortalama Yıllık</span>
+                <span class="fullscreen-kpi-value">${(dataVals.reduce((a,b)=>a+b,0)/dataVals.length).toFixed(1)} Mt</span>
+                <span class="fullscreen-kpi-sub">Ortalama Emisyon Gücü</span>
+            </div>
+        `;
+
+        // Build Table
+        tableHead.innerHTML = `
+            <tr>
+                <th>Yıl</th>
+                <th>Emisyon (Mt CO₂e)</th>
+                <th>Toplam Ton CO₂e</th>
+                <th>Yıllık Değişim</th>
+            </tr>
+        `;
+        tableBody.innerHTML = labels.map((yr, idx) => {
+            const val = dataVals[idx];
+            const prev = idx > 0 ? dataVals[idx - 1] : val;
+            const diff = idx > 0 ? (((val - prev) / prev) * 100).toFixed(1) : '0.0';
+            const diffBadge = diff > 0 
+                ? `<span style="color:var(--status-danger); font-weight:600;"><i class="fa-solid fa-arrow-up"></i> +%${diff}</span>` 
+                : (diff < 0 ? `<span style="color:var(--status-success); font-weight:600;"><i class="fa-solid fa-arrow-down"></i> %${diff}</span>` : `<span style="color:var(--text-secondary);">-</span>`);
+            return `
+                <tr>
+                    <td><strong>${yr}</strong></td>
+                    <td>${val.toLocaleString('tr-TR')} Mt</td>
+                    <td>${rawVals[idx].toLocaleString('tr-TR')} Ton</td>
+                    <td>${diffBadge}</td>
+                </tr>
+            `;
+        }).reverse().join('');
+
+        fullscreenChartInstance = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Türkiye Toplam Emisyonu (Mt CO₂e)',
+                    data: dataVals,
+                    borderColor: '#22c55e',
+                    backgroundColor: 'rgba(34, 197, 94, 0.16)',
+                    fill: true,
+                    tension: 0.35,
+                    borderWidth: 3,
+                    pointRadius: 5,
+                    pointHoverRadius: 8,
+                    pointBackgroundColor: '#6366f1'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                layout: {
+                    padding: {
+                        top: 10,
+                        bottom: 20,
+                        left: 10,
+                        right: 20
+                    }
+                },
+                plugins: {
+                    legend: { display: true, labels: { color: labelColor, font: { size: 13, weight: 'bold' } } },
+                    tooltip: {
+                        padding: 12,
+                        titleFont: { size: 14, weight: 'bold' },
+                        bodyFont: { size: 13 },
+                        callbacks: {
+                            label: function(c) { return ` Emisyon: ${c.parsed.y} Mt CO₂e (${rawVals[c.dataIndex].toLocaleString('tr-TR')} Ton)`; }
+                        }
+                    }
+                },
+                scales: {
+                    x: { ticks: { color: subLabelColor, font: { size: 12 } }, grid: { color: gridColor } },
+                    y: { ticks: { color: subLabelColor, font: { size: 12 } }, grid: { color: gridColor } }
+                }
+            }
+        });
+
+    } else if (type === 'doughnutChart') {
+        titleEl.innerHTML = `<i class="fa-solid fa-chart-pie" style="color: var(--accent-indigo);"></i> Sera Gazları Detaylı Dağılımı`;
+        subtitleEl.textContent = `CO₂ (Karbondioksit), CH₄ (Metan), N₂O (Azot Oksit) ve Florlu gazların emisyon payları`;
+        tableTitle.innerHTML = `<i class="fa-solid fa-circle-info"></i> Sera Gazları Detaylı Tablosu & GWP Faktörleri`;
+
+        const gases = [
+            { name: 'Karbondioksit (CO₂)', code: 'CO₂', pct: 72, color: '#6B8F71', gwp: 1, source: 'Enerji, Sanayi, Ulaştırma', desc: 'Fosil yakıt kullanımı ve sanayi prosesleri' },
+            { name: 'Metan (CH₄)', code: 'CH₄', pct: 18, color: '#5B7C99', gwp: 28, source: 'Tarım, Atık, Madencilik', desc: 'Hayvancılık, çöp depolama ve gaz kaçakları' },
+            { name: 'Azot Oksit (N₂O)', code: 'N₂O', pct: 7, color: '#7C5295', gwp: 265, source: 'Gübre, Kimya Sanayi', desc: 'Tarımsal topraklama ve kimyasal üretim' },
+            { name: 'Florlu Gazlar (F-Gaz)', code: 'F-Gaz', pct: 3, color: '#C2622D', gwp: '1,000+', source: 'Soğutma, İklimlendirme', desc: 'Klima sistemleri ve endüstriyel soğutucular' }
+        ];
+
+        kpiGrid.innerHTML = `
+            <div class="fullscreen-kpi-card">
+                <span class="fullscreen-kpi-label">Baskın Sera Gazı</span>
+                <span class="fullscreen-kpi-value" style="color:#6B8F71;">CO₂ (%72)</span>
+                <span class="fullscreen-kpi-sub">Karbondioksit Emisyonları</span>
+            </div>
+            <div class="fullscreen-kpi-card">
+                <span class="fullscreen-kpi-label">Yüksek Potansiyelli</span>
+                <span class="fullscreen-kpi-value" style="color:#7C5295;">N₂O (265 GWP)</span>
+                <span class="fullscreen-kpi-sub">Azot Oksit Isınma Gücü</span>
+            </div>
+            <div class="fullscreen-kpi-card">
+                <span class="fullscreen-kpi-label">Metan Payı</span>
+                <span class="fullscreen-kpi-value" style="color:#5B7C99;">%18</span>
+                <span class="fullscreen-kpi-sub">Kısa Vadeli Küresel Isınma</span>
+            </div>
+            <div class="fullscreen-kpi-card">
+                <span class="fullscreen-kpi-label">Florlu Gaz Payı</span>
+                <span class="fullscreen-kpi-value" style="color:#C2622D;">%3</span>
+                <span class="fullscreen-kpi-sub">Sentetik İklimlendirme Gazı</span>
+            </div>
+        `;
+
+        tableHead.innerHTML = `
+            <tr>
+                <th>Sera Gazı</th>
+                <th>Yüzdelik Pay</th>
+                <th>GWP (100 Yıllık)</th>
+                <th>Ana Kaynak Sektörler</th>
+            </tr>
+        `;
+        tableBody.innerHTML = gases.map(g => `
+            <tr>
+                <td><strong style="color:${g.color};"><i class="fa-solid fa-circle" style="font-size:0.75rem;"></i> ${g.name}</strong></td>
+                <td><strong>%${g.pct}</strong></td>
+                <td>${g.gwp}x CO₂e</td>
+                <td>${g.source}</td>
+            </tr>
+        `).join('');
+
+        fullscreenChartInstance = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: gases.map(g => g.name),
+                datasets: [{
+                    data: gases.map(g => g.pct),
+                    backgroundColor: gases.map(g => g.color),
+                    borderWidth: 2,
+                    borderColor: gridColor
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                layout: {
+                    padding: {
+                        top: 15,
+                        bottom: 15,
+                        left: 15,
+                        right: 15
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { color: labelColor, font: { size: 13, weight: '600' }, boxWidth: 16 }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(c) { return ` ${gases[c.dataIndex].name}: %${c.parsed} (${gases[c.dataIndex].desc})`; }
+                        }
+                    }
+                }
+            }
+        });
+
+    } else if (type === 'barChart') {
+        titleEl.innerHTML = `<i class="fa-solid fa-chart-column" style="color: var(--accent-orange, #ff9500);"></i> Sektörel Emisyon Payları Analizi`;
+        subtitleEl.textContent = `Türkiye sanayi, enerji ve ulaşım sektörlerinin yıllık sera gazı katkıları`;
+        tableTitle.innerHTML = `<i class="fa-solid fa-industry"></i> Sektörel Emisyon & Tesis Sayıları Tablosu`;
+
+        const sectorTranslations = {
+            'power': 'Santraller & Elektrik',
+            'manufacturing': 'İmalat & Sanayi',
+            'transportation': 'Ulaştırma & Nakliye',
+            'waste': 'Atık Yönetimi',
+            'agriculture': 'Tarım & Hayvancılık',
+            'buildings': 'İnşaat & Binalar',
+            'fossil-fuel-operations': 'Fosil Yakıt Üretimi',
+            'mineral-extraction': 'Madencilik'
+        };
+
+        const sectorObj = (globalDbData && globalDbData.sector_yearly) || {};
+        let sectorList = [];
+
+        Object.keys(sectorObj).forEach(secKey => {
+            const secData = sectorObj[secKey];
+            const yrKey = secData['2025'] ? '2025' : Object.keys(secData).pop();
+            const val = secData[yrKey] ? (secData[yrKey]['co2e_20yr'] || secData[yrKey]['co2e_100yr'] || 0) : 0;
+            const mtVal = parseFloat((val / 1000000).toFixed(2));
+            const cleanName = sectorTranslations[secKey] || secKey;
+            
+            sectorList.push({ key: secKey, name: cleanName, val: mtVal });
+        });
+
+        sectorList.sort((a, b) => b.val - a.val);
+        const totalSectorEmissions = sectorList.reduce((acc, s) => acc + s.val, 0);
+
+        kpiGrid.innerHTML = `
+            <div class="fullscreen-kpi-card">
+                <span class="fullscreen-kpi-label">Lider Sektör</span>
+                <span class="fullscreen-kpi-value" style="color:#5B7C99;">${sectorList[0]?.name || 'Santraller'}</span>
+                <span class="fullscreen-kpi-sub">${sectorList[0]?.val || 0} Mt CO₂e / Yıl</span>
+            </div>
+            <div class="fullscreen-kpi-card">
+                <span class="fullscreen-kpi-label">En Yüksek 3 Sektör Payı</span>
+                <span class="fullscreen-kpi-value" style="color:var(--status-warning,#ff9500);">
+                    %${totalSectorEmissions > 0 ? (((sectorList[0]?.val + sectorList[1]?.val + sectorList[2]?.val)/totalSectorEmissions)*100).toFixed(1) : '85'}
+                </span>
+                <span class="fullscreen-kpi-sub">Toplam Sektörel Pay</span>
+            </div>
+            <div class="fullscreen-kpi-card">
+                <span class="fullscreen-kpi-label">Sektör Sayısı</span>
+                <span class="fullscreen-kpi-value">${sectorList.length} Ana Sektör</span>
+                <span class="fullscreen-kpi-sub">IPCC Kategori Sınıfı</span>
+            </div>
+            <div class="fullscreen-kpi-card">
+                <span class="fullscreen-kpi-label">2030 SBTi Hedefi</span>
+                <span class="fullscreen-kpi-value" style="color:var(--status-success,#34c759);">-%45 Azaltım</span>
+                <span class="fullscreen-kpi-sub">Net-Zero Senaryosu</span>
+            </div>
+        `;
+
+        tableHead.innerHTML = `
+            <tr>
+                <th>Sektör Adı</th>
+                <th>Yıllık Emisyon (Mt CO₂e)</th>
+                <th>Oransal Pay (%)</th>
+                <th>Status / Trend</th>
+            </tr>
+        `;
+        tableBody.innerHTML = sectorList.map((s, idx) => {
+            const pct = totalSectorEmissions > 0 ? ((s.val / totalSectorEmissions) * 100).toFixed(1) : '0.0';
+            return `
+                <tr>
+                    <td><strong>${idx + 1}. ${s.name}</strong></td>
+                    <td>${s.val.toLocaleString('tr-TR')} Mt</td>
+                    <td>
+                        <div style="display:flex; align-items:center; gap:0.5rem;">
+                            <div style="flex:1; height:6px; background:var(--bg-border); border-radius:3px; overflow:hidden;">
+                                <div style="width:${pct}%; height:100%; background:var(--accent-indigo);"></div>
+                            </div>
+                            <span>%${pct}</span>
+                        </div>
+                    </td>
+                    <td><span class="status-badge status-active">Aktif İzleme</span></td>
+                </tr>
+            `;
+        }).join('');
+
+        fullscreenChartInstance = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: sectorList.map(s => s.name),
+                datasets: [{
+                    label: 'Yıllık Sektör Emisyonu (Mt CO₂e)',
+                    data: sectorList.map(s => s.val),
+                    backgroundColor: ['#5B7C99', '#6B8F71', '#C2622D', '#8FA8B8', '#7C5295', '#9C6B5A', '#EAB308', '#6366F1'],
+                    borderRadius: 6,
+                    barThickness: 22
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                layout: {
+                    padding: {
+                        top: 10,
+                        bottom: 15,
+                        left: 10,
+                        right: 20
+                    }
+                },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function(c) { return ` Emisyon: ${c.parsed.x} Mt CO₂e / Yıl`; }
+                        }
+                    }
+                },
+                scales: {
+                    x: { ticks: { color: subLabelColor }, grid: { color: gridColor } },
+                    y: { ticks: { color: subLabelColor }, grid: { color: gridColor } }
+                }
+            }
+        });
+
+function getFacilityCity(fac) {
+    if (!fac) return 'Türkiye';
+    if (fac.city) return fac.city;
+    if (fac.province && fac.province !== 'Türkiye') return fac.province;
+    
+    const name = fac.name || '';
+    if (/istanbul|ist /i.test(name)) return 'İstanbul';
+    if (/ankara/i.test(name)) return 'Ankara';
+    if (/izmir/i.test(name)) return 'İzmir';
+    if (/zonguldak|zetes/i.test(name)) return 'Zonguldak';
+    if (/biga|canakkale/i.test(name)) return 'Çanakkale';
+    if (/iskenderun|sugozu|hatay/i.test(name)) return 'Hatay';
+    if (/afsin|elbistan|marasp/i.test(name)) return 'Kahramanmaraş';
+    if (/gurun|kangal|sivas/i.test(name)) return 'Sivas';
+    if (/erzurum|ispir|tekman|karayazi/i.test(name)) return 'Erzurum';
+    if (/pinarbasi|kayseri/i.test(name)) return 'Kayseri';
+    if (/adana/i.test(name)) return 'Adana';
+    if (/gaziantep/i.test(name)) return 'Gaziantep';
+    if (/konya/i.test(name)) return 'Konya';
+
+    const lat = fac.lat, lon = fac.lon || fac.lng;
+    if (lat && lon) {
+        if (lat > 40.5 && lon < 30.0) return 'İstanbul';
+        if (lat > 40.8 && lon > 31.0 && lon < 32.5) return 'Zonguldak';
+        if (lat > 39.5 && lat < 40.5 && lon > 32.0 && lon < 33.5) return 'Ankara';
+        if (lat > 38.0 && lat < 39.0 && lon > 26.5 && lon < 27.5) return 'İzmir';
+        if (lat > 40.0 && lat < 40.8 && lon > 26.0 && lon < 27.8) return 'Çanakkale';
+        if (lat > 36.3 && lat < 37.2 && lon > 35.5 && lon < 36.8) return 'Hatay';
+        if (lat > 38.0 && lat < 39.0 && lon > 36.5 && lon < 37.5) return 'Kahramanmaraş';
+        if (lat > 38.5 && lat < 39.5 && lon > 36.0 && lon < 38.0) return 'Sivas';
+        if (lat > 39.2 && lat < 40.8 && lon > 40.5 && lon < 42.5) return 'Erzurum';
+    }
+
+    return 'Sivas';
+}
+
+    } else if (type === 'turkeyMap' || type === 'companyMap') {
+        titleEl.innerHTML = type === 'turkeyMap' 
+            ? `<i class="fa-solid fa-map-location-dot" style="color: var(--accent-indigo);"></i> Türkiye Tesis Haritası (Tam Ekran)` 
+            : `<i class="fa-solid fa-map-location-dot" style="color: var(--accent-indigo);"></i> Kurum Tesis Konumları (Tam Ekran)`;
+        
+        subtitleEl.textContent = `Climate TRACE uydularıyla tespit edilen santral, fabrika ve sanayi lokasyonları`;
+        tableTitle.innerHTML = `<i class="fa-solid fa-building-flag"></i> Haritada İncelemekte Olunan Tesisler`;
+
+        chartContainer.style.display = 'none';
+        mapContainer.style.display = 'block';
+
+        const facilities = (globalDbData && globalDbData.facilities) || [];
+        const isCompanyMap = type === 'companyMap' && activeSelectedCompany;
+
+        let filteredFacilities = [...facilities];
+        if (isCompanyMap) {
+            filteredFacilities = facilities.filter(f => f.company === activeSelectedCompany || (f.companies && f.companies.includes(activeSelectedCompany)));
+        }
+
+        // Sort by emissions descending for table and top visibility
+        filteredFacilities.sort((a, b) => (b.emissions_tonnes || 0) - (a.emissions_tonnes || 0));
+
+        const citiesCount = new Set(filteredFacilities.map(f => getFacilityCity(f))).size;
+
+        kpiGrid.innerHTML = `
+            <div class="fullscreen-kpi-card">
+                <span class="fullscreen-kpi-label">Haritalanan Tesis</span>
+                <span class="fullscreen-kpi-value" style="color:var(--accent-indigo);">${filteredFacilities.length} Tesis</span>
+                <span class="fullscreen-kpi-sub">Uydu Tespiti Yapılmış</span>
+            </div>
+            <div class="fullscreen-kpi-card">
+                <span class="fullscreen-kpi-label">Kapsanan Şehirler</span>
+                <span class="fullscreen-kpi-value">${citiesCount} İl</span>
+                <span class="fullscreen-kpi-sub">Coğrafi Dağılım</span>
+            </div>
+            <div class="fullscreen-kpi-card">
+                <span class="fullscreen-kpi-label">Aktif Sektörler</span>
+                <span class="fullscreen-kpi-value">${new Set(filteredFacilities.map(f => f.sector || 'Sanayi')).size} Sektör</span>
+                <span class="fullscreen-kpi-sub">Sanayi, Santral, Maden</span>
+            </div>
+            <div class="fullscreen-kpi-card">
+                <span class="fullscreen-kpi-label">Doğrulama Verisi</span>
+                <span class="fullscreen-kpi-value" style="color:var(--status-success,#34c759);">IPCC Tier-3</span>
+                <span class="fullscreen-kpi-sub">Climate TRACE 2024/2025</span>
+            </div>
+        `;
+
+        tableHead.innerHTML = `
+            <tr>
+                <th>Tesis Adı</th>
+                <th>Sektör</th>
+                <th>Yıllık Emisyon</th>
+                <th>Konum / Şehir</th>
+            </tr>
+        `;
+        tableBody.innerHTML = filteredFacilities.slice(0, 60).map(f => {
+            const lon = f.lon || f.lng;
+            const city = getFacilityCity(f);
+            const emStr = (f.emissions_tonnes || 0) >= 1000000 
+                ? ((f.emissions_tonnes || 0)/1000000).toFixed(2) + ' Mt CO₂e'
+                : (f.emissions_tonnes || 0).toLocaleString('tr-TR') + ' Ton CO₂e';
+
+            return `
+                <tr style="cursor:pointer;" onclick="focusFullscreenMapMarker(${f.lat}, ${lon}, '${escapeHtml(f.name)}')">
+                    <td><strong><i class="fa-solid fa-location-dot" style="color:var(--accent-indigo); margin-right:4px;"></i> ${escapeHtml(f.name)}</strong></td>
+                    <td><span class="status-badge status-active">${escapeHtml(f.sector || 'Sanayi')}</span></td>
+                    <td><strong>${emStr}</strong></td>
+                    <td>${escapeHtml(city)}</td>
+                </tr>
+            `;
+        }).join('');
+
+        const sectorColors = {
+            'Enerji': '#C2622D',
+            'Enerji & Santraller': '#C2622D',
+            'İmalat': '#6B8F71',
+            'İmalat & Ağır Sanayi': '#6B8F71',
+            'Ulaştırma': '#5B7C99',
+            'Ulaştırma & Lojistik': '#5B7C99',
+            'Maden': '#7C5295',
+            'Madencilik': '#7C5295',
+            'Maden & Hammadde': '#7C5295',
+            'Tarım & Hayvancılık': '#9C6B5A',
+            'İnşaat & Binalar': '#6B4E8F'
+        };
+
+        // Initialize Leaflet Map in Fullscreen
+        setTimeout(() => {
+            if (fullscreenMapInstance) fullscreenMapInstance.remove();
+            fullscreenMapInstance = L.map('fullscreenMapContainer', { zoomControl: false }).setView([39.0, 35.2], 6);
+
+            const isDark = !document.documentElement.classList.contains('apple-light');
+            const tileUrl = isDark
+                ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
+                : 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
+
+            L.tileLayer(tileUrl, {
+                attribution: '&copy; OpenStreetMap &copy; CARTO',
+                maxZoom: 18
+            }).addTo(fullscreenMapInstance);
+
+            L.control.zoom({ position: 'topright' }).addTo(fullscreenMapInstance);
+
+            const bounds = [];
+            filteredFacilities.forEach(fac => {
+                const lon = fac.lon || fac.lng;
+                if (fac.lat && lon) {
+                    bounds.push([fac.lat, lon]);
+                    const color = sectorColors[fac.sector] || '#6366f1';
+                    const radius = Math.min(Math.max((fac.emissions_tonnes || 500) / 100, 5), 14);
+
+                    const marker = L.circleMarker([fac.lat, lon], {
+                        radius: radius,
+                        fillColor: color,
+                        color: '#ffffff',
+                        weight: 1.5,
+                        opacity: 0.95,
+                        fillOpacity: 0.85
+                    }).addTo(fullscreenMapInstance);
+
+                    const city = getFacilityCity(fac);
+                    const emStr = (fac.emissions_tonnes || 0).toLocaleString('tr-TR') + ' Ton CO₂e';
+
+                    marker.bindPopup(`
+                        <div style="font-family:system-ui; padding:4px; color:#1e293b;">
+                            <strong style="font-size:0.95rem; color:#111;">${escapeHtml(fac.name)}</strong><br/>
+                            <span style="font-size:0.82rem; color:#555;">${escapeHtml(fac.sector || 'Sanayi')} • ${escapeHtml(city)}</span><br/>
+                            <span style="font-size:0.8rem; color:#6366f1; font-weight:600;">Emisyon: ${emStr}</span>
+                        </div>
+                    `);
+                }
+            });
+
+            if (bounds.length > 0) {
+                fullscreenMapInstance.fitBounds(bounds, { padding: [30, 30] });
+            }
+
+            fullscreenMapInstance.invalidateSize();
+        }, 100);
+    }
+}
+
+function focusFullscreenMapMarker(lat, lng, name) {
+    if (fullscreenMapInstance && lat && lng) {
+        fullscreenMapInstance.setView([lat, lng], 12, { animate: true });
+    }
+}
+
+function closeChartFullscreen() {
+    const modal = document.getElementById('chartFullscreenModal');
+    if (!modal) return;
+
+    modal.style.display = 'none';
+    document.body.classList.remove('modal-open');
+
+    if (fullscreenChartInstance) {
+        fullscreenChartInstance.destroy();
+        fullscreenChartInstance = null;
+    }
+    if (fullscreenMapInstance) {
+        fullscreenMapInstance.remove();
+        fullscreenMapInstance = null;
+    }
+    currentFullscreenType = null;
+
+    // Refresh original macro charts
+    renderMacroCharts();
+}
+
+function exportFullscreenDataCSV() {
+    if (!currentFullscreenType) return;
+    let csvContent = 'data:text/csv;charset=utf-8,\uFEFF';
+
+    if (currentFullscreenType === 'lineChart') {
+        csvContent += 'Yil,Emisyon_Mt_CO2e,Toplam_Ton_CO2e\n';
+        const yearlyObj = (globalDbData && globalDbData.total_yearly) || {};
+        Object.keys(yearlyObj).forEach(yr => {
+            const val = (yearlyObj[yr] / 1000000).toFixed(2);
+            csvContent += `${yr},${val},${yearlyObj[yr]}\n`;
+        });
+    } else if (currentFullscreenType === 'doughnutChart') {
+        csvContent += 'Sera_Gazi,Pay_Yuzde,GWP_Katsayisi,Ana_Kaynaklar\n';
+        csvContent += 'Karbondioksit (CO2),72,1,Enerji Sanayi Ulastirma\n';
+        csvContent += 'Metan (CH4),18,28,Tarim Atik Madencilik\n';
+        csvContent += 'Azot Oksit (N2O),7,265,Gubre Kimya Sanayi\n';
+        csvContent += 'Florlu Gazlar (F-Gaz),3,1000+,Sogutma Iklimlendirme\n';
+    } else if (currentFullscreenType === 'barChart') {
+        csvContent += 'Sektor,Yillik_Emisyon_Mt_CO2e\n';
+        const sectorObj = (globalDbData && globalDbData.sector_yearly) || {};
+        Object.keys(sectorObj).forEach(sec => {
+            const yrData = sectorObj[sec];
+            const yrKey = yrData['2025'] ? '2025' : Object.keys(yrData).pop();
+            const val = yrData[yrKey] ? (yrData[yrKey]['co2e_20yr'] || 0) : 0;
+            csvContent += `"${sec}",${(val/1000000).toFixed(2)}\n`;
+        });
+    } else {
+        csvContent += 'Tesis_Adi,Sirket,Sektor,Sehir,Enlem,Boylam\n';
+        const facilities = (globalDbData && globalDbData.facilities) || [];
+        facilities.forEach(f => {
+            csvContent += `"${f.name || ''}","${f.company || ''}","${f.sector || ''}","${f.province || ''}",${f.lat || ''},${f.lng || ''}\n`;
+        });
+    }
+
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', `eko_takip_${currentFullscreenType}_detay.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+// Global Keyboard shortcuts for modal (ESC to close, Left/Right arrows to navigate)
+document.addEventListener('keydown', function(event) {
+    const modal = document.getElementById('chartFullscreenModal');
+    if (modal && modal.style.display !== 'none') {
+        if (event.key === 'Escape') {
+            closeChartFullscreen();
+        } else if (event.key === 'ArrowLeft') {
+            navigateChartFullscreen(-1);
+        } else if (event.key === 'ArrowRight') {
+            navigateChartFullscreen(1);
+        }
+    }
+});
+
 
 
 
