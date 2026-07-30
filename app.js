@@ -2002,18 +2002,28 @@ function initOrUpdateMap(sectorFilter = 'ALL') {
     const mapDiv = document.getElementById('turkeyMap');
     if (!mapDiv) return;
 
+    const tileUrl = document.body.classList.contains('apple-light')
+        ? 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png'
+        : 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
+
     if (!leafletMap) {
         leafletMap = L.map('turkeyMap', { zoomControl: false }).setView([39.0, 35.2], 6);
-        const tileUrl = document.body.classList.contains('apple-light')
-            ? 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png'
-            : 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
-
         L.tileLayer(tileUrl, {
             attribution: '&copy; OpenStreetMap &copy; CARTO',
             maxZoom: 19
         }).addTo(leafletMap);
         
         L.control.zoom({ position: 'topright' }).addTo(leafletMap);
+    } else {
+        leafletMap.eachLayer(layer => {
+            if (layer instanceof L.TileLayer) {
+                leafletMap.removeLayer(layer);
+            }
+        });
+        L.tileLayer(tileUrl, {
+            attribution: '&copy; OpenStreetMap &copy; CARTO',
+            maxZoom: 19
+        }).addTo(leafletMap);
     }
 
     mapMarkers.forEach(m => leafletMap.removeLayer(m));
