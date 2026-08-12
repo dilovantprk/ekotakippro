@@ -3475,8 +3475,8 @@ html.apple-light .fullscreen-close-btn:hover {
 
 .landing-hero {
     text-align: center;
-    padding: 3rem 1rem 2.5rem 1rem;
-    max-width: 900px;
+    padding: 5.5rem 1.5rem 4.5rem 1.5rem;
+    max-width: 1040px;
     margin: 0 auto;
 }
 
@@ -3500,28 +3500,38 @@ html.apple-light .fullscreen-close-btn:hover {
 }
 
 .landing-title {
-    font-size: 3.1rem;
+    font-size: 3.6rem;
     font-weight: 800;
     line-height: 1.12;
-    letter-spacing: -0.035em;
+    letter-spacing: -0.04em;
     color: var(--text-primary);
-    margin-bottom: 1.25rem;
+    margin-bottom: 1.75rem;
+}
+
+@media (max-width: 768px) {
+    .landing-hero {
+        padding: 3.5rem 1rem 2.5rem 1rem;
+    }
+    .landing-title {
+        font-size: 2.35rem;
+    }
 }
 
 .landing-subtitle {
-    font-size: 1.15rem;
-    line-height: 1.6;
+    font-size: 1.25rem;
+    line-height: 1.65;
     color: var(--text-secondary);
-    max-width: 680px;
-    margin: 0 auto 2.25rem auto;
+    max-width: 820px;
+    margin: 0 auto 3rem auto;
 }
 
 .landing-cta-row {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 1rem;
+    gap: 1.25rem;
     flex-wrap: wrap;
+    margin-bottom: 1.5rem;
 }
 
 .nav-cta-btn {
@@ -3625,8 +3635,9 @@ html.apple-light .fullscreen-close-btn:hover {
 .landing-stats-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 1rem;
-    margin-bottom: 3.5rem;
+    gap: 1.25rem;
+    margin-top: 1rem;
+    margin-bottom: 4.5rem;
 }
 
 @media (max-width: 900px) {
