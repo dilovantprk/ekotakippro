@@ -3636,7 +3636,7 @@ html.apple-dark .hero-btn-secondary {
     background: #F3F4F6;
     color: #111827 !important;
     border: 1px solid #E5E7EB;
-    padding: 0.6rem 1.2rem;
+    padding: 0.65rem 1.35rem;
     border-radius: 8px;
     font-size: 0.9rem;
     font-weight: 600;
@@ -3645,7 +3645,8 @@ html.apple-dark .hero-btn-secondary {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    margin-top: 1.25rem;
+    margin-top: 1.5rem;
+    align-self: flex-end;
 }
 
 html.apple-dark .feature-link-btn {
@@ -3886,6 +3887,11 @@ html.apple-dark .product-feature-block {
         grid-template-columns: 1fr;
         gap: 1.5rem;
     }
+}
+
+.product-info {
+    display: flex;
+    flex-direction: column;
 }
 
 .product-info h3 {
