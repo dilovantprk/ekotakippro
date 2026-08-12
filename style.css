@@ -3622,11 +3622,23 @@ html.apple-light .fullscreen-close-btn:hover {
     transform: translateX(3px);
 }
 
-.landing-metrics-grid {
+.landing-stats-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-columns: repeat(4, 1fr);
     gap: 1rem;
-    margin-bottom: 2.5rem;
+    margin-bottom: 3.5rem;
+}
+
+@media (max-width: 900px) {
+    .landing-stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 550px) {
+    .landing-stats-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 .metric-box {
