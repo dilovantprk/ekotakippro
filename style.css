@@ -429,16 +429,27 @@ body.modal-open .fab-bottom-right-btn {
 }
 
 .logo-svg {
-    width: 26px;
-    height: 26px;
+    width: 28px;
+    height: 28px;
     flex-shrink: 0;
-    filter: drop-shadow(0 1px 3px rgba(16, 185, 129, 0.25));
-    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.25s ease;
+    transition: transform 0.25s ease;
 }
 
 .logo:hover .logo-svg {
-    transform: scale(1.12) rotate(-5deg);
-    filter: drop-shadow(0 3px 8px rgba(16, 185, 129, 0.45));
+    transform: scale(1.08) rotate(-4deg);
+}
+
+.logo-badge {
+    font-size: 0.7rem;
+    font-weight: 800;
+    padding: 0.12rem 0.45rem;
+    background: rgba(22, 101, 52, 0.1);
+    color: var(--brand-green);
+    border-radius: 5px;
+    margin-left: 0.35rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    vertical-align: middle;
 }
 
 .logo-img {
