@@ -3469,78 +3469,32 @@ html.apple-light .fullscreen-close-btn:hover {
     margin: 0 auto;
 }
 
-.landing-hero-badge {
+.landing-hero-tag {
     display: flex;
-    flex-wrap: wrap;
     justify-content: center;
-    gap: 0.6rem;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.25rem;
 }
 
-.badge-pill {
+.hero-tag-pill {
     display: inline-flex;
     align-items: center;
-    padding: 0.35rem 0.9rem;
+    padding: 0.35rem 0.95rem;
     border-radius: 999px;
-    font-size: 0.8rem;
-    font-weight: 600;
-    line-height: 1.2;
-}
-
-.badge-pill.green {
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
     background: rgba(22, 101, 52, 0.08);
     color: var(--brand-green);
-    border: 1px solid rgba(22, 101, 52, 0.18);
-}
-
-.badge-pill.indigo {
-    background: rgba(107, 78, 143, 0.08);
-    color: var(--accent-indigo);
-    border: 1px solid rgba(107, 78, 143, 0.18);
-}
-
-.badge-pill.border {
-    background: rgba(0, 0, 0, 0.03);
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    color: var(--text-secondary);
-}
-
-html.apple-dark .badge-pill.border {
-    background: rgba(255, 255, 255, 0.05);
-    border-color: rgba(255, 255, 255, 0.15);
-}
-
-.badge-pill.outline-green {
-    border: 1px solid var(--status-success);
-    color: var(--status-success);
-    background: transparent;
+    border: 1px solid rgba(22, 101, 52, 0.2);
 }
 
 .landing-title {
-    font-size: 3rem;
+    font-size: 3.1rem;
     font-weight: 800;
     line-height: 1.12;
     letter-spacing: -0.035em;
     color: var(--text-primary);
-    margin-bottom: 1.2rem;
-}
-
-@media (max-width: 640px) {
-    .landing-title {
-        font-size: 2.1rem;
-    }
-}
-
-.gradient-text {
-    background: linear-gradient(135deg, var(--brand-green) 0%, var(--accent-indigo) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-
-html.apple-dark .gradient-text {
-    background: linear-gradient(135deg, #6B8F71 0%, #A78BFA 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    margin-bottom: 1.25rem;
 }
 
 .landing-subtitle {
