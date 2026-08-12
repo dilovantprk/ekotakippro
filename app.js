@@ -520,6 +520,11 @@ function toggleThemeFromSwitch(isDarkChecked) {
     applyTheme(isDarkChecked ? 'dark' : 'light');
 }
 
+function toggleThemeQuick() {
+    const current = getActiveTheme();
+    applyTheme(current === 'dark' ? 'light' : 'dark');
+}
+
 async function resetAllDataToDefault() {
     const sure = await showCustomConfirm(
         'Tüm Verileri Sıfırla',
@@ -1833,20 +1838,29 @@ function switchTab(tabId) {
         pane.classList.toggle('active', pane.id === tabId);
     });
 
-    const navLanding = document.getElementById('nav-link-landing');
+    const isLanding = tabId === 'landingTab';
+    const landingNav = document.getElementById('landing-nav-menu');
+    const appNav = document.getElementById('app-nav-menu');
+    const landingActions = document.getElementById('landing-nav-actions');
+    const appActions = document.getElementById('app-nav-actions');
+    const mobileTabBar = document.getElementById('mobileTabBar');
+
+    if (landingNav) landingNav.style.display = isLanding ? 'flex' : 'none';
+    if (appNav) appNav.style.display = isLanding ? 'none' : 'flex';
+    if (landingActions) landingActions.style.display = isLanding ? 'flex' : 'none';
+    if (appActions) appActions.style.display = isLanding ? 'none' : 'flex';
+    if (mobileTabBar) mobileTabBar.style.display = isLanding ? 'none' : 'flex';
+
     const navMacro = document.getElementById('nav-link-macro');
     const navCompany = document.getElementById('nav-link-company');
     const navEvents = document.getElementById('nav-link-events');
-    if (navLanding) navLanding.classList.toggle('active', tabId === 'landingTab');
     if (navMacro) navMacro.classList.toggle('active', tabId === 'macroTab');
     if (navCompany) navCompany.classList.toggle('active', tabId === 'companyTab');
     if (navEvents) navEvents.classList.toggle('active', tabId === 'eventsTab');
 
-    const tbLanding = document.getElementById('tabbar-landing');
     const tbMacro = document.getElementById('tabbar-macro');
     const tbCompany = document.getElementById('tabbar-company');
     const tbEvents = document.getElementById('tabbar-events');
-    if (tbLanding) tbLanding.classList.toggle('active', tabId === 'landingTab');
     if (tbMacro) tbMacro.classList.toggle('active', tabId === 'macroTab');
     if (tbCompany) tbCompany.classList.toggle('active', tabId === 'companyTab');
     if (tbEvents) tbEvents.classList.toggle('active', tabId === 'eventsTab');
@@ -1858,6 +1872,7 @@ function switchTab(tabId) {
 
     if (tabId === 'landingTab') {
         calcLandingMiniSim();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     } else if (tabId === 'macroTab') {
         setTimeout(() => {
             if (leafletMap) safeInvalidateSize(leafletMap, 'turkeyMap');
