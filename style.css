@@ -3852,6 +3852,19 @@ html.apple-dark .text-indigo { color: #C4B5FD !important; }
     line-height: 1.4;
 }
 
+.feature-block-footer {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--bg-border);
+}
+
+.feature-block-footer .feature-link-btn {
+    margin-top: 0;
+    align-self: auto;
+}
+
 .product-preview-card {
     background: var(--bg-grouped);
     border: 1px solid var(--bg-border);
