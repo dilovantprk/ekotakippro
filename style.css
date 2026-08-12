@@ -3824,13 +3824,8 @@ html.apple-dark .text-indigo { color: #C4B5FD !important; }
     background: var(--bg-grouped);
     border: 1px solid var(--bg-border);
     border-radius: 20px;
-    padding: 2.5rem;
-    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.03);
-    transition: box-shadow 0.2s ease;
-}
-
-.product-feature-block:hover {
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.07), 0 2px 6px rgba(0, 0, 0, 0.04);
+    padding: 2.25rem;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.03);
 }
 
 .product-tab-grid {
@@ -3853,55 +3848,34 @@ html.apple-dark .text-indigo { color: #C4B5FD !important; }
 }
 
 .product-info h3 {
-    font-size: 1.65rem;
-    font-weight: 800;
+    font-size: 1.5rem;
+    font-weight: 700;
     color: var(--text-primary);
-    margin: 0.6rem 0 1rem 0;
-    line-height: 1.25;
-    letter-spacing: -0.025em;
+    margin: 0.75rem 0;
+    line-height: 1.3;
 }
 
 .product-info p {
     font-size: 0.95rem;
-    line-height: 1.65;
+    line-height: 1.6;
     color: var(--text-secondary);
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.25rem;
 }
 
 .feature-bullets {
     list-style: none;
     padding: 0;
     margin: 0 0 1.5rem 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.55rem;
 }
 
 .feature-bullets li {
     display: flex;
     align-items: flex-start;
-    gap: 0.65rem;
-    font-size: 0.9rem;
+    gap: 0.6rem;
+    font-size: 0.92rem;
     color: var(--text-secondary);
-    line-height: 1.5;
-    padding: 0.55rem 0.75rem;
-    background: var(--bg-system);
-    border-radius: 8px;
-    border: 1px solid var(--bg-border);
-}
-
-.feature-bullets li::before {
-    content: "✓";
-    color: var(--brand-green);
-    font-weight: 700;
-    font-size: 0.85rem;
-    flex-shrink: 0;
-    margin-top: 0.05rem;
-}
-
-.feature-bullets li strong {
-    color: var(--text-primary);
-    font-weight: 600;
+    margin-bottom: 0.6rem;
+    line-height: 1.4;
 }
 
 .feature-block-footer {
@@ -3918,20 +3892,20 @@ html.apple-dark .text-indigo { color: #C4B5FD !important; }
 }
 
 .product-preview-card {
-    background: var(--bg-system);
+    background: var(--bg-grouped);
     border: 1px solid var(--bg-border);
     border-radius: 16px;
     overflow: hidden;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    box-shadow: var(--glass-shadow);
 }
 
 .mockup-header {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    padding: 0.8rem 1.1rem;
-    background: var(--text-primary);
-    border-bottom: none;
+    gap: 0.4rem;
+    padding: 0.75rem 1rem;
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--bg-border);
 }
 
 .dot {
@@ -3952,81 +3926,48 @@ html.apple-dark .text-indigo { color: #C4B5FD !important; }
 
 .mockup-body {
     padding: 1.5rem;
-    background: var(--bg-grouped);
 }
 
 .mockup-stat-row {
     display: flex;
     justify-content: space-between;
     gap: 1rem;
-    margin-bottom: 1.25rem;
-    padding-bottom: 1.25rem;
-    border-bottom: 1px solid var(--bg-border);
+    margin-bottom: 1.2rem;
 }
 
 .m-stat span {
     display: block;
-    font-size: 0.72rem;
-    font-weight: 600;
+    font-size: 0.75rem;
     color: var(--text-tertiary);
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    margin-bottom: 0.3rem;
 }
 
 .m-stat strong {
     display: block;
-    font-size: 1.1rem;
-    font-weight: 800;
+    font-size: 1.05rem;
+    font-weight: 700;
     color: var(--text-primary);
-    letter-spacing: -0.02em;
 }
 
 .mockup-chart-placeholder {
-    height: 90px;
-    background: linear-gradient(180deg, rgba(22, 101, 52, 0.12) 0%, rgba(22, 101, 52, 0.02) 100%);
-    border-bottom: 2.5px solid var(--brand-green);
+    height: 120px;
+    background: linear-gradient(180deg, rgba(22, 101, 52, 0.1) 0%, rgba(22, 101, 52, 0) 100%);
+    border-bottom: 2px solid var(--brand-green);
     border-radius: 8px;
-    position: relative;
-    overflow: hidden;
-}
-
-.mockup-chart-placeholder::after {
-    content: '';
-    position: absolute;
-    bottom: 3px;
-    left: 8%;
-    width: 84%;
-    height: 2px;
-    background: var(--brand-green);
-    opacity: 0.4;
-    border-radius: 1px;
 }
 
 .mockup-scope-list {
     display: flex;
     flex-direction: column;
-    gap: 0.6rem;
+    gap: 0.75rem;
 }
 
 .scope-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.7rem 1rem;
-    background: var(--bg-system);
+    padding: 0.75rem 1rem;
+    background: var(--bg-secondary);
     border-radius: 10px;
-    border: 1px solid var(--bg-border);
-    font-size: 0.88rem;
-}
-
-.scope-row span {
-    color: var(--text-secondary);
-}
-
-.scope-row strong {
-    color: var(--text-primary);
-    font-weight: 700;
     font-size: 0.9rem;
 }
 
