@@ -184,7 +184,7 @@
                     <div class="product-feature-block">
                         <div class="product-tab-grid">
                             <div class="product-info">
-                                <span class="badge-pill green">01. Veri & Harita Analitiği</span>
+                                <span class="badge-pill green">01. Veri &amp; Harita Analitiği</span>
                                 <h3>Türkiye Sanayi Emisyon Haritası ve Tarihsel Trendler</h3>
                                 <p>Türkiye genelindeki 500'den fazla ağır sanayi tesisini, elektrik santralini ve holding emisyonlarını harita üzerinde inceleyin. 2015-2025 tarihsel iklim verilerini analiz edin.</p>
                                 <ul class="feature-bullets">
@@ -192,6 +192,9 @@
                                     <li><strong>20 Yıllık Tarihsel Analiz:</strong> Türkiye emisyon eğilimleri ve sektör dağılımları.</li>
                                     <li><strong>Sektörel Kıyaslama:</strong> Çimento, demir-çelik, enerji ve cam sektör verileri.</li>
                                 </ul>
+                                <button type="button" class="feature-link-btn" onclick="switchTab('macroTab')">
+                                    Harita ve Makro Verileri İncele <i class="fa-solid fa-arrow-right"></i>
+                                </button>
                             </div>
                             <div class="product-preview-card">
                                 <div class="mockup-header">
@@ -212,20 +215,21 @@
                                             <strong>Enerji (%42)</strong>
                                         </div>
                                     </div>
-                                    <div class="mockup-chart-placeholder">
-                                        <div class="chart-line-sim"></div>
+                                    <!-- Gerçekçi bar grafik -->
+                                    <div class="mockup-bar-chart">
+                                        <div class="bar-chart-rows">
+                                            <div class="bc-row"><span>Enerji</span><div class="bc-track"><div class="bc-bar" style="width:82%; background: var(--brand-green);"></div></div><small>234 Mt</small></div>
+                                            <div class="bc-row"><span>Sanayi</span><div class="bc-track"><div class="bc-bar" style="width:58%; background: #4F46E5;"></div></div><small>162 Mt</small></div>
+                                            <div class="bc-row"><span>Demir-Çelik</span><div class="bc-track"><div class="bc-bar" style="width:38%; background: #D97706;"></div></div><small>108 Mt</small></div>
+                                            <div class="bc-row"><span>Çimento</span><div class="bc-track"><div class="bc-bar" style="width:22%; background: #0EA5E9;"></div></div><small>60 Mt</small></div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="feature-block-footer">
-                            <button type="button" class="feature-link-btn" onclick="switchTab('macroTab')">
-                                Harita ve Makro Verileri İncele <i class="fa-solid fa-arrow-right"></i>
-                            </button>
-                        </div>
                     </div>
 
-                    <!-- Feature 2: Kurumsal Karbon Yönetimi (Alternating Grid: Card Left, Text Right) -->
+                    <!-- Feature 2: Kurumsal Karbon Yönetimi -->
                     <div class="product-feature-block">
                         <div class="product-tab-grid reverse-grid">
                             <div class="product-preview-card">
@@ -235,17 +239,39 @@
                                 <div class="mockup-body">
                                     <div class="mockup-scope-list">
                                         <div class="scope-row">
-                                            <span>Kapsam 1 (Doğrudan Emisyonlar)</span>
-                                            <strong>12,450 tCO₂e</strong>
+                                            <div class="scope-info">
+                                                <span>Kapsam 1</span>
+                                                <small>Doğrudan Emisyonlar</small>
+                                            </div>
+                                            <div class="scope-right">
+                                                <div class="scope-bar-wrap"><div class="scope-bar" style="width:72%; background: #166534;"></div></div>
+                                                <strong>12,450 tCO₂e</strong>
+                                            </div>
                                         </div>
                                         <div class="scope-row">
-                                            <span>Kapsam 2 (Enerji Tüketimi)</span>
-                                            <strong>8,320 tCO₂e</strong>
+                                            <div class="scope-info">
+                                                <span>Kapsam 2</span>
+                                                <small>Enerji Tüketimi</small>
+                                            </div>
+                                            <div class="scope-right">
+                                                <div class="scope-bar-wrap"><div class="scope-bar" style="width:51%; background: #4F46E5;"></div></div>
+                                                <strong>8,320 tCO₂e</strong>
+                                            </div>
                                         </div>
                                         <div class="scope-row">
-                                            <span>Kapsam 3 (Tedarik Zinciri)</span>
-                                            <strong>4,110 tCO₂e</strong>
+                                            <div class="scope-info">
+                                                <span>Kapsam 3</span>
+                                                <small>Tedarik Zinciri</small>
+                                            </div>
+                                            <div class="scope-right">
+                                                <div class="scope-bar-wrap"><div class="scope-bar" style="width:25%; background: #D97706;"></div></div>
+                                                <strong>4,110 tCO₂e</strong>
+                                            </div>
                                         </div>
+                                    </div>
+                                    <div class="scope-total-row">
+                                        <span>Toplam Karbon Ayak İzi</span>
+                                        <strong class="scope-total-val">24,880 tCO₂e</strong>
                                     </div>
                                 </div>
                             </div>
@@ -258,12 +284,10 @@
                                     <li><strong>AI Ingestion:</strong> Fatura ve dokümanlardan otomatik emisyon verisi çıkarma.</li>
                                     <li><strong>Kurumsal Beyanname:</strong> AB SKDM / CBAM uyumlu bildirim hazırlığı.</li>
                                 </ul>
+                                <button type="button" class="feature-link-btn" onclick="switchTab('companyTab')">
+                                    Kurumsal Modüle Git <i class="fa-solid fa-arrow-right"></i>
+                                </button>
                             </div>
-                        </div>
-                        <div class="feature-block-footer">
-                            <button type="button" class="feature-link-btn" onclick="switchTab('companyTab')">
-                                Kurumsal Modüle Git <i class="fa-solid fa-arrow-right"></i>
-                            </button>
                         </div>
                     </div>
 
@@ -271,14 +295,17 @@
                     <div class="product-feature-block">
                         <div class="product-tab-grid">
                             <div class="product-info">
-                                <span class="badge-pill border">03. Etkinlik & Tesis Hesabı</span>
+                                <span class="badge-pill border">03. Etkinlik &amp; Tesis Hesabı</span>
                                 <h3>4-Kategorili Hassas Karbon Hesaplayıcısı</h3>
                                 <p>Kurumsal organizasyonların, fuarların, tesislerin ve iş seyahatlerinin karbon ayak izini dakikalar içinde hesaplayın ve yazdırılabilir resmi PDF raporu elde edin.</p>
                                 <ul class="feature-bullets">
-                                    <li><strong>Seyahat & Lojistik:</strong> Uçuş, transfer ve kargo emisyonları.</li>
-                                    <li><strong>Tesis & Enerji:</strong> Elektrik, jeneratör ve konaklama.</li>
-                                    <li><strong>Gıda & Malzeme:</strong> Catering menüleri, sahne branda ve promosyon atıkları.</li>
+                                    <li><strong>Seyahat &amp; Lojistik:</strong> Uçuş, transfer ve kargo emisyonları.</li>
+                                    <li><strong>Tesis &amp; Enerji:</strong> Elektrik, jeneratör ve konaklama.</li>
+                                    <li><strong>Gıda &amp; Malzeme:</strong> Catering menüleri, sahne branda ve promosyon atıkları.</li>
                                 </ul>
+                                <button type="button" class="feature-link-btn" onclick="switchTab('eventsTab')">
+                                    Hesaplayıcıyı Başlat <i class="fa-solid fa-arrow-right"></i>
+                                </button>
                             </div>
                             <div class="product-preview-card">
                                 <div class="mockup-header">
@@ -291,20 +318,32 @@
                                             <label>Toplam Etkinlik Emisyonu</label>
                                             <h4>18.45 ton CO₂e</h4>
                                         </div>
-                                        <div class="report-bars">
-                                            <div class="r-bar" style="width: 45%; background: var(--pillar-travel);"></div>
-                                            <div class="r-bar" style="width: 30%; background: var(--pillar-energy);"></div>
-                                            <div class="r-bar" style="width: 15%; background: var(--pillar-catering);"></div>
-                                            <div class="r-bar" style="width: 10%; background: var(--pillar-materials);"></div>
+                                        <!-- Gerçekçi kategori çubukları -->
+                                        <div class="report-category-bars">
+                                            <div class="rc-row">
+                                                <div class="rc-label"><i class="fa-solid fa-plane" style="color:var(--pillar-travel)"></i> Seyahat</div>
+                                                <div class="rc-track"><div class="rc-bar" style="width:52%; background:var(--pillar-travel);"></div></div>
+                                                <span>9.6 t</span>
+                                            </div>
+                                            <div class="rc-row">
+                                                <div class="rc-label"><i class="fa-solid fa-bolt" style="color:var(--pillar-energy)"></i> Enerji</div>
+                                                <div class="rc-track"><div class="rc-bar" style="width:32%; background:var(--pillar-energy);"></div></div>
+                                                <span>5.9 t</span>
+                                            </div>
+                                            <div class="rc-row">
+                                                <div class="rc-label"><i class="fa-solid fa-utensils" style="color:var(--pillar-catering)"></i> Gıda</div>
+                                                <div class="rc-track"><div class="rc-bar" style="width:14%; background:var(--pillar-catering);"></div></div>
+                                                <span>2.6 t</span>
+                                            </div>
+                                            <div class="rc-row">
+                                                <div class="rc-label"><i class="fa-solid fa-box" style="color:var(--pillar-materials)"></i> Malzeme</div>
+                                                <div class="rc-track"><div class="rc-bar" style="width:2%; background:var(--pillar-materials);"></div></div>
+                                                <span>0.35 t</span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="feature-block-footer">
-                            <button type="button" class="feature-link-btn" onclick="switchTab('eventsTab')">
-                                Hesaplayıcıyı Başlat <i class="fa-solid fa-arrow-right"></i>
-                            </button>
                         </div>
                     </div>
                 </div>

@@ -3831,10 +3831,7 @@ html.apple-dark .text-indigo { color: #C4B5FD !important; }
     flex-direction: column;
 }
 
-/* Per-card accent top border */
-.product-feature-block:nth-child(1) { border-top: 3px solid #166534; }
-.product-feature-block:nth-child(2) { border-top: 3px solid #4F46E5; }
-.product-feature-block:nth-child(3) { border-top: 3px solid #D97706; }
+
 
 .product-tab-grid {
     display: grid;
@@ -3898,15 +3895,12 @@ html.apple-dark .text-indigo { color: #C4B5FD !important; }
 }
 
 .feature-block-footer {
-    display: flex;
-    justify-content: flex-end;
-    padding: 1rem 2.25rem 1.25rem 2.25rem;
-    border-top: 1px solid var(--bg-border);
+    display: none;
 }
 
-.feature-block-footer .feature-link-btn {
-    margin-top: 0;
-    align-self: auto;
+.feature-link-btn {
+    margin-top: auto;
+    align-self: flex-start;
 }
 
 .product-preview-card {
@@ -3976,27 +3970,164 @@ html.apple-dark .text-indigo { color: #C4B5FD !important; }
     color: var(--text-primary);
 }
 
-.mockup-chart-placeholder {
-    height: 120px;
-    background: linear-gradient(180deg, rgba(22, 101, 52, 0.1) 0%, rgba(22, 101, 52, 0) 100%);
-    border-bottom: 2px solid var(--brand-green);
-    border-radius: 8px;
+/* Bar chart inside macro mockup */
+.mockup-bar-chart {
+    margin-top: 0.5rem;
 }
 
+.bar-chart-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+}
+
+.bc-row {
+    display: grid;
+    grid-template-columns: 70px 1fr 46px;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.78rem;
+}
+
+.bc-row span {
+    color: var(--text-secondary);
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.bc-row small {
+    color: var(--text-tertiary);
+    font-size: 0.72rem;
+    text-align: right;
+}
+
+.bc-track {
+    height: 8px;
+    background: var(--bg-border);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.bc-bar {
+    height: 100%;
+    border-radius: 4px;
+    opacity: 0.85;
+}
+
+/* Scope rows with inline bar */
 .mockup-scope-list {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 0.65rem;
 }
 
 .scope-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.75rem 1rem;
+    gap: 1rem;
+    padding: 0.65rem 0.9rem;
     background: var(--bg-secondary);
     border-radius: 10px;
-    font-size: 0.9rem;
+    border: 1px solid var(--bg-border);
+}
+
+.scope-info span {
+    display: block;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.scope-info small {
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
+}
+
+.scope-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.3rem;
+    min-width: 120px;
+}
+
+.scope-bar-wrap {
+    width: 100%;
+    height: 5px;
+    background: var(--bg-border);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.scope-bar {
+    height: 100%;
+    border-radius: 3px;
+    opacity: 0.75;
+}
+
+.scope-total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--bg-border);
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+}
+
+.scope-total-val {
+    font-size: 1rem;
+    font-weight: 800;
+    color: var(--text-primary);
+}
+
+/* Report category bars (calculator mockup) */
+.report-category-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+    margin-top: 0.75rem;
+    text-align: left;
+}
+
+.rc-row {
+    display: grid;
+    grid-template-columns: 72px 1fr 42px;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.78rem;
+}
+
+.rc-label {
+    color: var(--text-secondary);
+    font-size: 0.78rem;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.rc-track {
+    height: 7px;
+    background: var(--bg-border);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.rc-bar {
+    height: 100%;
+    border-radius: 4px;
+    min-width: 4px;
+    opacity: 0.8;
+}
+
+.rc-row span {
+    color: var(--text-tertiary);
+    font-size: 0.72rem;
+    text-align: right;
 }
 
 .mockup-report-preview {
