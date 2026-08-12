@@ -59,7 +59,6 @@
                 
                 <!-- LANDING PAGE NAVIGATION (Visible on Landing Page) -->
                 <nav class="nav-menu" id="landing-nav-menu">
-                    <a href="#landing-sim" class="nav-link" onclick="scrollToLandingSection('landing-sim', event)">Simülatör</a>
                     <a href="#landing-features" class="nav-link" onclick="scrollToLandingSection('landing-features', event)">Modüller</a>
                     <a href="#landing-standards" class="nav-link" onclick="scrollToLandingSection('landing-standards', event)">Standartlar</a>
                     <a href="#landing-faq" class="nav-link" onclick="scrollToLandingSection('landing-faq', event)">SSS</a>
@@ -171,52 +170,7 @@
                 </div>
             </div>
 
-            <!-- Mini Interactive Carbon Simulator (Retention Element) -->
-            <div class="landing-sim-card margin-bottom-2" id="landing-sim">
-                <div class="sim-card-header">
-                    <div>
-                        <div class="badge-pill outline-green margin-bottom-05">Anlık Canlı Hesaplama</div>
-                        <h3 class="sim-title">Hızlı Karbon Ayak İzi Tahmincisi</h3>
-                        <p class="sim-desc">3 temel girdi ile tesisiniz veya etkinliğiniz için tahmini emisyonu anında görün.</p>
-                    </div>
-                    <div class="sim-result-badge">
-                        <span class="sim-val" id="landingSimVal">0.00</span>
-                        <span class="sim-unit">ton CO₂e</span>
-                    </div>
-                </div>
 
-                <div class="sim-inputs-grid">
-                    <div class="sim-input-group">
-                        <label for="simArea">Tesis / Etkinlik Alanı (m²)</label>
-                        <input type="range" id="simArea" min="50" max="5000" step="50" value="500" oninput="calcLandingMiniSim()">
-                        <div class="sim-range-val"><span id="simAreaVal">500</span> m²</div>
-                    </div>
-                    <div class="sim-input-group">
-                        <label for="simElec">Şebeke Elektriği (kWh)</label>
-                        <input type="range" id="simElec" min="100" max="25000" step="100" value="2500" oninput="calcLandingMiniSim()">
-                        <div class="sim-range-val"><span id="simElecVal">2,500</span> kWh</div>
-                    </div>
-                    <div class="sim-input-group">
-                        <label for="simStay">Otel Konaklaması (Gece/Kişi)</label>
-                        <input type="range" id="simStay" min="0" max="200" step="5" value="20" oninput="calcLandingMiniSim()">
-                        <div class="sim-range-val"><span id="simStayVal">20</span> gece</div>
-                    </div>
-                </div>
-
-                <div class="sim-footer">
-                    <div class="sim-equivalents">
-                        <div class="sim-eq-item">
-                            <span>Sektörel Emisyon Yoğunluğu: <strong id="landingSimIntensity" class="text-green">0.00</strong> kg CO₂e/m²</span>
-                        </div>
-                        <div class="sim-eq-item">
-                            <span>Araba sürüşü eşdeğeri: <strong id="landingSimKm" class="text-indigo">0</strong> km</span>
-                        </div>
-                    </div>
-                    <button type="button" class="hero-btn-secondary" onclick="transferLandingSimToCalculator()">
-                        Detaylı Raporlama İçin Aktar <i class="fa-solid fa-arrow-right"></i>
-                    </button>
-                </div>
-            </div>
 
             <!-- Product Showcase / Stacked Feature Blocks -->
             <div class="landing-product-showcase margin-bottom-2" id="landing-features">
