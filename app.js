@@ -4529,8 +4529,306 @@ function toggleLandingFaq(faqId) {
     item.classList.toggle('active');
 }
 
+/* ==========================================================================
+   ClimateTrace 3D Interactive Globe & Emission Pillars Canvas Animation
+   ========================================================================== */
+function initClimateGlobeCanvas() {
+    const canvas = document.getElementById('climateGlobeCanvas');
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    const tooltip = document.getElementById('globeTooltip');
+    const container = canvas.parentElement;
+
+    let width, height, dpr;
+    function resize() {
+        dpr = window.devicePixelRatio || 1;
+        width = container.clientWidth;
+        height = container.clientHeight;
+        canvas.width = width * dpr;
+        canvas.height = height * dpr;
+        ctx.scale(dpr, dpr);
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    // 3D Camera & Globe Parameters
+    let rotX = 0.35;
+    let rotY = 0.65;
+    let isDragging = false;
+    let lastMouseX = 0;
+    let lastMouseY = 0;
+    let hoveredNode = null;
+
+    // Industrial Facility Emission Nodes (Lat, Lon, Name, Emission, Color, Height)
+    const facilities = [
+        { lat: 41.0, lon: 28.7, name: "Ambarlı Enerji Santrali (İstanbul)", val: "4.2 Mt CO₂e", color: "#10B981", height: 45 },
+        { lat: 40.8, lon: 29.5, name: "Dilovası Organize Sanayi (Kocaeli)", val: "6.8 Mt CO₂e", color: "#F59E0B", height: 65 },
+        { lat: 41.4, lon: 31.8, name: "Erdemir Demir-Çelik (Ereğli)", val: "9.1 Mt CO₂e", color: "#EF4444", height: 95 },
+        { lat: 38.8, lon: 26.9, name: "Aliağa HABAŞ Tesisleri (İzmir)", val: "8.4 Mt CO₂e", color: "#EF4444", height: 88 },
+        { lat: 36.6, lon: 36.2, name: "İsdemir Demir-Çelik (İskenderun)", val: "11.2 Mt CO₂e", color: "#EF4444", height: 115 },
+        { lat: 38.2, lon: 36.9, name: "Afşin-Elbistan Termik Santrali", val: "12.5 Mt CO₂e", color: "#EF4444", height: 125 },
+        { lat: 39.2, lon: 27.5, name: "Soma Termik Santrali (Manisa)", val: "7.6 Mt CO₂e", color: "#F59E0B", height: 78 },
+        { lat: 36.8, lon: 35.9, name: "Sugözü Enerji Santrali (Adana)", val: "5.3 Mt CO₂e", color: "#10B981", height: 55 },
+        { lat: 39.6, lon: 32.1, name: "Başkent Organize Sanayi (Ankara)", val: "3.1 Mt CO₂e", color: "#10B981", height: 38 },
+        { lat: 40.4, lon: 29.1, name: "Gemlik Kimya & Gübre (Bursa)", val: "4.8 Mt CO₂e", color: "#F59E0B", height: 50 },
+        { lat: 41.2, lon: 36.4, name: "Samsun Gübre & Bakır Tesisleri", val: "3.9 Mt CO₂e", color: "#10B981", height: 42 },
+        { lat: 37.4, lon: 31.8, name: "Eti Alüminyum Tesisleri (Konya)", val: "5.1 Mt CO₂e", color: "#F59E0B", height: 54 },
+        { lat: 48.8, lon: 2.35, name: "Paris Endüstriyel Havza", val: "3.4 Mt CO₂e", color: "#6366F1", height: 35 },
+        { lat: 51.5, lon: -0.12, name: "Londra Enerji Ağı", val: "2.8 Mt CO₂e", color: "#6366F1", height: 30 },
+        { lat: 50.1, lon: 8.68, name: "Frankfurt Kimya Kümesi", val: "4.5 Mt CO₂e", color: "#6366F1", height: 46 },
+        { lat: 30.0, lon: 31.2, name: "Kahire Sanayi Tesisleri", val: "5.7 Mt CO₂e", color: "#F59E0B", height: 58 },
+        { lat: 35.7, lon: 51.4, name: "Tahran Petrokimya Tesisleri", val: "7.1 Mt CO₂e", color: "#EF4444", height: 72 }
+    ];
+
+    // Create Latitude/Longitude Grid Lines
+    const gridLines = [];
+    for (let lat = -60; lat <= 60; lat += 20) {
+        const line = [];
+        for (let lon = -180; lon <= 180; lon += 10) {
+            line.push({ lat, lon });
+        }
+        gridLines.push(line);
+    }
+    for (let lon = -180; lon < 180; lon += 30) {
+        const line = [];
+        for (let lat = -80; lat <= 80; lat += 10) {
+            line.push({ lat, lon });
+        }
+        gridLines.push(line);
+    }
+
+    // Convert Lat/Lon to 3D Cartesian coordinates
+    function latLonTo3D(lat, lon, radius) {
+        const phi = (90 - lat) * (Math.PI / 180);
+        const theta = (lon + 180) * (Math.PI / 180);
+        const x = -(radius * Math.sin(phi) * Math.cos(theta));
+        const z = radius * Math.sin(phi) * Math.sin(theta);
+        const y = radius * Math.cos(phi);
+        return { x, y, z };
+    }
+
+    // 3D Rotation Matrix
+    function rotate3D(pt, rX, rY) {
+        let x1 = pt.x * Math.cos(rY) + pt.z * Math.sin(rY);
+        let z1 = -pt.x * Math.sin(rY) + pt.z * Math.cos(rY);
+        let y1 = pt.y;
+
+        let y2 = y1 * Math.cos(rX) - z1 * Math.sin(rX);
+        let z2 = y1 * Math.sin(rX) + z1 * Math.cos(rX);
+        let x2 = x1;
+
+        return { x: x2, y: y2, z: z2 };
+    }
+
+    // Mouse Drag Events for 3D Globe Rotation
+    container.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        lastMouseX = e.clientX;
+        lastMouseY = e.clientY;
+    });
+
+    window.addEventListener('mousemove', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const mouseX = e.clientX - rect.left;
+        const mouseY = e.clientY - rect.top;
+
+        if (isDragging) {
+            const dx = e.clientX - lastMouseX;
+            const dy = e.clientY - lastMouseY;
+            rotY += dx * 0.006;
+            rotX += dy * 0.006;
+            rotX = Math.max(-Math.PI / 2.5, Math.min(Math.PI / 2.5, rotX));
+            lastMouseX = e.clientX;
+            lastMouseY = e.clientY;
+        }
+
+        // Check hover over 3D pillar tops
+        let found = null;
+        if (!isDragging && mouseX >= 0 && mouseX <= width && mouseY >= 0 && mouseY <= height) {
+            const globeRadius = Math.min(width, height) * 0.36;
+            const centerX = width / 2;
+            const centerY = height / 2;
+
+            for (const f of facilities) {
+                const pt = latLonTo3D(f.lat, f.lon, globeRadius);
+                const rPt = rotate3D(pt, rotX, rotY);
+
+                if (rPt.z > -globeRadius * 0.2) {
+                    const norm = Math.sqrt(rPt.x * rPt.x + rPt.y * rPt.y + rPt.z * rPt.z);
+                    const topPt = {
+                        x: rPt.x + (rPt.x / norm) * f.height,
+                        y: rPt.y + (rPt.y / norm) * f.height,
+                        z: rPt.z + (rPt.z / norm) * f.height
+                    };
+                    const sx = centerX + topPt.x;
+                    const sy = centerY - topPt.y;
+
+                    const dist = Math.hypot(mouseX - sx, mouseY - sy);
+                    if (dist < 18) {
+                        found = { facility: f, sx, sy };
+                        break;
+                    }
+                }
+            }
+        }
+
+        hoveredNode = found;
+        if (hoveredNode && tooltip) {
+            tooltip.style.display = 'block';
+            tooltip.style.left = `${hoveredNode.sx}px`;
+            tooltip.style.top = `${hoveredNode.sy}px`;
+            tooltip.innerHTML = `<strong>${hoveredNode.facility.name}</strong>Tahmini Yıllık Emisyon: ${hoveredNode.facility.val}`;
+        } else if (tooltip) {
+            tooltip.style.display = 'none';
+        }
+    });
+
+    window.addEventListener('mouseup', () => { isDragging = false; });
+
+    // Animation Loop
+    let particleOffset = 0;
+    function render() {
+        if (!isDragging) {
+            rotY += 0.0018;
+        }
+        particleOffset = (particleOffset + 0.02) % 1;
+
+        ctx.clearRect(0, 0, width, height);
+
+        const centerX = width / 2;
+        const centerY = height / 2;
+        const globeRadius = Math.min(width, height) * 0.36;
+
+        // Draw Globe Atmosphere Glow
+        const atmGrad = ctx.createRadialGradient(centerX, centerY, globeRadius * 0.85, centerX, centerY, globeRadius * 1.25);
+        atmGrad.addColorStop(0, 'rgba(16, 185, 129, 0.12)');
+        atmGrad.addColorStop(0.5, 'rgba(16, 185, 129, 0.04)');
+        atmGrad.addColorStop(1, 'rgba(15, 23, 42, 0)');
+        ctx.fillStyle = atmGrad;
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, globeRadius * 1.25, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Draw Globe Base Sphere
+        const sphereGrad = ctx.createRadialGradient(centerX - globeRadius * 0.3, centerY - globeRadius * 0.3, globeRadius * 0.1, centerX, centerY, globeRadius);
+        sphereGrad.addColorStop(0, '#1E293B');
+        sphereGrad.addColorStop(0.7, '#0F172A');
+        sphereGrad.addColorStop(1, '#09090B');
+        ctx.fillStyle = sphereGrad;
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, globeRadius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        // Draw 3D Grid Lines
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.06)';
+        ctx.lineWidth = 1;
+        for (const line of gridLines) {
+            ctx.beginPath();
+            let started = false;
+            for (const pt of line) {
+                const p3d = latLonTo3D(pt.lat, pt.lon, globeRadius);
+                const rPt = rotate3D(p3d, rotX, rotY);
+                if (rPt.z > 0) {
+                    const sx = centerX + rPt.x;
+                    const sy = centerY - rPt.y;
+                    if (!started) {
+                        ctx.moveTo(sx, sy);
+                        started = true;
+                    } else {
+                        ctx.lineTo(sx, sy);
+                    }
+                } else {
+                    started = false;
+                }
+            }
+            ctx.stroke();
+        }
+
+        // Sort Facilities by Depth (z-index)
+        const projectedFacilities = facilities.map(f => {
+            const pt = latLonTo3D(f.lat, f.lon, globeRadius);
+            const rPt = rotate3D(pt, rotX, rotY);
+            return { facility: f, basePt: rPt };
+        }).sort((a, b) => a.basePt.z - b.basePt.z);
+
+        // Render 3D ClimateTrace Emission Pillars
+        for (const pf of projectedFacilities) {
+            const f = pf.facility;
+            const rPt = pf.basePt;
+
+            if (rPt.z > -globeRadius * 0.15) {
+                const norm = Math.sqrt(rPt.x * rPt.x + rPt.y * rPt.y + rPt.z * rPt.z);
+                const dirX = rPt.x / norm;
+                const dirY = rPt.y / norm;
+                const dirZ = rPt.z / norm;
+
+                const bx = centerX + rPt.x;
+                const by = centerY - rPt.y;
+
+                const topPt = {
+                    x: rPt.x + dirX * f.height,
+                    y: rPt.y + dirY * f.height,
+                    z: rPt.z + dirZ * f.height
+                };
+
+                const tx = centerX + topPt.x;
+                const ty = centerY - topPt.y;
+
+                const alpha = Math.max(0.2, (rPt.z + globeRadius) / (2 * globeRadius));
+
+                // Draw Base Dot
+                ctx.fillStyle = f.color;
+                ctx.globalAlpha = alpha * 0.8;
+                ctx.beginPath();
+                ctx.arc(bx, by, 3, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Draw 3D Vertical Emission Pillar
+                const pillarGrad = ctx.createLinearGradient(bx, by, tx, ty);
+                pillarGrad.addColorStop(0, f.color);
+                pillarGrad.addColorStop(1, '#FFFFFF');
+
+                ctx.strokeStyle = pillarGrad;
+                ctx.lineWidth = 3.5;
+                ctx.globalAlpha = alpha * 0.9;
+                ctx.beginPath();
+                ctx.moveTo(bx, by);
+                ctx.lineTo(tx, ty);
+                ctx.stroke();
+
+                // Draw Pulse Particle rising along pillar
+                const px = bx + (tx - bx) * particleOffset;
+                const py = by + (ty - by) * particleOffset;
+                ctx.fillStyle = '#FFFFFF';
+                ctx.globalAlpha = alpha;
+                ctx.beginPath();
+                ctx.arc(px, py, 2.5, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Draw Glowing Top Cap
+                ctx.fillStyle = f.color;
+                ctx.shadowColor = f.color;
+                ctx.shadowBlur = 12;
+                ctx.beginPath();
+                ctx.arc(tx, ty, 4.5, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.shadowBlur = 0;
+            }
+        }
+        ctx.globalAlpha = 1.0;
+
+        requestAnimationFrame(render);
+    }
+    render();
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     calcLandingMiniSim();
+    initClimateGlobeCanvas();
     if (window.innerWidth <= 768) {
         switchTab('macroTab');
     }
