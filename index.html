@@ -59,18 +59,10 @@
                 
                 <!-- LANDING PAGE NAVIGATION (Visible on Landing Page) -->
                 <nav class="nav-menu" id="landing-nav-menu">
-                    <a href="#landing-sim" class="nav-link">
-                        <i class="fa-solid fa-bolt"></i> Simülatör
-                    </a>
-                    <a href="#landing-features" class="nav-link">
-                        <i class="fa-solid fa-cubes"></i> Modüller
-                    </a>
-                    <a href="#landing-standards" class="nav-link">
-                        <i class="fa-solid fa-shield-halved"></i> Standartlar
-                    </a>
-                    <a href="#landing-faq" class="nav-link">
-                        <i class="fa-solid fa-circle-question"></i> SSS
-                    </a>
+                    <a href="#landing-sim" class="nav-link">Simülatör</a>
+                    <a href="#landing-features" class="nav-link">Modüller</a>
+                    <a href="#landing-standards" class="nav-link">Standartlar</a>
+                    <a href="#landing-faq" class="nav-link">SSS</a>
                 </nav>
 
                 <!-- APP DASHBOARD NAVIGATION (Visible inside Portal App) -->
@@ -94,7 +86,7 @@
                         <i class="fa-solid fa-moon" id="landingThemeIcon"></i>
                     </button>
                     <button class="nav-cta-btn" type="button" onclick="switchTab('macroTab')">
-                        <i class="fa-solid fa-right-to-bracket"></i> Portala Giriş Yap
+                        Portala Giriş Yap <i class="fa-solid fa-arrow-right"></i>
                     </button>
                 </div>
 
@@ -132,9 +124,9 @@
             <!-- Hero Section -->
             <div class="landing-hero">
                 <div class="landing-hero-badge">
-                    <span class="badge-pill green"><i class="fa-solid fa-leaf"></i> Türkiye İklim Zekası</span>
-                    <span class="badge-pill indigo"><i class="fa-solid fa-shield-halved"></i> Zero-PII Cihaz İçi Güvenlik</span>
-                    <span class="badge-pill border"><i class="fa-solid fa-certificate"></i> AB SKDM & ISO 14064 Uyumlu</span>
+                    <span class="badge-pill green">Türkiye İklim Zekası</span>
+                    <span class="badge-pill indigo">Zero-PII Veri Güvenliği</span>
+                    <span class="badge-pill border">AB SKDM & ISO 14064 Uyumlu</span>
                 </div>
                 <h1 class="landing-title">
                     Türkiye İklim Zekası & <br><span class="gradient-text">Kurumsal Karbon Yönetimi</span>
@@ -144,22 +136,221 @@
                 </p>
                 <div class="landing-cta-row">
                     <button type="button" class="hero-btn-primary" onclick="switchTab('macroTab')">
-                        <i class="fa-solid fa-chart-pie"></i> Portala Giriş Yap
+                        Portala Giriş Yap <i class="fa-solid fa-arrow-right"></i>
                     </button>
                     <button type="button" class="hero-btn-secondary" onclick="switchTab('eventsTab')">
-                        <i class="fa-solid fa-calculator"></i> Hızlı Hesaplayıcıyı Aç
+                        Hızlı Hesaplayıcıyı Aç
                     </button>
                 </div>
             </div>
 
             <!-- Mini Interactive Carbon Simulator (Retention Element) -->
             <div class="landing-sim-card apple-card margin-bottom-2" id="landing-sim">
+                <div class="sim-card-header">
+                    <div>
+                        <div class="badge-pill outline-green margin-bottom-05">Anlık Canlı Hesaplama</div>
+                        <h3 class="sim-title">Hızlı Karbon Ayak İzi Tahmincisi</h3>
+                        <p class="sim-desc">3 temel girdi ile tesisiniz veya etkinliğiniz için tahmini emisyonu anında görün.</p>
+                    </div>
+                    <div class="sim-result-badge">
+                        <span class="sim-val" id="landingSimVal">0.00</span>
+                        <span class="sim-unit">ton CO₂e</span>
+                    </div>
+                </div>
+
+                <div class="sim-inputs-grid">
+                    <div class="sim-input-group">
+                        <label for="simArea">Tesis / Etkinlik Alanı (m²)</label>
+                        <input type="range" id="simArea" min="50" max="5000" step="50" value="500" oninput="calcLandingMiniSim()">
+                        <div class="sim-range-val"><span id="simAreaVal">500</span> m²</div>
+                    </div>
+                    <div class="sim-input-group">
+                        <label for="simElec">Şebeke Elektriği (kWh)</label>
+                        <input type="range" id="simElec" min="100" max="25000" step="100" value="2500" oninput="calcLandingMiniSim()">
+                        <div class="sim-range-val"><span id="simElecVal">2,500</span> kWh</div>
+                    </div>
+                    <div class="sim-input-group">
+                        <label for="simStay">Otel Konaklaması (Gece/Kişi)</label>
+                        <input type="range" id="simStay" min="0" max="200" step="5" value="20" oninput="calcLandingMiniSim()">
+                        <div class="sim-range-val"><span id="simStayVal">20</span> gece</div>
+                    </div>
+                </div>
+
+                <div class="sim-footer">
+                    <div class="sim-equivalents">
+                        <div class="sim-eq-item">
+                            <span>Denkleştirme için gereken: <strong id="landingSimTrees" class="text-green">0</strong> ağaç/yıl</span>
+                        </div>
+                        <div class="sim-eq-item">
+                            <span>Araba sürüşü eşdeğeri: <strong id="landingSimKm" class="text-indigo">0</strong> km</span>
+                        </div>
+                    </div>
+                    <button type="button" class="hero-btn-secondary" onclick="transferLandingSimToCalculator()">
+                        Detaylı Raporlama İçin Aktar <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
 
             <!-- Product Showcase / Interactive Feature Tabs -->
             <div class="landing-product-showcase margin-bottom-2" id="landing-features">
+                <div class="text-center margin-bottom-15">
+                    <h2 class="section-headline">Ürün Modülleri ve Yetenekleri</h2>
+                    <p class="section-subtext">Tek platformda makro iklim verisinden mikro kurumsal hesaplamaya tam entegrasyon.</p>
+                </div>
+
+                <div class="product-tabs-header">
+                    <button class="product-tab-btn active" id="prodTabBtnMacro" onclick="switchLandingProductTab('macro')">
+                        Makro İklim Zekası
+                    </button>
+                    <button class="product-tab-btn" id="prodTabBtnCompany" onclick="switchLandingProductTab('company')">
+                        Şirketim Portalı
+                    </button>
+                    <button class="product-tab-btn" id="prodTabBtnEvents" onclick="switchLandingProductTab('events')">
+                        Etkinlik & Tesis Hesaplayıcı
+                    </button>
+                </div>
+
+                <div class="product-tab-content active" id="prodTabContentMacro">
+                    <div class="product-tab-grid">
+                        <div class="product-info">
+                            <span class="badge-pill green">01. Veri & Harita Analitiği</span>
+                            <h3>Türkiye Sanayi Emisyon Haritası ve Tarihsel Trendler</h3>
+                            <p>Türkiye genelindeki 500'den fazla ağır sanayi tesisini, elektrik santralini ve holding emisyonlarını harita üzerinde inceleyin. 2015-2025 tarihsel iklim verilerini analiz edin.</p>
+                            <ul class="feature-bullets">
+                                <li><strong>500+ Haritalanmış Tesis:</strong> Şehir, sektör ve emisyon türüne göre filtreleme.</li>
+                                <li><strong>20 Yıllık Tarihsel Analiz:</strong> Türkiye emisyon eğilimleri ve sektör dağılımları.</li>
+                                <li><strong>Sektörel Kıyaslama:</strong> Çimento, demir-çelik, enerji ve cam sektör verileri.</li>
+                            </ul>
+                            <button type="button" class="hero-btn-primary" onclick="switchTab('macroTab')">
+                                Harita ve Makro Verileri İncele <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                        </div>
+                        <div class="product-preview-card apple-card">
+                            <div class="mockup-header">
+                                <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+                                <span class="mockup-title">Makro İklim Zekası Paneli</span>
+                            </div>
+                            <div class="mockup-body">
+                                <div class="mockup-stat-row">
+                                    <div class="m-stat">
+                                        <span>Toplam Emisyon</span>
+                                        <strong>564.2 Mt CO₂e</strong>
+                                    </div>
+                                    <div class="m-stat">
+                                        <span>Tesis Sayısı</span>
+                                        <strong>512 Tesis</strong>
+                                    </div>
+                                    <div class="m-stat">
+                                        <span>Lider Sektör</span>
+                                        <strong>Enerji (%42)</strong>
+                                    </div>
+                                </div>
+                                <div class="mockup-chart-placeholder">
+                                    <div class="chart-line-sim"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="product-tab-content" id="prodTabContentCompany">
+                    <div class="product-tab-grid">
+                        <div class="product-info">
+                            <span class="badge-pill indigo">02. Kurumsal Yönetim</span>
+                            <h3>Tesis ve Holding Bazlı Karbon Yönetim Portalı</h3>
+                            <p>Şirketinizin Kapsam 1 (Doğrudan), Kapsam 2 (Elektrik/Isı) ve Kapsam 3 (Tedarik Zinciri) emisyonlarını tek bir kokpitte yönetin. Emisyon yoğunluğu ve trend takibi yapın.</p>
+                            <ul class="feature-bullets">
+                                <li><strong>Kapsam 1, 2, 3 Ayrıştırması:</strong> GHG Protocol uyumlu kategori takibi.</li>
+                                <li><strong>AI Ingestion:</strong> Fatura ve dokümanlardan otomatik emisyon verisi çıkarma.</li>
+                                <li><strong>Kurumsal Beyanname:</strong> AB SKDM / CBAM uyumlu bildirim hazırlığı.</li>
+                            </ul>
+                            <button type="button" class="hero-btn-primary" onclick="switchTab('companyTab')">
+                                Kurumsal Portala Git <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                        </div>
+                        <div class="product-preview-card apple-card">
+                            <div class="mockup-header">
+                                <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+                                <span class="mockup-title">Şirketim Karbon Kokpiti</span>
+                            </div>
+                            <div class="mockup-body">
+                                <div class="mockup-scope-list">
+                                    <div class="scope-row">
+                                        <span>Kapsam 1 (Doğrudan Emisyonlar)</span>
+                                        <strong>12,450 tCO₂e</strong>
+                                    </div>
+                                    <div class="scope-row">
+                                        <span>Kapsam 2 (Enerji Tüketimi)</span>
+                                        <strong>8,320 tCO₂e</strong>
+                                    </div>
+                                    <div class="scope-row">
+                                        <span>Kapsam 3 (Tedarik Zinciri)</span>
+                                        <strong>4,110 tCO₂e</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="product-tab-content" id="prodTabContentEvents">
+                    <div class="product-tab-grid">
+                        <div class="product-info">
+                            <span class="badge-pill border">03. Etkinlik & Tesis Hesabı</span>
+                            <h3>4-Kategorili Hassas Karbon Hesaplayıcısı</h3>
+                            <p>Kurumsal organizasyonların, fuarların, tesislerin ve iş seyahatlerinin karbon ayak izini dakikalar içinde hesaplayın ve yazdırılabilir resmi PDF raporu elde edin.</p>
+                            <ul class="feature-bullets">
+                                <li><strong>Seyahat & Lojistik:</strong> Uçuş, transfer ve kargo emisyonları.</li>
+                                <li><strong>Tesis & Enerji:</strong> Elektrik, jeneratör ve konaklama.</li>
+                                <li><strong>Gıda & Malzeme:</strong> Catering menüleri, sahne branda ve promosyon atıkları.</li>
+                            </ul>
+                            <button type="button" class="hero-btn-primary" onclick="switchTab('eventsTab')">
+                                Hesaplayıcıyı Başlat <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                        </div>
+                        <div class="product-preview-card apple-card">
+                            <div class="mockup-header">
+                                <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+                                <span class="mockup-title">Karbon Hesaplayıcı Raporu</span>
+                            </div>
+                            <div class="mockup-body">
+                                <div class="mockup-report-preview">
+                                    <div class="report-badge">PDF HAZIR</div>
+                                    <div class="report-metric">
+                                        <label>Toplam Etkinlik Emisyonu</label>
+                                        <h4>18.45 ton CO₂e</h4>
+                                    </div>
+                                    <div class="report-bars">
+                                        <div class="r-bar" style="width: 45%; background: var(--pillar-travel);"></div>
+                                        <div class="r-bar" style="width: 30%; background: var(--pillar-energy);"></div>
+                                        <div class="r-bar" style="width: 15%; background: var(--pillar-catering);"></div>
+                                        <div class="r-bar" style="width: 10%; background: var(--pillar-materials);"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <!-- Key Technical Standards & Security Pillars -->
             <div class="landing-pillars-grid margin-bottom-2" id="landing-standards">
+                <div class="pillar-card apple-card">
+                    <div class="pillar-icon green"><i class="fa-solid fa-lock"></i></div>
+                    <h4>Zero-PII & %100 Cihaz İçi Güvenlik</h4>
+                    <p>Hassas kurumsal verileriniz üçüncü taraf sunuculara aktarılmaz. Tüm hesaplamalar ve beyannameler cihazınızda güvenle işlenir.</p>
+                </div>
+                <div class="pillar-card apple-card">
+                    <div class="pillar-icon indigo"><i class="fa-solid fa-check-double"></i></div>
+                    <h4>AB SKDM / CBAM Uyumlu</h4>
+                    <p>Avrupa Birliği Sınırda Karbon Düzenleme Mekanizması standartları ve ISO 14064 emisyon faktörleri ile tam entegrasyon.</p>
+                </div>
+                <div class="pillar-card apple-card">
+                    <div class="pillar-icon blue"><i class="fa-solid fa-file-export"></i></div>
+                    <h4>Resmi PDF & CSV Çıktıları</h4>
+                    <p>Yönetim kurulu sunumları, sürdürülebilirlik raporları ve denetimler için hazır ve yazdırılabilir rapor formatları.</p>
+                </div>
+            </div>
 
             <!-- FAQ Section -->
             <div class="landing-faq-section apple-card margin-bottom-2" id="landing-faq">
@@ -206,8 +397,8 @@
                     <h2>İklim Zekası ve Karbon Yönetimine Şimdi Başlayın</h2>
                     <p>Ücretsiz ve güvenli bir şekilde emisyonlarınızı ölçün, raporlayın ve denkleştirme stratejinizi belirleyin.</p>
                     <div class="cta-btn-group">
-                        <button type="button" class="apple-btn primary-btn btn-lg" onclick="switchTab('macroTab')">
-                            <i class="fa-solid fa-rocket"></i> Portala Giriş Yap
+                        <button type="button" class="hero-btn-primary" onclick="switchTab('macroTab')">
+                            Portala Giriş Yap <i class="fa-solid fa-arrow-right"></i>
                         </button>
                     </div>
                 </div>
