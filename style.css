@@ -422,29 +422,15 @@ body.modal-open .fab-bottom-right-btn {
     letter-spacing: -0.02em;
 }
 
-.logo-leaf-icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 30px;
-    height: 30px;
-    border-radius: 8px;
-    background: rgba(22, 101, 52, 0.12);
-    color: var(--brand-green);
-    font-size: 0.95rem;
+.logo-svg {
+    width: 26px;
+    height: 26px;
     flex-shrink: 0;
     transition: transform 0.2s ease;
 }
 
-.logo-leaf-icon.sm {
-    width: 24px;
-    height: 24px;
-    font-size: 0.8rem;
-    border-radius: 6px;
-}
-
-.logo:hover .logo-leaf-icon {
-    transform: scale(1.08) rotate(-6deg);
+.logo:hover .logo-svg {
+    transform: scale(1.08) rotate(-4deg);
 }
 
 .logo-badge {
