@@ -3524,35 +3524,24 @@ html.apple-light .fullscreen-close-btn:hover {
 }
 
 .nav-cta-btn {
-    background: #0F172A;
+    background: var(--brand-green);
     color: #ffffff !important;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 0.42rem 0.95rem;
+    border: none;
+    padding: 0.45rem 1rem;
     border-radius: 7px;
-    font-size: 0.84rem;
+    font-size: 0.85rem;
     font-weight: 600;
     cursor: pointer;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
     transition: all 0.18s ease;
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;
-    letter-spacing: -0.01em;
 }
 
 .nav-cta-btn:hover {
-    background: #1E293B;
+    background: #14532D;
     transform: translateY(-1px);
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
-}
-
-html.apple-dark .nav-cta-btn {
-    background: #166534;
-    color: #ffffff !important;
-}
-
-html.apple-dark .nav-cta-btn:hover {
-    background: #15803D;
 }
 
 .hero-btn-primary {
@@ -4084,17 +4073,11 @@ html.apple-dark .text-indigo { color: #C4B5FD !important; }
     margin: 0;
 }
 
-/* Root Landing Page - Clean High-End SaaS Palette (#FAFAFA & Pure White #FFFFFF Cards) */
+/* Root Landing Page - Enforce Site Design System Palette (var(--bg-system) & var(--bg-grouped)) */
 html.landing-mode body, 
 html.landing-mode .main-content,
 html.landing-mode .header {
-    background: #FAFAFA !important;
-}
-
-html.apple-dark.landing-mode body, 
-html.apple-dark.landing-mode .main-content,
-html.apple-dark.landing-mode .header {
-    background: #09090B !important;
+    background: var(--bg-system) !important;
 }
 
 html.landing-mode .pillar-card,
@@ -4102,39 +4085,22 @@ html.landing-mode .landing-sim-card,
 html.landing-mode .product-feature-block,
 html.landing-mode .stat-card,
 html.landing-mode .product-preview-card {
-    background: #FFFFFF !important;
-    border: 1px solid rgba(0, 0, 0, 0.08) !important;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03) !important;
-}
-
-html.apple-dark.landing-mode .pillar-card,
-html.apple-dark.landing-mode .landing-sim-card,
-html.apple-dark.landing-mode .product-feature-block,
-html.apple-dark.landing-mode .stat-card,
-html.apple-dark.landing-mode .product-preview-card {
-    background: #16181C !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2) !important;
+    background: var(--bg-grouped) !important;
+    border: 1px solid var(--bg-border) !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03) !important;
 }
 
 html.landing-mode .hero-btn-secondary,
 html.landing-mode .feature-link-btn {
-    background: #F1F5F9 !important;
-    color: #0F172A !important;
-    border: 1px solid #E2E8F0 !important;
+    background: var(--bg-grouped) !important;
+    color: var(--text-primary) !important;
+    border: 1px solid var(--bg-border) !important;
 }
 
 html.landing-mode .feature-link-btn:hover {
-    background: #166534 !important;
+    background: var(--brand-green) !important;
     color: #FFFFFF !important;
-    border-color: #166534 !important;
-}
-
-html.apple-dark.landing-mode .hero-btn-secondary,
-html.apple-dark.landing-mode .feature-link-btn {
-    background: #27272A !important;
-    color: #FAFAFA !important;
-    border: 1px solid #3F3F46 !important;
+    border-color: var(--brand-green) !important;
 }
 
 /* FAQ Section - Clean Borderless Accordion */
