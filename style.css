@@ -3477,9 +3477,14 @@ html.apple-light .fullscreen-close-btn:hover {
 
 .landing-hero {
     text-align: center;
-    padding: 7.5rem 1.5rem 5rem 1.5rem;
+    padding: 5rem 1.5rem 4rem 1.5rem;
     max-width: 1040px;
     margin: 0 auto;
+    min-height: calc(72vh - 80px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 .landing-title {
