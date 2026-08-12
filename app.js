@@ -1849,7 +1849,14 @@ function switchTab(tabId) {
     if (appNav) appNav.style.display = isLanding ? 'none' : 'flex';
     if (landingActions) landingActions.style.display = isLanding ? 'flex' : 'none';
     if (appActions) appActions.style.display = isLanding ? 'none' : 'flex';
-    if (mobileTabBar) mobileTabBar.style.display = isLanding ? 'none' : 'flex';
+    if (mobileTabBar) {
+        mobileTabBar.style.display = '';
+        if (isLanding) {
+            mobileTabBar.classList.remove('app-active');
+        } else {
+            mobileTabBar.classList.add('app-active');
+        }
+    }
 
     const navMacro = document.getElementById('nav-link-macro');
     const navCompany = document.getElementById('nav-link-company');

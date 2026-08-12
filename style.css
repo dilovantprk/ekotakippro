@@ -2010,7 +2010,7 @@ body.apple-light .nav-link.active i {
 
 /* Mobile TabBar - Apple iOS Frosted Glass Overhaul */
 .apple-tabbar {
-    display: none;
+    display: none !important;
     position: fixed;
     bottom: 0;
     left: 0;
@@ -2026,8 +2026,9 @@ body.apple-light .nav-link.active i {
     border-top: 1px solid rgba(0, 0, 0, 0.08);
     box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.04);
     z-index: 99;
-    justify-content: space-around;
+    justify-content: center;
     align-items: center;
+    gap: 1.5rem;
 }
 
 html.apple-dark .apple-tabbar {
@@ -2038,10 +2039,10 @@ html.apple-dark .apple-tabbar {
 
 @media (max-width: 768px) {
     .nav-menu {
-        display: none;
+        display: none !important;
     }
-    .apple-tabbar {
-        display: flex;
+    .apple-tabbar.app-active {
+        display: flex !important;
     }
     .main-content {
         padding-bottom: calc(4.8rem + env(safe-area-inset-bottom));
