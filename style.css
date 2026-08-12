@@ -4018,14 +4018,15 @@ html.apple-dark .text-indigo { color: #C4B5FD !important; }
 .pillar-card {
     padding: 2rem;
     border-radius: 20px;
-    background: #FFFFFF;
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+    background: var(--bg-grouped);
+    border: 1px solid var(--bg-border);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-html.apple-dark .pillar-card {
-    background: #16181C;
-    border-color: rgba(255, 255, 255, 0.1);
+.pillar-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
 }
 
 .pillar-icon {
