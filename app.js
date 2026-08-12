@@ -4472,13 +4472,13 @@ function calcLandingMiniSim() {
     const valEl = document.getElementById('landingSimVal');
     if (valEl) valEl.textContent = totalTons.toFixed(2);
 
-    const trees = Math.ceil(totalKg / 22);
+    const intensity = area > 0 ? (totalKg / area).toFixed(2) : '0.00';
     const km = Math.round(totalKg / 0.12);
 
-    const treesEl = document.getElementById('landingSimTrees');
+    const intensityEl = document.getElementById('landingSimIntensity');
     const kmEl = document.getElementById('landingSimKm');
 
-    if (treesEl) treesEl.textContent = trees.toLocaleString('tr-TR');
+    if (intensityEl) intensityEl.textContent = intensity;
     if (kmEl) kmEl.textContent = km.toLocaleString('tr-TR');
 }
 
