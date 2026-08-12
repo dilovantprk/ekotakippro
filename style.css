@@ -4104,58 +4104,65 @@ html.apple-dark .pillar-card {
     margin: 0;
 }
 
-/* FAQ Accordion */
-.landing-faq-section {
-    padding: 2.5rem;
-    border-radius: 22px;
-    background: #FFFFFF;
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
-    margin-bottom: 4.5rem;
+/* Root Landing Page Edge-to-Edge Pure Background */
+html.landing-mode body, 
+html.landing-mode .main-content {
+    background: #FFFFFF !important;
 }
 
-html.apple-dark .landing-faq-section {
-    background: #16181C;
-    border-color: rgba(255, 255, 255, 0.1);
+html.apple-dark.landing-mode body, 
+html.apple-dark.landing-mode .main-content {
+    background: #09090B !important;
+}
+
+/* FAQ Section - Clean Borderless Accordion */
+.landing-faq-section {
+    padding: 3rem 0;
+    margin-bottom: 5rem;
+    max-width: 840px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .faq-header {
     text-align: center;
-    margin-bottom: 2rem;
+    margin-bottom: 2.5rem;
 }
 
 .faq-header h3 {
-    font-size: 1.75rem;
+    font-size: 2rem;
     font-weight: 800;
     color: var(--text-primary);
-    margin-bottom: 0.35rem;
-    letter-spacing: -0.02em;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.025em;
 }
 
 .faq-header p {
-    font-size: 0.95rem;
+    font-size: 1rem;
     color: var(--text-secondary);
 }
 
 .faq-accordion {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
-    max-width: 840px;
-    margin: 0 auto;
+    gap: 0;
+    border-top: 1px solid #E5E7EB;
+}
+
+html.apple-dark .faq-accordion {
+    border-top-color: #27272A;
 }
 
 .faq-item {
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    border-radius: 14px;
-    overflow: hidden;
-    background: #FAFAFA;
-    transition: all 0.2s ease;
+    border-bottom: 1px solid #E5E7EB;
+    border-radius: 0;
+    background: transparent;
+    transition: all 0.15s ease;
 }
 
 html.apple-dark .faq-item {
-    background: #20232A;
-    border-color: rgba(255, 255, 255, 0.1);
+    border-bottom-color: #27272A;
+    background: transparent;
 }
 
 .faq-question {
@@ -4163,65 +4170,92 @@ html.apple-dark .faq-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1.1rem 1.4rem;
+    padding: 1.25rem 0.5rem;
     border: none;
     background: transparent;
-    font-size: 0.98rem;
+    font-size: 1.05rem;
     font-weight: 600;
     color: var(--text-primary);
     text-align: left;
     cursor: pointer;
+    transition: color 0.15s ease;
+}
+
+.faq-question:hover {
+    color: var(--brand-green);
 }
 
 .faq-icon {
     transition: transform 0.25s ease;
     color: var(--text-tertiary);
+    font-size: 0.9rem;
 }
 
 .faq-item.active .faq-icon {
     transform: rotate(180deg);
+    color: var(--brand-green);
 }
 
 .faq-answer {
     display: none;
-    padding: 0 1.25rem 1rem 1.25rem;
-    font-size: 0.9rem;
-    line-height: 1.6;
+    padding: 0 0.5rem 1.25rem 0.5rem;
+    font-size: 0.96rem;
+    line-height: 1.65;
     color: var(--text-secondary);
-    border-top: 1px solid var(--bg-border);
-    margin-top: 0.25rem;
 }
 
 .faq-item.active .faq-answer {
     display: block;
 }
 
-/* Bottom CTA Banner */
+/* Bottom CTA Banner - High-Impact Dark SaaS Banner */
 .landing-bottom-cta {
-    padding: 2.5rem 1.5rem;
+    padding: 3.75rem 2.5rem;
     text-align: center;
-    border-radius: 20px;
-    background: linear-gradient(135deg, rgba(22, 101, 52, 0.08) 0%, rgba(107, 78, 143, 0.08) 100%);
-    border: 1px solid var(--bg-border);
+    border-radius: 24px;
+    background: #09090B;
+    color: #FFFFFF;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+    margin-bottom: 4rem;
+}
+
+html.apple-dark .landing-bottom-cta {
+    background: #14532D;
+    border: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 .cta-content h2 {
-    font-size: 1.75rem;
+    font-size: 2.1rem;
     font-weight: 800;
-    color: var(--text-primary);
-    margin-bottom: 0.5rem;
+    color: #FFFFFF;
+    margin-bottom: 0.75rem;
+    letter-spacing: -0.03em;
 }
 
 .cta-content p {
-    font-size: 1rem;
-    color: var(--text-secondary);
-    max-width: 600px;
-    margin: 0 auto 1.5rem auto;
+    font-size: 1.05rem;
+    color: rgba(255, 255, 255, 0.8);
+    max-width: 620px;
+    margin: 0 auto 2rem auto;
+    line-height: 1.6;
 }
 
 .cta-btn-group {
     display: flex;
     justify-content: center;
+}
+
+.cta-btn-group .hero-btn-primary {
+    background: #166534;
+    color: #FFFFFF !important;
+    border: 1px solid #15803D;
+    padding: 0.85rem 2rem;
+    font-size: 1rem;
+    border-radius: 10px;
+}
+
+.cta-btn-group .hero-btn-primary:hover {
+    background: #14532D;
 }
 
 /* Landing Footer */

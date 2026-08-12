@@ -1839,6 +1839,7 @@ function switchTab(tabId) {
     });
 
     const isLanding = tabId === 'landingTab';
+    document.documentElement.classList.toggle('landing-mode', isLanding);
     const landingNav = document.getElementById('landing-nav-menu');
     const appNav = document.getElementById('app-nav-menu');
     const landingActions = document.getElementById('landing-nav-actions');
