@@ -1832,6 +1832,9 @@ function destroyLeafletMap(mapInstance, containerId) {
 }
 
 function switchTab(tabId) {
+    if (window.innerWidth <= 768 && tabId === 'landingTab') {
+        tabId = 'macroTab';
+    }
     currentActiveTabId = tabId;
 
     document.querySelectorAll('.tab-pane').forEach(pane => {
@@ -4528,6 +4531,9 @@ function toggleLandingFaq(faqId) {
 
 document.addEventListener('DOMContentLoaded', () => {
     calcLandingMiniSim();
+    if (window.innerWidth <= 768) {
+        switchTab('macroTab');
+    }
 });
 
 
