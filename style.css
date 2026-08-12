@@ -3467,6 +3467,14 @@ html.apple-light .fullscreen-close-btn:hover {
    EkoTakip Pro - Minimal & Product-Focused Landing Page Styles
    ========================================================================== */
 
+/* Landing Navigation Anchor Offset */
+#landing-sim,
+#landing-features,
+#landing-standards,
+#landing-faq {
+    scroll-margin-top: 100px;
+}
+
 .landing-hero {
     text-align: center;
     padding: 7.5rem 1.5rem 5rem 1.5rem;

@@ -4529,6 +4529,20 @@ function toggleLandingFaq(faqId) {
     item.classList.toggle('active');
 }
 
+function scrollToLandingSection(sectionId, event) {
+    if (event) event.preventDefault();
+    const target = document.getElementById(sectionId);
+    if (!target) return;
+    const headerOffset = 90;
+    const elementPosition = target.getBoundingClientRect().top;
+    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+    window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+    });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     calcLandingMiniSim();
     if (window.innerWidth <= 768) {
