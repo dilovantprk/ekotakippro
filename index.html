@@ -211,140 +211,133 @@
                 </div>
             </div>
 
-            <!-- Product Showcase / Interactive Feature Tabs -->
+            <!-- Product Showcase / Stacked Feature Blocks -->
             <div class="landing-product-showcase margin-bottom-2" id="landing-features">
-                <div class="text-center margin-bottom-15">
+                <div class="text-center margin-bottom-2">
                     <h2 class="section-headline">Ürün Modülleri ve Yetenekleri</h2>
                     <p class="section-subtext">Tek platformda makro iklim verisinden mikro kurumsal hesaplamaya tam entegrasyon.</p>
                 </div>
 
-                <div class="product-tabs-header">
-                    <button class="product-tab-btn active" id="prodTabBtnMacro" onclick="switchLandingProductTab('macro')">
-                        Makro İklim Zekası
-                    </button>
-                    <button class="product-tab-btn" id="prodTabBtnCompany" onclick="switchLandingProductTab('company')">
-                        Şirketim Portalı
-                    </button>
-                    <button class="product-tab-btn" id="prodTabBtnEvents" onclick="switchLandingProductTab('events')">
-                        Etkinlik & Tesis Hesaplayıcı
-                    </button>
-                </div>
-
-                <div class="product-tab-content active" id="prodTabContentMacro">
-                    <div class="product-tab-grid">
-                        <div class="product-info">
-                            <span class="badge-pill green">01. Veri & Harita Analitiği</span>
-                            <h3>Türkiye Sanayi Emisyon Haritası ve Tarihsel Trendler</h3>
-                            <p>Türkiye genelindeki 500'den fazla ağır sanayi tesisini, elektrik santralini ve holding emisyonlarını harita üzerinde inceleyin. 2015-2025 tarihsel iklim verilerini analiz edin.</p>
-                            <ul class="feature-bullets">
-                                <li><strong>500+ Haritalanmış Tesis:</strong> Şehir, sektör ve emisyon türüne göre filtreleme.</li>
-                                <li><strong>20 Yıllık Tarihsel Analiz:</strong> Türkiye emisyon eğilimleri ve sektör dağılımları.</li>
-                                <li><strong>Sektörel Kıyaslama:</strong> Çimento, demir-çelik, enerji ve cam sektör verileri.</li>
-                            </ul>
-                            <button type="button" class="hero-btn-primary" onclick="switchTab('macroTab')">
-                                Harita ve Makro Verileri İncele <i class="fa-solid fa-arrow-right"></i>
-                            </button>
-                        </div>
-                        <div class="product-preview-card">
-                            <div class="mockup-header">
-                                <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
-                                <span class="mockup-title">Makro İklim Zekası Paneli</span>
+                <div class="product-features-stack">
+                    <!-- Feature 1: Makro İklim Zekası -->
+                    <div class="product-feature-block">
+                        <div class="product-tab-grid">
+                            <div class="product-info">
+                                <span class="badge-pill green">01. Veri & Harita Analitiği</span>
+                                <h3>Türkiye Sanayi Emisyon Haritası ve Tarihsel Trendler</h3>
+                                <p>Türkiye genelindeki 500'den fazla ağır sanayi tesisini, elektrik santralini ve holding emisyonlarını harita üzerinde inceleyin. 2015-2025 tarihsel iklim verilerini analiz edin.</p>
+                                <ul class="feature-bullets">
+                                    <li><strong>500+ Haritalanmış Tesis:</strong> Şehir, sektör ve emisyon türüne göre filtreleme.</li>
+                                    <li><strong>20 Yıllık Tarihsel Analiz:</strong> Türkiye emisyon eğilimleri ve sektör dağılımları.</li>
+                                    <li><strong>Sektörel Kıyaslama:</strong> Çimento, demir-çelik, enerji ve cam sektör verileri.</li>
+                                </ul>
+                                <button type="button" class="hero-btn-primary" onclick="switchTab('macroTab')">
+                                    Harita ve Makro Verileri İncele <i class="fa-solid fa-arrow-right"></i>
+                                </button>
                             </div>
-                            <div class="mockup-body">
-                                <div class="mockup-stat-row">
-                                    <div class="m-stat">
-                                        <span>Toplam Emisyon</span>
-                                        <strong>564.2 Mt CO₂e</strong>
-                                    </div>
-                                    <div class="m-stat">
-                                        <span>Tesis Sayısı</span>
-                                        <strong>512 Tesis</strong>
-                                    </div>
-                                    <div class="m-stat">
-                                        <span>Lider Sektör</span>
-                                        <strong>Enerji (%42)</strong>
-                                    </div>
+                            <div class="product-preview-card">
+                                <div class="mockup-header">
+                                    <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+                                    <span class="mockup-title">Makro İklim Zekası Paneli</span>
                                 </div>
-                                <div class="mockup-chart-placeholder">
-                                    <div class="chart-line-sim"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="product-tab-content" id="prodTabContentCompany">
-                    <div class="product-tab-grid">
-                        <div class="product-info">
-                            <span class="badge-pill indigo">02. Kurumsal Yönetim</span>
-                            <h3>Tesis ve Holding Bazlı Karbon Yönetim Portalı</h3>
-                            <p>Şirketinizin Kapsam 1 (Doğrudan), Kapsam 2 (Elektrik/Isı) ve Kapsam 3 (Tedarik Zinciri) emisyonlarını tek bir kokpitte yönetin. Emisyon yoğunluğu ve trend takibi yapın.</p>
-                            <ul class="feature-bullets">
-                                <li><strong>Kapsam 1, 2, 3 Ayrıştırması:</strong> GHG Protocol uyumlu kategori takibi.</li>
-                                <li><strong>AI Ingestion:</strong> Fatura ve dokümanlardan otomatik emisyon verisi çıkarma.</li>
-                                <li><strong>Kurumsal Beyanname:</strong> AB SKDM / CBAM uyumlu bildirim hazırlığı.</li>
-                            </ul>
-                            <button type="button" class="hero-btn-primary" onclick="switchTab('companyTab')">
-                                Kurumsal Portala Git <i class="fa-solid fa-arrow-right"></i>
-                            </button>
-                        </div>
-                        <div class="product-preview-card">
-                            <div class="mockup-header">
-                                <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
-                                <span class="mockup-title">Şirketim Karbon Kokpiti</span>
-                            </div>
-                            <div class="mockup-body">
-                                <div class="mockup-scope-list">
-                                    <div class="scope-row">
-                                        <span>Kapsam 1 (Doğrudan Emisyonlar)</span>
-                                        <strong>12,450 tCO₂e</strong>
+                                <div class="mockup-body">
+                                    <div class="mockup-stat-row">
+                                        <div class="m-stat">
+                                            <span>Toplam Emisyon</span>
+                                            <strong>564.2 Mt CO₂e</strong>
+                                        </div>
+                                        <div class="m-stat">
+                                            <span>Tesis Sayısı</span>
+                                            <strong>512 Tesis</strong>
+                                        </div>
+                                        <div class="m-stat">
+                                            <span>Lider Sektör</span>
+                                            <strong>Enerji (%42)</strong>
+                                        </div>
                                     </div>
-                                    <div class="scope-row">
-                                        <span>Kapsam 2 (Enerji Tüketimi)</span>
-                                        <strong>8,320 tCO₂e</strong>
-                                    </div>
-                                    <div class="scope-row">
-                                        <span>Kapsam 3 (Tedarik Zinciri)</span>
-                                        <strong>4,110 tCO₂e</strong>
+                                    <div class="mockup-chart-placeholder">
+                                        <div class="chart-line-sim"></div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="product-tab-content" id="prodTabContentEvents">
-                    <div class="product-tab-grid">
-                        <div class="product-info">
-                            <span class="badge-pill border">03. Etkinlik & Tesis Hesabı</span>
-                            <h3>4-Kategorili Hassas Karbon Hesaplayıcısı</h3>
-                            <p>Kurumsal organizasyonların, fuarların, tesislerin ve iş seyahatlerinin karbon ayak izini dakikalar içinde hesaplayın ve yazdırılabilir resmi PDF raporu elde edin.</p>
-                            <ul class="feature-bullets">
-                                <li><strong>Seyahat & Lojistik:</strong> Uçuş, transfer ve kargo emisyonları.</li>
-                                <li><strong>Tesis & Enerji:</strong> Elektrik, jeneratör ve konaklama.</li>
-                                <li><strong>Gıda & Malzeme:</strong> Catering menüleri, sahne branda ve promosyon atıkları.</li>
-                            </ul>
-                            <button type="button" class="hero-btn-primary" onclick="switchTab('eventsTab')">
-                                Hesaplayıcıyı Başlat <i class="fa-solid fa-arrow-right"></i>
-                            </button>
-                        </div>
-                        <div class="product-preview-card">
-                            <div class="mockup-header">
-                                <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
-                                <span class="mockup-title">Karbon Hesaplayıcı Raporu</span>
-                            </div>
-                            <div class="mockup-body">
-                                <div class="mockup-report-preview">
-                                    <div class="report-badge">PDF HAZIR</div>
-                                    <div class="report-metric">
-                                        <label>Toplam Etkinlik Emisyonu</label>
-                                        <h4>18.45 ton CO₂e</h4>
+                    <!-- Feature 2: Şirketim Portalı (Alternating Grid: Card Left, Text Right) -->
+                    <div class="product-feature-block">
+                        <div class="product-tab-grid reverse-grid">
+                            <div class="product-preview-card">
+                                <div class="mockup-header">
+                                    <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+                                    <span class="mockup-title">Şirketim Karbon Kokpiti</span>
+                                </div>
+                                <div class="mockup-body">
+                                    <div class="mockup-scope-list">
+                                        <div class="scope-row">
+                                            <span>Kapsam 1 (Doğrudan Emisyonlar)</span>
+                                            <strong>12,450 tCO₂e</strong>
+                                        </div>
+                                        <div class="scope-row">
+                                            <span>Kapsam 2 (Enerji Tüketimi)</span>
+                                            <strong>8,320 tCO₂e</strong>
+                                        </div>
+                                        <div class="scope-row">
+                                            <span>Kapsam 3 (Tedarik Zinciri)</span>
+                                            <strong>4,110 tCO₂e</strong>
+                                        </div>
                                     </div>
-                                    <div class="report-bars">
-                                        <div class="r-bar" style="width: 45%; background: var(--pillar-travel);"></div>
-                                        <div class="r-bar" style="width: 30%; background: var(--pillar-energy);"></div>
-                                        <div class="r-bar" style="width: 15%; background: var(--pillar-catering);"></div>
-                                        <div class="r-bar" style="width: 10%; background: var(--pillar-materials);"></div>
+                                </div>
+                            </div>
+                            <div class="product-info">
+                                <span class="badge-pill indigo">02. Kurumsal Yönetim</span>
+                                <h3>Tesis ve Holding Bazlı Karbon Yönetim Portalı</h3>
+                                <p>Şirketinizin Kapsam 1 (Doğrudan), Kapsam 2 (Elektrik/Isı) ve Kapsam 3 (Tedarik Zinciri) emisyonlarını tek bir kokpitte yönetin. Emisyon yoğunluğu ve trend takibi yapın.</p>
+                                <ul class="feature-bullets">
+                                    <li><strong>Kapsam 1, 2, 3 Ayrıştırması:</strong> GHG Protocol uyumlu kategori takibi.</li>
+                                    <li><strong>AI Ingestion:</strong> Fatura ve dokümanlardan otomatik emisyon verisi çıkarma.</li>
+                                    <li><strong>Kurumsal Beyanname:</strong> AB SKDM / CBAM uyumlu bildirim hazırlığı.</li>
+                                </ul>
+                                <button type="button" class="hero-btn-primary" onclick="switchTab('companyTab')">
+                                    Kurumsal Portala Git <i class="fa-solid fa-arrow-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Feature 3: Etkinlik & Tesis Hesaplayıcısı -->
+                    <div class="product-feature-block">
+                        <div class="product-tab-grid">
+                            <div class="product-info">
+                                <span class="badge-pill border">03. Etkinlik & Tesis Hesabı</span>
+                                <h3>4-Kategorili Hassas Karbon Hesaplayıcısı</h3>
+                                <p>Kurumsal organizasyonların, fuarların, tesislerin ve iş seyahatlerinin karbon ayak izini dakikalar içinde hesaplayın ve yazdırılabilir resmi PDF raporu elde edin.</p>
+                                <ul class="feature-bullets">
+                                    <li><strong>Seyahat & Lojistik:</strong> Uçuş, transfer ve kargo emisyonları.</li>
+                                    <li><strong>Tesis & Enerji:</strong> Elektrik, jeneratör ve konaklama.</li>
+                                    <li><strong>Gıda & Malzeme:</strong> Catering menüleri, sahne branda ve promosyon atıkları.</li>
+                                </ul>
+                                <button type="button" class="hero-btn-primary" onclick="switchTab('eventsTab')">
+                                    Hesaplayıcıyı Başlat <i class="fa-solid fa-arrow-right"></i>
+                                </button>
+                            </div>
+                            <div class="product-preview-card">
+                                <div class="mockup-header">
+                                    <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+                                    <span class="mockup-title">Karbon Hesaplayıcı Raporu</span>
+                                </div>
+                                <div class="mockup-body">
+                                    <div class="mockup-report-preview">
+                                        <div class="report-badge">PDF HAZIR</div>
+                                        <div class="report-metric">
+                                            <label>Toplam Etkinlik Emisyonu</label>
+                                            <h4>18.45 ton CO₂e</h4>
+                                        </div>
+                                        <div class="report-bars">
+                                            <div class="r-bar" style="width: 45%; background: var(--pillar-travel);"></div>
+                                            <div class="r-bar" style="width: 30%; background: var(--pillar-energy);"></div>
+                                            <div class="r-bar" style="width: 15%; background: var(--pillar-catering);"></div>
+                                            <div class="r-bar" style="width: 10%; background: var(--pillar-materials);"></div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

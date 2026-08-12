@@ -3794,83 +3794,56 @@ html.apple-dark .sim-val {
 html.apple-dark .text-green { color: #8EB897 !important; }
 html.apple-dark .text-indigo { color: #C4B5FD !important; }
 
-/* Product Showcase Tabs */
+/* Product Showcase - Stacked Vertical Feature Blocks */
 .landing-product-showcase {
-    margin-top: 2rem;
+    margin-top: 3rem;
+    margin-bottom: 3.5rem;
 }
 
 .section-headline {
-    font-size: 1.85rem;
+    font-size: 2rem;
     font-weight: 800;
     color: var(--text-primary);
-    margin-bottom: 0.35rem;
-    letter-spacing: -0.02em;
+    margin-bottom: 0.4rem;
+    letter-spacing: -0.025em;
 }
 
 .section-subtext {
-    font-size: 1rem;
+    font-size: 1.05rem;
     color: var(--text-secondary);
 }
 
-.product-tabs-header {
+.product-features-stack {
     display: flex;
-    justify-content: center;
-    gap: 0.5rem;
-    background: var(--bg-secondary);
-    padding: 0.35rem;
-    border-radius: 14px;
-    max-width: 650px;
-    margin: 0 auto 2rem auto;
-    border: 1px solid var(--bg-border);
+    flex-direction: column;
+    gap: 2rem;
+    margin-top: 2rem;
 }
 
-.product-tab-btn {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    padding: 0.65rem 1rem;
-    border: none;
-    background: transparent;
-    border-radius: 10px;
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: var(--text-secondary);
-    cursor: pointer;
-    transition: all 0.2s ease;
+.product-feature-block {
+    background: #FFFFFF;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 20px;
+    padding: 2.25rem;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.03);
 }
 
-.product-tab-btn.active {
-    background: var(--bg-grouped);
-    color: var(--text-primary);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-}
-
-.product-tab-content {
-    display: none;
-}
-
-.product-tab-content.active {
-    display: block;
-    animation: fadeInTab 0.3s ease;
-}
-
-@keyframes fadeInTab {
-    from { opacity: 0; transform: translateY(6px); }
-    to { opacity: 1; transform: translateY(0); }
+html.apple-dark .product-feature-block {
+    background: #16181C;
+    border-color: rgba(255, 255, 255, 0.1);
 }
 
 .product-tab-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 2rem;
+    gap: 2.5rem;
     align-items: center;
 }
 
 @media (max-width: 868px) {
     .product-tab-grid {
         grid-template-columns: 1fr;
+        gap: 1.5rem;
     }
 }
 
