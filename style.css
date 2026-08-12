@@ -3475,28 +3475,9 @@ html.apple-light .fullscreen-close-btn:hover {
 
 .landing-hero {
     text-align: center;
-    padding: 5.5rem 1.5rem 4.5rem 1.5rem;
+    padding: 7.5rem 1.5rem 5rem 1.5rem;
     max-width: 1040px;
     margin: 0 auto;
-}
-
-.landing-hero-tag {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 1.25rem;
-}
-
-.hero-tag-pill {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.35rem 0.95rem;
-    border-radius: 999px;
-    font-size: 0.78rem;
-    font-weight: 700;
-    letter-spacing: 0.04em;
-    background: rgba(22, 101, 52, 0.08);
-    color: var(--brand-green);
-    border: 1px solid rgba(22, 101, 52, 0.2);
 }
 
 .landing-title {
@@ -3506,6 +3487,12 @@ html.apple-light .fullscreen-close-btn:hover {
     letter-spacing: -0.04em;
     color: var(--text-primary);
     margin-bottom: 1.75rem;
+}
+
+@media (max-width: 1024px) {
+    .landing-hero {
+        padding: 5.5rem 1.25rem 4rem 1.25rem;
+    }
 }
 
 @media (max-width: 768px) {
