@@ -1833,16 +1833,20 @@ function switchTab(tabId) {
         pane.classList.toggle('active', pane.id === tabId);
     });
 
+    const navLanding = document.getElementById('nav-link-landing');
     const navMacro = document.getElementById('nav-link-macro');
     const navCompany = document.getElementById('nav-link-company');
     const navEvents = document.getElementById('nav-link-events');
+    if (navLanding) navLanding.classList.toggle('active', tabId === 'landingTab');
     if (navMacro) navMacro.classList.toggle('active', tabId === 'macroTab');
     if (navCompany) navCompany.classList.toggle('active', tabId === 'companyTab');
     if (navEvents) navEvents.classList.toggle('active', tabId === 'eventsTab');
 
+    const tbLanding = document.getElementById('tabbar-landing');
     const tbMacro = document.getElementById('tabbar-macro');
     const tbCompany = document.getElementById('tabbar-company');
     const tbEvents = document.getElementById('tabbar-events');
+    if (tbLanding) tbLanding.classList.toggle('active', tabId === 'landingTab');
     if (tbMacro) tbMacro.classList.toggle('active', tabId === 'macroTab');
     if (tbCompany) tbCompany.classList.toggle('active', tabId === 'companyTab');
     if (tbEvents) tbEvents.classList.toggle('active', tabId === 'eventsTab');
@@ -1852,7 +1856,9 @@ function switchTab(tabId) {
         fab.style.display = tabId === 'eventsTab' ? 'flex' : 'none';
     }
 
-    if (tabId === 'macroTab') {
+    if (tabId === 'landingTab') {
+        calcLandingMiniSim();
+    } else if (tabId === 'macroTab') {
         setTimeout(() => {
             if (leafletMap) safeInvalidateSize(leafletMap, 'turkeyMap');
             else initOrUpdateMap('ALL');
@@ -4408,6 +4414,97 @@ document.addEventListener('click', function(event) {
             }
         }
     });
+});
+
+/* ==========================================================================
+   EkoTakip Pro - Minimal Landing Page Engine & Interactive Tools
+   ========================================================================== */
+
+function calcLandingMiniSim() {
+    const areaInput = document.getElementById('simArea');
+    const elecInput = document.getElementById('simElec');
+    const stayInput = document.getElementById('simStay');
+
+    if (!areaInput || !elecInput || !stayInput) return;
+
+    const area = parseFloat(areaInput.value) || 0;
+    const elec = parseFloat(elecInput.value) || 0;
+    const stay = parseFloat(stayInput.value) || 0;
+
+    const areaValEl = document.getElementById('simAreaVal');
+    const elecValEl = document.getElementById('simElecVal');
+    const stayValEl = document.getElementById('simStayVal');
+
+    if (areaValEl) areaValEl.textContent = area.toLocaleString('tr-TR');
+    if (elecValEl) elecValEl.textContent = elec.toLocaleString('tr-TR');
+    if (stayValEl) stayValEl.textContent = stay.toLocaleString('tr-TR');
+
+    // Factors: Area: 0.05, Elec: 0.44 kg CO2/kWh, Hotel: 18.2 kg CO2/night
+    const totalKg = (area * 0.05) + (elec * 0.44) + (stay * 18.2);
+    const totalTons = totalKg / 1000;
+
+    const valEl = document.getElementById('landingSimVal');
+    if (valEl) valEl.textContent = totalTons.toFixed(2);
+
+    const trees = Math.ceil(totalKg / 22);
+    const km = Math.round(totalKg / 0.12);
+
+    const treesEl = document.getElementById('landingSimTrees');
+    const kmEl = document.getElementById('landingSimKm');
+
+    if (treesEl) treesEl.textContent = trees.toLocaleString('tr-TR');
+    if (kmEl) kmEl.textContent = km.toLocaleString('tr-TR');
+}
+
+function transferLandingSimToCalculator() {
+    const areaInput = document.getElementById('simArea');
+    const elecInput = document.getElementById('simElec');
+    const stayInput = document.getElementById('simStay');
+
+    const area = areaInput ? parseFloat(areaInput.value) || 0 : 500;
+    const elec = elecInput ? parseFloat(elecInput.value) || 0 : 2500;
+    const stay = stayInput ? parseFloat(stayInput.value) || 0 : 20;
+
+    const areaField = document.getElementById('evtArea') || document.getElementById('facilityArea');
+    const elecField = document.getElementById('evtElec') || document.getElementById('gridElectricityKwh');
+    const stayField = document.getElementById('evtHotel') || document.getElementById('hotelNights');
+
+    if (areaField) areaField.value = area;
+    if (elecField) elecField.value = elec;
+    if (stayField) stayField.value = stay;
+
+    switchTab('eventsTab');
+}
+
+function switchLandingProductTab(tabKey) {
+    const btnMap = {
+        macro: 'prodTabBtnMacro',
+        company: 'prodTabBtnCompany',
+        events: 'prodTabBtnEvents'
+    };
+
+    const contentMap = {
+        macro: 'prodTabContentMacro',
+        company: 'prodTabContentCompany',
+        events: 'prodTabContentEvents'
+    };
+
+    Object.keys(btnMap).forEach(key => {
+        const btn = document.getElementById(btnMap[key]);
+        const content = document.getElementById(contentMap[key]);
+        if (btn) btn.classList.toggle('active', key === tabKey);
+        if (content) content.classList.toggle('active', key === tabKey);
+    });
+}
+
+function toggleLandingFaq(faqId) {
+    const item = document.getElementById(faqId);
+    if (!item) return;
+    item.classList.toggle('active');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    calcLandingMiniSim();
 });
 
 
