@@ -3555,10 +3555,66 @@ html.apple-dark .gradient-text {
     flex-wrap: wrap;
 }
 
-.btn-lg {
-    padding: 0.85rem 1.6rem !important;
-    font-size: 1rem !important;
-    border-radius: 12px !important;
+.nav-cta-btn {
+    background: linear-gradient(135deg, var(--brand-green) 0%, #15803d 100%);
+    color: #ffffff !important;
+    border: none;
+    padding: 0.55rem 1.25rem;
+    border-radius: 999px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 3px 12px rgba(22, 101, 52, 0.25);
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+}
+
+.nav-cta-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 5px 16px rgba(22, 101, 52, 0.35);
+}
+
+.hero-btn-primary {
+    background: linear-gradient(135deg, var(--brand-green) 0%, var(--accent-indigo) 100%);
+    color: #ffffff !important;
+    border: none;
+    padding: 0.85rem 1.75rem;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 18px rgba(22, 101, 52, 0.3);
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.hero-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 22px rgba(22, 101, 52, 0.4);
+}
+
+.hero-btn-secondary {
+    background: var(--bg-secondary);
+    color: var(--text-primary) !important;
+    border: 1px solid var(--bg-border);
+    padding: 0.85rem 1.75rem;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.hero-btn-secondary:hover {
+    background: var(--bg-grouped);
+    border-color: var(--accent-indigo);
 }
 
 /* Landing Simulator Card */
