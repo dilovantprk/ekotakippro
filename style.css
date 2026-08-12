@@ -3560,71 +3560,112 @@ html.apple-dark .gradient-text {
 }
 
 .nav-cta-btn {
-    background: linear-gradient(135deg, var(--brand-green) 0%, #15803d 100%);
+    background: #166534;
     color: #ffffff !important;
     border: none;
-    padding: 0.55rem 1.25rem;
-    border-radius: 999px;
+    padding: 0.5rem 1.15rem;
+    border-radius: 8px;
     font-size: 0.88rem;
     font-weight: 600;
     cursor: pointer;
-    box-shadow: 0 3px 12px rgba(22, 101, 52, 0.25);
-    transition: all 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+    transition: all 0.18s ease;
     display: inline-flex;
     align-items: center;
     gap: 0.45rem;
 }
 
 .nav-cta-btn:hover {
+    background: #14532D;
     transform: translateY(-1px);
-    box-shadow: 0 5px 16px rgba(22, 101, 52, 0.35);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.18);
 }
 
 .hero-btn-primary {
-    background: linear-gradient(135deg, var(--brand-green) 0%, var(--accent-indigo) 100%);
+    background: #166534;
     color: #ffffff !important;
-    border: none;
-    padding: 0.85rem 1.75rem;
-    border-radius: 12px;
-    font-size: 1rem;
-    font-weight: 700;
+    border: 1px solid #15803D;
+    padding: 0.75rem 1.5rem;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: 600;
     cursor: pointer;
-    box-shadow: 0 4px 18px rgba(22, 101, 52, 0.3);
-    transition: all 0.2s ease;
+    box-shadow: 0 2px 6px rgba(22, 101, 52, 0.2);
+    transition: all 0.18s ease;
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
 }
 
 .hero-btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 22px rgba(22, 101, 52, 0.4);
+    background: #14532D;
+    border-color: #166534;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(22, 101, 52, 0.3);
 }
 
 .hero-btn-secondary {
     background: #FFFFFF;
-    color: var(--text-primary) !important;
-    border: 1px solid rgba(0, 0, 0, 0.12);
-    padding: 0.85rem 1.75rem;
-    border-radius: 12px;
-    font-size: 1rem;
+    color: #1F2937 !important;
+    border: 1px solid #E5E7EB;
+    padding: 0.75rem 1.5rem;
+    border-radius: 10px;
+    font-size: 0.95rem;
     font-weight: 600;
     cursor: pointer;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
-    transition: all 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    transition: all 0.18s ease;
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
 }
 
 html.apple-dark .hero-btn-secondary {
-    background: #16181C;
-    border-color: rgba(255, 255, 255, 0.15);
+    background: #18181B;
+    color: #FAFAFA !important;
+    border-color: #27272A;
 }
 
 .hero-btn-secondary:hover {
-    border-color: var(--accent-indigo);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    background: #F9FAFB;
+    border-color: #D1D5DB;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.feature-link-btn {
+    background: #F3F4F6;
+    color: #111827 !important;
+    border: 1px solid #E5E7EB;
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1.25rem;
+}
+
+html.apple-dark .feature-link-btn {
+    background: #27272A;
+    color: #FAFAFA !important;
+    border-color: #3F3F46;
+}
+
+.feature-link-btn:hover {
+    background: #166534;
+    color: #FFFFFF !important;
+    border-color: #166534;
+}
+
+.feature-link-btn i {
+    transition: transform 0.2s ease;
+}
+
+.feature-link-btn:hover i {
+    transform: translateX(3px);
 }
 
 .landing-metrics-grid {
